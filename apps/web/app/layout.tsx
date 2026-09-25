@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#FBFAF7',
+  themeColor: '#F4F1EA',
 };
 
 const clarityProjectId = process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID;

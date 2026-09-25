@@ -1,7 +1,7 @@
 // Tailwind preset shared by apps/mobile (NativeWind) and apps/web (Tailwind + NativeWind).
 // Usage: presets: [require('nativewind/preset'), createPreset({ platform: 'native' | 'web' })]
 const plugin = require('tailwindcss/plugin');
-const { colors, radius, fonts } = require('./index.js');
+const { palette, colors, radius, fonts } = require('./index.js');
 
 const toCssVars = (palette) =>
   Object.fromEntries(Object.entries(palette).map(([k, v]) => [`--${k}`, v]));
@@ -10,6 +10,8 @@ const toCssVars = (palette) =>
 const colorRef = (name) => `hsl(var(--${name}))`;
 
 const themeColors = {
+  // Fixed brand colors (same in light and dark): `bg-sage`, `text-olive`, `bg-taupe/40`.
+  ...Object.fromEntries(Object.keys(palette).map((name) => [name, `hsl(${palette[name]})`])),
   border: colorRef('border'),
   input: colorRef('input'),
   ring: colorRef('ring'),

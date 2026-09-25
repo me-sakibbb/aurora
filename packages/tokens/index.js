@@ -1,54 +1,69 @@
 // Single source of truth for Aurora's design tokens.
-// PLACEHOLDER VALUES: there are no designs yet. The palette borrows the olive/tan feel of the
-// quotation document. Replace these once designs (or Figma Variables) exist; every consumer
-// (Tailwind preset → NativeWind on native, Tailwind on web) reads from here.
+// Every consumer (Tailwind preset → NativeWind on native, Tailwind on web) reads from here.
 //
 // Colors are HSL triplets ("H S% L%") so Tailwind can apply opacity: `bg-primary/50`.
 
-/** Semantic color roles, named to match react-native-reusables / shadcn so its components work as-is. */
+/**
+ * Brand palette (client-provided, Sep 2026). Exact hex values in comments.
+ * Prefer the semantic roles below in UI; use these directly only for illustrations and charts.
+ */
+const palette = {
+  sage: '78 10% 43%', // #737A63
+  taupe: '37 24% 64%', // #B9A88C
+  ivory: '42 31% 94%', // #F4F1EA
+  olive: '74 16% 16%', // #2C2F22 (dark olive)
+};
+
+/**
+ * Semantic color roles, named to match react-native-reusables / shadcn so its components work as-is.
+ * Contrast (WCAG) was checked for each text/background pair; ratios in comments. Notes:
+ * - Primary is dark olive, not sage: ivory text on sage is only 3.97:1 (fails AA for normal text).
+ * - Taupe on ivory is 2.06:1, so taupe is a surface color only (chips, secondary), never text/borders.
+ * - Sage on ivory is 3.97:1: fine for icons, focus rings and large text; small text uses muted-foreground.
+ */
 const colors = {
   light: {
-    background: '40 33% 98%',
-    foreground: '75 14% 18%',
-    card: '0 0% 100%',
-    'card-foreground': '75 14% 18%',
-    popover: '0 0% 100%',
-    'popover-foreground': '75 14% 18%',
-    primary: '75 14% 24%',
-    'primary-foreground': '40 33% 98%',
-    secondary: '38 36% 92%',
-    'secondary-foreground': '75 14% 18%',
-    muted: '40 20% 94%',
-    'muted-foreground': '75 6% 42%',
-    accent: '36 45% 60%',
-    'accent-foreground': '75 14% 14%',
-    destructive: '0 72% 51%',
-    'destructive-foreground': '0 0% 100%',
-    border: '40 16% 86%',
-    input: '40 16% 86%',
-    ring: '36 45% 60%',
+    background: palette.ivory,
+    foreground: palette.olive, // 12.1:1
+    card: '42 33% 97%',
+    'card-foreground': palette.olive,
+    popover: '42 33% 97%',
+    'popover-foreground': palette.olive,
+    primary: palette.olive,
+    'primary-foreground': palette.ivory, // 12.1:1
+    secondary: palette.taupe,
+    'secondary-foreground': palette.olive, // 5.9:1
+    muted: '40 22% 89%',
+    'muted-foreground': '78 11% 34%', // deep sage: 5.8:1 on background, 5.2:1 on muted
+    accent: palette.sage,
+    'accent-foreground': palette.ivory, // 3.97:1: large/bold text and icons only
+    destructive: '0 65% 45%',
+    'destructive-foreground': palette.ivory,
+    border: '40 18% 84%', // decorative dividers
+    input: '78 10% 48%', // form field outlines need ≥3:1 against the background
+    ring: palette.sage, // 3.97:1
   },
   // Token-ready only: dark mode is not designed or shipped yet (outside the quoted scope).
   dark: {
-    background: '75 14% 8%',
-    foreground: '40 33% 96%',
-    card: '75 14% 11%',
-    'card-foreground': '40 33% 96%',
-    popover: '75 14% 11%',
-    'popover-foreground': '40 33% 96%',
-    primary: '36 45% 64%',
-    'primary-foreground': '75 14% 10%',
-    secondary: '75 10% 18%',
-    'secondary-foreground': '40 33% 96%',
-    muted: '75 10% 16%',
-    'muted-foreground': '40 10% 65%',
-    accent: '36 45% 50%',
-    'accent-foreground': '40 33% 98%',
+    background: '74 16% 9%',
+    foreground: palette.ivory, // 15.5:1
+    card: '74 14% 12%',
+    'card-foreground': palette.ivory,
+    popover: '74 14% 12%',
+    'popover-foreground': palette.ivory,
+    primary: palette.taupe, // 7.5:1 against dark text
+    'primary-foreground': '74 16% 9%',
+    secondary: '74 12% 18%',
+    'secondary-foreground': palette.ivory,
+    muted: '74 12% 16%',
+    'muted-foreground': '40 12% 68%', // 6.5:1 on muted
+    accent: '78 14% 60%', // lightened sage
+    'accent-foreground': '74 16% 9%',
     destructive: '0 62% 50%',
     'destructive-foreground': '0 0% 100%',
-    border: '75 10% 20%',
-    input: '75 10% 20%',
-    ring: '36 45% 60%',
+    border: '74 10% 22%',
+    input: '78 8% 40%',
+    ring: '78 14% 60%',
   },
 };
 
@@ -71,4 +86,4 @@ const fonts = {
   },
 };
 
-module.exports = { colors, radius, fonts };
+module.exports = { palette, colors, radius, fonts };

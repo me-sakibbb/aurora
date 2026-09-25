@@ -38,7 +38,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       { faceIDPermission: 'Allow Aurora to use Face ID to unlock the app.' },
     ],
     'expo-notifications',
-    ['expo-splash-screen', { backgroundColor: '#FBFAF7' }],
+    ['expo-splash-screen', { backgroundColor: '#F4F1EA' }],
   ],
   experiments: {
     typedRoutes: true,

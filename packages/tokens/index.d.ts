@@ -19,6 +19,7 @@ type ColorRole =
   | 'input'
   | 'ring';
 
+export declare const palette: Record<'sage' | 'taupe' | 'ivory' | 'olive', string>;
 export declare const colors: Record<'light' | 'dark', Record<ColorRole, string>>;
 export declare const radius: string;
 export declare const fonts: {
