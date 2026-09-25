@@ -1,0 +1,20 @@
+{
+  "extends": "@aurora/tsconfig/base.json",
+  "compilerOptions": {
+    // Must be set here directly: Turbopack ignores jsxImportSource inherited via "extends",
+    // and without it NativeWind className props are silently dropped on web.
+    "jsx": "react-jsx",
+    "jsxImportSource": "nativewind",
+    "incremental": true,
+    "plugins": [{ "name": "next" }]
+  },
+  "include": [
+    "next-env.d.ts",
+    "nativewind-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

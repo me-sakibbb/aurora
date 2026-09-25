@@ -1,0 +1,30 @@
+/* Theme CSS variables come from @aurora/tokens (Tailwind preset). */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    overscroll-behavior-y: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: var(--font-sans), system-ui, sans-serif;
+  }
+
+  /* react-native-web gives Text/TextInput `font: 14px System`; inherit the page font instead. */
+  html [class*="css-text-"],
+  html [class*="css-textinput-"] {
+    font-family: inherit;
+  }
+}

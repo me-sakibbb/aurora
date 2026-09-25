@@ -1,0 +1,20 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Metro (Expo) does not follow pnpm's symlinked node_modules layout reliably.
+# A hoisted, npm-style layout keeps React Native, Expo and Next happy together.
+nodeLinker: hoisted
+
+# pnpm blocks dependency install scripts unless approved here.
+allowBuilds:
+  '@parcel/watcher': true
+  unrs-resolver: true
+
+# Exactly one React across the monorepo, matching the Expo SDK (currently SDK 57 → 19.2.3).
+# Two copies cause "Invalid hook call" at runtime. Bump together with `expo install --fix`.
+overrides:
+  react: 19.2.3
+  react-dom: 19.2.3
+  # Optional RN peer; keep in lockstep with the react-native version Expo installs.
+  '@react-native/metro-config': 0.86.3

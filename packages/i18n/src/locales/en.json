@@ -1,0 +1,18 @@
+{
+  "common": {
+    "appName": "Aurora",
+    "retry": "Try again",
+    "offline": "You're offline. We'll save this once you're back online."
+  },
+  "home": {
+    "title": "Welcome to Aurora",
+    "subtitle": "One codebase, running on web and Android.",
+    "switchLanguage": "বাংলায় দেখুন"
+  },
+  "auth": {
+    "errors": {
+      "invalidEmail": "Enter a valid email address.",
+      "passwordRequired": "Enter your password."
+    }
+  }
+}

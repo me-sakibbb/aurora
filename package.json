@@ -1,0 +1,26 @@
+{
+  "name": "aurora",
+  "private": true,
+  "packageManager": "pnpm@12.6.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "web": "pnpm --filter @aurora/web dev",
+    "mobile": "pnpm --filter @aurora/mobile start",
+    "android": "pnpm --filter @aurora/mobile android",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "lint": "biome check .",
+    "format": "biome check --write ."
+  },
+  "devDependencies": {
+    "@aurora/ui": "workspace:*",
+    "@biomejs/biome": "^2.5.14",
+    "@types/react": "~19.2.18",
+    "turbo": "^2.11.3",
+    "typescript": "~5.9.3"
+  }
+}

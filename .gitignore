@@ -1,0 +1,38 @@
+# dependencies
+node_modules/
+
+# turbo
+.turbo/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+
+# expo / react native
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+apps/mobile/android/
+apps/mobile/ios/
+*.jks
+*.keystore
+*.p8
+*.p12
+*.mobileprovision
+google-services.json
+
+# env
+.env
+.env*.local
+
+# misc
+.DS_Store
+*.log
+coverage/
+.vercel
+
+# client contract / pricing docs stay local
+docs/client/

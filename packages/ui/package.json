@@ -1,0 +1,24 @@
+{
+  "name": "@aurora/ui",
+  "version": "0.0.0",
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rn-primitives/slot": "^1.5.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.1"
+  },
+  "peerDependencies": {
+    "nativewind": "*",
+    "react": "*",
+    "react-native": "*"
+  },
+  "devDependencies": {
+    "@aurora/tsconfig": "workspace:*"
+  },
+  "main": "index.ts"
+}

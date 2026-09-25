@@ -1,0 +1,4 @@
+/* Theme CSS variables come from @aurora/tokens (Tailwind preset). Keep this file to directives. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

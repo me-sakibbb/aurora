@@ -1,0 +1,22 @@
+{
+  "name": "@aurora/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "sideEffects": [
+    "./src/index.ts"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "i18next": "^26.4.2",
+    "react-i18next": "^17.0.15"
+  },
+  "peerDependencies": {
+    "react": "*"
+  },
+  "devDependencies": {
+    "@aurora/tsconfig": "workspace:*"
+  },
+  "main": "src/index.ts"
+}

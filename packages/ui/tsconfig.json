@@ -1,0 +1,9 @@
+{
+  "extends": "@aurora/tsconfig/base.json",
+  "compilerOptions": {
+    "paths": {
+      "@aurora/ui/*": ["./*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}
