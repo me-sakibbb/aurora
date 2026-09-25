@@ -36,3 +36,5 @@ coverage/
 
 # client contract / pricing docs stay local
 docs/client/
+
+.vercel
