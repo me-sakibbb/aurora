@@ -4,6 +4,8 @@ import '@aurora/i18n';
 import { createQueryClient, persistOptions, setupAppLifecycle } from '@aurora/api';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useEffect, useState } from 'react';
+import { AuthGate } from '../features/auth/auth-gate';
+import { useAuthListener } from '../features/auth/session';
 import { useRestoreLanguage } from '../lib/language';
 import { SafeArea } from './safe-area';
 
@@ -22,8 +24,14 @@ export function Provider({ children }: { children: React.ReactNode }) {
         // Replay anything saved while offline (or before the app was closed).
         onSuccess={() => queryClient.resumePausedMutations()}
       >
-        {children}
+        <AuthListener />
+        <AuthGate>{children}</AuthGate>
       </PersistQueryClientProvider>
     </SafeArea>
   );
+}
+
+function AuthListener() {
+  useAuthListener();
+  return null;
 }

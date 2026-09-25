@@ -1,0 +1,120 @@
+{
+  "common": {
+    "appName": "Aurora",
+    "retry": "Try again",
+    "offline": "You're offline. We'll save this once you're back online.",
+    "loading": "Loading…",
+    "languageToggle": "বাংলা",
+    "languageToggleLabel": "দেখুন বাংলায় (View in Bengali)"
+  },
+  "home": {
+    "title": "Welcome to Aurora",
+    "subtitle": "One codebase, running on web and Android.",
+    "switchLanguage": "বাংলায় দেখুন"
+  },
+  "onboarding": {
+    "placeholder": {
+      "title": "Let's set up Aurora for you",
+      "body": "The short onboarding flow goes here next."
+    }
+  },
+  "auth": {
+    "brand": {
+      "headline": "Food, cycle and mood, understood together.",
+      "body": "A calm companion for everyday eating, your cycle and how you feel, built for Bangladesh.",
+      "featureFood": "Log meals you actually cook",
+      "featureCycle": "Track your cycle privately",
+      "featureMood": "Notice how mood and food connect"
+    },
+    "tabs": {
+      "signIn": "Sign in",
+      "signUp": "Create account"
+    },
+    "signIn": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to pick up where you left off.",
+      "submit": "Sign in",
+      "submitting": "Signing in…"
+    },
+    "signUp": {
+      "title": "Create your account",
+      "subtitle": "Use the email address the Aurora team approved for the beta.",
+      "submit": "Create account",
+      "submitting": "Creating account…"
+    },
+    "google": "Continue with Google",
+    "googleBusy": "Opening Google…",
+    "divider": "or use email",
+    "fields": {
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "passwordHint": "At least {{count}} characters."
+    },
+    "showPassword": "Show",
+    "hidePassword": "Hide",
+    "showPasswordLabel": "Show password",
+    "hidePasswordLabel": "Hide password",
+    "forgotPassword": "Forgot password?",
+    "offline": "You're offline. Connect to the internet to sign in.",
+    "errors": {
+      "invalidEmail": "Enter a valid email address.",
+      "passwordRequired": "Enter your password.",
+      "passwordTooShort": "Use at least 8 characters.",
+      "passwordsDontMatch": "The passwords don't match.",
+      "invalidCredentials": "That email and password don't match. Check for typos, or reset your password.",
+      "emailNotConfirmed": "Please confirm your email address first.",
+      "accountExists": "You already have an account with this email. Sign in instead.",
+      "weakPassword": "That password is too easy to guess. Try a longer one.",
+      "samePassword": "Your new password must be different from your old one.",
+      "rateLimited": "Too many attempts. Please wait a minute, then try again.",
+      "network": "We couldn't reach Aurora. Check your connection and try again.",
+      "linkExpired": "That link has expired or was already used. Please request a new one.",
+      "unknown": "Something went wrong on our side. Please try again.",
+      "notApproved": "This account isn't on the Aurora beta list yet."
+    },
+    "resetPasswordAction": "Reset password",
+    "notApproved": {
+      "title": "You're not on the beta list yet",
+      "bodyEmail": "Aurora is in a small, invite-only beta, and {{email}} isn't on the approved list.",
+      "body": "Aurora is in a small, invite-only beta, and this account isn't on the approved list.",
+      "help": "If you were invited, try the email or Google account you gave the Aurora team.",
+      "tryAgain": "Try a different account"
+    },
+    "checkEmail": {
+      "title": "Check your inbox",
+      "confirmBody": "We sent a confirmation link to {{email}}. Open it on this device to finish creating your account.",
+      "resetBody": "If {{email}} has an Aurora account, we've sent it a link to choose a new password.",
+      "spamHint": "Can't see it? Check your spam or promotions folder.",
+      "resend": "Resend email",
+      "resendIn": "Resend in {{seconds}}s",
+      "resent": "Sent again. It can take a minute to arrive.",
+      "back": "Back to sign in"
+    },
+    "forgot": {
+      "title": "Reset your password",
+      "subtitle": "Enter your email and we'll send you a link to choose a new password.",
+      "submit": "Send reset link",
+      "submitting": "Sending…"
+    },
+    "reset": {
+      "title": "Choose a new password",
+      "subtitle": "You'll use it the next time you sign in.",
+      "submit": "Save password",
+      "submitting": "Saving…",
+      "expiredTitle": "This link has expired",
+      "expiredBody": "Password reset links work once and expire after a while. Request a new one and use the latest email.",
+      "requestNew": "Request a new link"
+    },
+    "callback": {
+      "signingIn": "Signing you in…"
+    },
+    "gate": {
+      "error": "We couldn't load your account.",
+      "offline": "You're offline, and we need a connection once to finish signing you in."
+    },
+    "signOut": "Sign out"
+  }
+}
