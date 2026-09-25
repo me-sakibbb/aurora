@@ -40,14 +40,18 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-notifications',
     // @react-native-google-signin/google-signin needs no config plugin on Android (autolinked).
     // If iOS is added later, add ['@react-native-google-signin/google-signin', { iosUrlScheme }].
-    ['expo-splash-screen', { backgroundColor: '#F4F1EA' }],
+    // Placeholder transparent logo until designs land; Android fails resource linking without an image.
+    [
+      'expo-splash-screen',
+      { backgroundColor: '#F4F1EA', image: './assets/splash-icon.png', imageWidth: 200 },
+    ],
   ],
   experiments: {
     typedRoutes: true,
   },
   extra: {
     eas: {
-      // Filled in by `eas init`.
+      projectId: '766e5e4c-9acf-45be-b96d-b95bcc251249',
     },
   },
 });

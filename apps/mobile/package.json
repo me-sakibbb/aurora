@@ -7,6 +7,8 @@
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "build:apk": "eas build --platform android --profile preview",
+    "build:apk:dev": "eas build --platform android --profile development",
     "typecheck": "tsc --noEmit",
     "doctor": "expo-doctor"
   },

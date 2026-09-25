@@ -10,6 +10,8 @@
     "web": "pnpm --filter @aurora/web dev",
     "mobile": "pnpm --filter @aurora/mobile start",
     "android": "pnpm --filter @aurora/mobile android",
+    "apk": "pnpm --filter @aurora/mobile build:apk",
+    "apk:dev": "pnpm --filter @aurora/mobile build:apk:dev",
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
