@@ -22,7 +22,7 @@ import { useReducedMotion } from '../../../lib/use-reduced-motion';
 const useNativeDriver = Platform.OS !== 'web';
 
 /**
- * `light`: the app background with soft glows, for the in-between milestones.
+ * `light`: the plain app background, for the in-between milestones.
  * `olive`: the brand's dark olive floods the screen, for the big moments (account, finish).
  * Fixed brand colors (not theme roles) so the olive moments look the same in every theme.
  */
@@ -468,30 +468,6 @@ export function CelebrationBadge({
 
 // ─── Shell ──────────────────────────────────────────────────────────────────────────────────────
 
-/** Soft blurred glows (web) / faint blobs (native) in the corners. */
-function Glows({ tone }: { tone: CelebrationTone }) {
-  const blur = Platform.select({ web: 'blur-3xl' });
-  const olive = tone === 'olive';
-  return (
-    <View aria-hidden pointerEvents="none" className="absolute inset-0 overflow-hidden">
-      <View
-        className={cn(
-          'absolute -right-28 -top-24 h-96 w-96 rounded-full',
-          olive ? (blur ? 'bg-sage/45' : 'bg-sage/20') : blur ? 'bg-sage/25' : 'bg-sage/10',
-          blur,
-        )}
-      />
-      <View
-        className={cn(
-          'absolute -bottom-32 -left-28 h-96 w-96 rounded-full',
-          olive ? (blur ? 'bg-taupe/25' : 'bg-taupe/10') : blur ? 'bg-taupe/30' : 'bg-taupe/10',
-          blur,
-        )}
-      />
-    </View>
-  );
-}
-
 /** The olive floods in as a circle growing from just above the middle of the screen. */
 function OliveReveal() {
   const reduced = useReducedMotion();
@@ -545,9 +521,6 @@ function CelebrationShell({
       style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
     >
       {tone === 'olive' ? <OliveReveal /> : null}
-      <FadeIn delay={tone === 'olive' ? 250 : 0} className="absolute inset-0">
-        <Glows tone={tone} />
-      </FadeIn>
       <View className="w-full max-w-md flex-1 self-center px-6">
         <View className="flex-1 items-center justify-center gap-3 py-6">{children}</View>
         {action ? (
