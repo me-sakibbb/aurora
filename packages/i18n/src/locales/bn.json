@@ -13,9 +13,314 @@
     "switchLanguage": "View in English"
   },
   "onboarding": {
-    "placeholder": {
-      "title": "চলুন, আপনার জন্য অরোরা সাজিয়ে নিই",
-      "body": "ছোট্ট অনবোর্ডিং ধাপগুলো এখানে যুক্ত হবে।"
+    "back": "Back",
+    "progressLabel": "Onboarding progress",
+    "continue": "Continue",
+    "skip": "Skip",
+    "welcome": {
+      "headline": "Food, cycle and mood, understood together.",
+      "body": "Aurora is a calm, everyday companion for home-cooked meals, your cycle and how you feel, built for kitchens in Bangladesh.",
+      "start": "Get started",
+      "signIn": "I already have an account",
+      "featuresTitle": "What Aurora does",
+      "foodTitle": "Meals from your own kitchen",
+      "foodBody": "Log the dal, bhaat and torkari you actually cook, and see what's in them.",
+      "cycleTitle": "Your cycle, gently tracked",
+      "cycleBody": "Keep track of your period and get to know your cycle, at your own pace.",
+      "moodTitle": "Mood and energy, connected",
+      "moodBody": "Notice how what you eat and where you are in your cycle relate to how you feel.",
+      "stepsTitle": "How getting started works",
+      "step1": "Answer a few quick questions about your goals and kitchen.",
+      "step2": "Try logging a sample meal to see how it works.",
+      "step3": "Create your account and set your starting baseline.",
+      "privacyTitle": "Private by design",
+      "privacyBody": "Your health is personal. Aurora keeps you in control of what you share.",
+      "privacyDiscreet": "Discreet Mode keeps things low-key on a shared phone.",
+      "privacyChoice": "You choose which features to use and what to track.",
+      "privacyOffline": "Keeps working when your connection drops, and catches up later.",
+      "closingTitle": "Ready when you are.",
+      "previewToday": "Today",
+      "previewLogged": "3 meals",
+      "previewDal": "Masoor dal",
+      "previewRice": "Bhaat",
+      "previewBhaji": "Shobji bhaji",
+      "previewCycle": "Cycle on track",
+      "previewMood": "Feeling calm"
+    },
+    "heardFrom": {
+      "title": "How did you hear about us?",
+      "subtitle": "Optional, but it helps us reach more people like you."
+    },
+    "goal": {
+      "title": "What's your main focus?",
+      "subtitle": "Pick the one that matters most right now. You can change it later."
+    },
+    "cookingStyle": {
+      "title": "What's your cooking style?",
+      "subtitle": "How do meals usually come together at home?"
+    },
+    "oil": {
+      "title": "How much oil do you usually cook with?",
+      "subtitle": "A rough idea is fine."
+    },
+    "sandbox": {
+      "title": "Try logging a meal",
+      "subtitle": "Tap a dish to add it to your plate. Pick up to {{count}}.",
+      "portion": "{{grams}} g serving",
+      "add": "Add",
+      "added": "Added",
+      "plate": "Your sample plate",
+      "plateEmpty": "Tap Add on a dish to put it here.",
+      "remove": "Remove",
+      "removeLabel": "Remove {{name}}",
+      "error": "We couldn't load the sample meals.",
+      "offline": "You're offline, so the sample meals can't load right now.",
+      "empty": "There are no sample meals to show right now.",
+      "count": "{{count}} of {{max}}"
+    },
+    "sex": {
+      "title": "What's your sex?",
+      "subtitle": "This helps us show the features that fit you."
+    },
+    "features": {
+      "title": "Which features do you want?",
+      "subtitle": "You can change this later.",
+      "food": "Calorie & Nutrition Tracker",
+      "foodHint": "Log home-cooked meals and see what's in them.",
+      "cycle": "Cycle & Period Health Companion",
+      "cycleHint": "Track your period and understand your cycle.",
+      "both": "Both",
+      "bothHint": "The full Aurora experience."
+    },
+    "lastPeriod": {
+      "title": "When did your last period start?",
+      "subtitle": "Pick the first day of your last period.",
+      "dontRecall": "I don't recall",
+      "dontRecallHint": "That's fine, you can add it later."
+    },
+    "cycleLength": {
+      "title": "What's your typical cycle length?",
+      "subtitle": "From the first day of one period to the first day of the next.",
+      "value_one": "{{count}} day",
+      "value_other": "{{count}} days",
+      "hint": "Not sure? Leave it at 28 days. You can adjust it later."
+    },
+    "discreetMode": {
+      "title": "Turn on Discreet Mode?",
+      "subtitle": "For extra privacy on a shared or borrowed phone.",
+      "toggle": "Discreet Mode",
+      "hint": "Uses neutral wording for cycle features so they're less obvious to others. You can change this anytime."
+    },
+    "signUp": {
+      "title": "Save your answers",
+      "subtitle": "Create your account to keep going. Your answers so far are saved on this device.",
+      "email": "Continue with Email",
+      "summary": "Saved so far"
+    },
+    "bodyType": {
+      "title": "Which body type is closest to yours?",
+      "subtitle": "Pick the one that fits best."
+    },
+    "units": {
+      "cm": "cm",
+      "ftin": "ft / in",
+      "kg": "kg",
+      "lb": "lb"
+    },
+    "height": {
+      "title": "How tall are you?",
+      "cmValue": "{{value}} cm",
+      "ftinValue": "{{feet}} ft {{inches}} in",
+      "subtitle": "Drag the slider or use − and +."
+    },
+    "weight": {
+      "title": "What's your current weight?",
+      "kgValue": "{{value}} kg",
+      "lbValue": "{{value}} lb",
+      "subtitle": "Your starting point. You can update it anytime."
+    },
+    "activity": {
+      "title": "How active are you on a typical day?",
+      "subtitle": "Think about an ordinary weekday."
+    },
+    "health": {
+      "title": "A little about your health",
+      "subtitle": "This helps Aurora tailor guidance to you.",
+      "bloodPressure": "Blood pressure",
+      "diabetes": "Do you have diabetes?",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "options": {
+      "heardFrom": {
+        "app_store": "App Store search",
+        "instagram": "Instagram",
+        "tiktok": "TikTok",
+        "friend": "Friend or family",
+        "facebook": "Facebook",
+        "other": "Other"
+      },
+      "goal": {
+        "weight": "Weight management & fat loss",
+        "hormonal": "Hormonal balance & cycle regularity",
+        "mindful": "Mindful eating & home cooking",
+        "energy": "Daily energy & vitality"
+      },
+      "cookingStyle": {
+        "quick": "Quick & Easy",
+        "traditional": "Traditional Home Cooking",
+        "meal_prep": "Meal Prep",
+        "budget": "Budget-Friendly"
+      },
+      "oil": {
+        "low": "A little",
+        "typical": "A typical amount",
+        "high": "Quite a lot"
+      },
+      "oilHint": {
+        "low": "Just enough to coat the pan.",
+        "typical": "The usual amount for curries and bhaji.",
+        "high": "Rich, oily dishes are common at home."
+      },
+      "sex": {
+        "female": "Female",
+        "male": "Male",
+        "other": "Other"
+      },
+      "bodyType": {
+        "slim": "Slim",
+        "average": "Average",
+        "athletic": "Athletic",
+        "full": "Fuller"
+      },
+      "activity": {
+        "sedentary": "Mostly sitting",
+        "light": "Lightly active",
+        "moderate": "Moderately active",
+        "active": "Very active"
+      },
+      "activityHint": {
+        "sedentary": "Desk work, little walking",
+        "light": "Some walking or chores",
+        "moderate": "On my feet a lot",
+        "active": "Physical work or daily exercise"
+      },
+      "bloodPressure": {
+        "normal": "Normal",
+        "high": "High",
+        "low": "Low",
+        "unknown": "I don't know"
+      },
+      "goalHint": {
+        "weight": "Reach a healthier weight, steadily.",
+        "hormonal": "Support a more regular, balanced cycle.",
+        "mindful": "Cook and eat with more awareness.",
+        "energy": "Feel more energetic through the day."
+      },
+      "cookingStyleHint": {
+        "quick": "Fast weekday meals",
+        "traditional": "Family recipes, made fresh",
+        "meal_prep": "Cook ahead for the week",
+        "budget": "Good food, low cost"
+      }
+    },
+    "review": {
+      "title": "Your baseline",
+      "subtitle": "Check everything looks right. Tap any answer to change it.",
+      "goal": "Main focus",
+      "cookingStyle": "Cooking style",
+      "oil": "Cooking oil",
+      "sex": "Sex",
+      "features": "Features",
+      "lastPeriod": "Last period started",
+      "cycleLength": "Typical cycle length",
+      "discreetMode": "Discreet Mode",
+      "bodyType": "Body type",
+      "height": "Height",
+      "weight": "Weight",
+      "activity": "Activity level",
+      "bloodPressure": "Blood pressure",
+      "diabetes": "Diabetes",
+      "on": "On",
+      "off": "Off",
+      "editLabel": "Edit {{field}}",
+      "lockIn": "Lock In My Baseline",
+      "groupGoals": "Goals & kitchen",
+      "groupYou": "About you",
+      "groupBody": "Your body"
+    },
+    "notifications": {
+      "title": "Stay on track with gentle reminders",
+      "subtitle": "Aurora can send you a nudge when it helps.",
+      "pointMeals": "A reminder to log your meals",
+      "pointCycle": "Heads-ups about your cycle",
+      "pointControl": "You choose which ones you get, anytime",
+      "channel": "Reminders",
+      "enable": "Turn on notifications",
+      "notNow": "Not now"
+    },
+    "widget": {
+      "title": "Want a home-screen widget?",
+      "subtitle": "See your streak at a glance. We'll let you know when it's ready to add.",
+      "previewStreak": "Day 1",
+      "yes": "Yes, I'd like one",
+      "no": "No thanks"
+    },
+    "finish": {
+      "offline": "You're offline. Your answers are saved on this device; connect to finish.",
+      "error": "We couldn't save your answers. They're still on this device."
+    },
+    "slider": {
+      "decrease": "Decrease {{label}}",
+      "increase": "Increase {{label}}"
+    },
+    "calendar": {
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month"
+    },
+    "backToReview": "Back to review",
+    "sections": {
+      "start": "Getting started",
+      "kitchen": "Your kitchen",
+      "you": "About you",
+      "cycle": "Your cycle",
+      "body": "Your body",
+      "finish": "Almost done"
+    },
+    "milestones": {
+      "kitchen": {
+        "eyebrow": "Kitchen set up",
+        "title": "Your kitchen is set",
+        "subtitle": "Great picks. Next, a little about you."
+      },
+      "profile": {
+        "eyebrow": "Profile started",
+        "title": "Your profile is taking shape",
+        "subtitle": "Create a free account so your answers are kept safe."
+      },
+      "account": {
+        "eyebrow": "Account created",
+        "title": "You're in!",
+        "subtitle": "Welcome aboard. A few quick questions about your body and you're done."
+      },
+      "almost": {
+        "eyebrow": "Body basics done",
+        "title": "Almost there",
+        "subtitle": "Take a quick look at your answers before we lock them in."
+      }
+    },
+    "finale": {
+      "saving": "Locking in your baseline…",
+      "items": {
+        "answers": "Saving your answers",
+        "kitchen": "Setting up your kitchen",
+        "cycle": "Getting your cycle tracker ready",
+        "home": "Preparing your home screen"
+      },
+      "doneTitle": "You're all set!",
+      "doneSubtitle": "Your baseline is locked in. Let's get started.",
+      "go": "Let's go",
+      "doneEyebrow": "Setup complete"
     }
   },
   "auth": {

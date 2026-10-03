@@ -89,10 +89,24 @@ the workspace root. Review each added component: some need extra `@rn-primitives
 
 - **Screens** (`packages/app/features/auth`): `/login` (Sign in / Create account tabs + Google),
   `/forgot-password`, `/reset-password`, `/auth/callback` (Google on web + every email link).
-- **Gate** (`auth-gate.tsx`, mounted by the shared `Provider`): signed out → `/login?next=…`, signed in
-  with no `onboarding_responses` row → `/onboarding`, otherwise home. The rules are the pure function
-  `resolveAuthRedirect` in `packages/api/src/auth/routing.ts` (unit tested). After F2 completes, invalidate
-  `onboardingQueryKey(userId)`.
+- **Gate** (`auth-gate.tsx`, mounted by the shared `Provider`): signed out → `/onboarding` from the app
+  root (Welcome + pre-sign-up questions) or `/login?next=…` from other pages; signed in with no
+  `onboarding_responses` row → `/onboarding`, otherwise home. The rules are the pure function
+  `resolveAuthRedirect` in `packages/api/src/auth/routing.ts` (unit tested).
+
+## Onboarding (F2)
+
+- One route, `/onboarding`, runs the whole flow. Step order and visibility (signed in/out, platform,
+  male → no cycle steps) are pure functions in `packages/api/src/onboarding/flow.ts` (unit tested).
+- Answers live in an on-device draft (`features/onboarding/draft-store.ts`, zustand persisted to `kv`)
+  so pre-sign-up answers survive sign-up (including Google's redirect on web) and app restarts. It's
+  cleared after a successful submit and on sign-out.
+- Everything is sent once, at the last step, to the FastAPI `POST /api/v1/onboarding`
+  (`buildOnboardingPayload`). On success the client sets `onboardingQueryKey(userId)` to `true` so the
+  gate sends the person home; the backend must write the `onboarding_responses` row for that to stick.
+- Sandbox meals come from `GET /api/v1/food/recipes`. No calorie numbers are computed in the client.
+- Push token registration and the real home-screen widget are not built yet (backend endpoints/keys
+  pending). Only the opt-ins are recorded.
 - **Google**: web uses Supabase's redirect flow; Android uses the native account picker
   (`@react-native-google-signin/google-signin`) + `signInWithIdToken`. Split in `auth/google(.native).ts`.
 - **Not approved** (backend contract): the Supabase *before user created* hook rejects non-allowlisted

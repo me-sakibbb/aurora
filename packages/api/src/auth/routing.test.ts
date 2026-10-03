@@ -7,10 +7,16 @@ describe('resolveAuthRedirect', () => {
     ).toBeNull();
   });
 
-  it('sends signed-out visitors to login, remembering deep links', () => {
+  it('starts signed-out visitors at onboarding (welcome + pre-sign-up questions)', () => {
     expect(resolveAuthRedirect({ status: 'signedOut', pathname: '/', onboarding: 'unknown' })).toBe(
-      '/login',
+      '/onboarding',
     );
+    expect(
+      resolveAuthRedirect({ status: 'signedOut', pathname: '/onboarding', onboarding: 'unknown' }),
+    ).toBeNull();
+  });
+
+  it('sends signed-out visitors on app pages to login, remembering deep links', () => {
     expect(
       resolveAuthRedirect({ status: 'signedOut', pathname: '/mood', onboarding: 'unknown' }),
     ).toBe('/login?next=%2Fmood');

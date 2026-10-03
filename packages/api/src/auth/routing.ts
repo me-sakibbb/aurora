@@ -40,7 +40,8 @@ export function paramsFromUrl(url: string): URLSearchParams {
 
 /**
  * Where the current visitor should be. Returns null to stay put.
- * - Signed out on an app page → /login (remembering the page as `next`).
+ * - Signed out: the app root → /onboarding (Welcome and the pre-sign-up questions are answered
+ *   signed out); any other app page → /login (remembering the page as `next`).
  * - Signed in but onboarding not done → /onboarding. Done → never back to /onboarding.
  * - Signed in on /login → `next` (if safe) or home.
  */
@@ -60,8 +61,8 @@ export function resolveAuthRedirect({
 
   const isGuestRoute = GUEST_ROUTES.includes(path);
   if (status === 'signedOut') {
-    if (isGuestRoute) return null;
-    return path === HOME_ROUTE ? '/login' : `/login?next=${encodeURIComponent(path)}`;
+    if (isGuestRoute || path === ONBOARDING_ROUTE) return null;
+    return path === HOME_ROUTE ? ONBOARDING_ROUTE : `/login?next=${encodeURIComponent(path)}`;
   }
 
   if (onboarding === 'unknown') return null;

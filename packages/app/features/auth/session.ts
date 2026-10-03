@@ -12,6 +12,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { create } from 'zustand';
+import { useOnboardingDraft } from '../onboarding/draft-store';
 
 type AuthState = { status: AuthStatus; session: Session | null };
 
@@ -23,7 +24,8 @@ export const useSession = () => useAuthStore((s) => s.session);
 /**
  * Mirrors Supabase's auth state into the store. The session itself persists in SecureStore
  * (native) / localStorage (web) and survives restarts and offline launches.
- * Signing out wipes the query cache so the next person on a shared phone sees nothing.
+ * Signing out wipes the query cache and any onboarding answers, so the next person on a shared
+ * phone sees nothing.
  */
 export function useAuthListener() {
   const queryClient = useQueryClient();
@@ -37,13 +39,16 @@ export function useAuthListener() {
       data: { subscription },
     } = getSupabase().auth.onAuthStateChange((event, session) => {
       useAuthStore.setState({ status: session ? 'signedIn' : 'signedOut', session });
-      if (event === 'SIGNED_OUT') queryClient.clear();
+      if (event === 'SIGNED_OUT') {
+        queryClient.clear();
+        useOnboardingDraft.getState().reset();
+      }
     });
     return () => subscription.unsubscribe();
   }, [queryClient]);
 }
 
-/** Invalidate this after onboarding (F2) completes so the gate lets the user into the app. */
+/** Onboarding (F2) sets this to `true` after a successful submit so the gate lets the user in. */
 export const onboardingQueryKey = (userId: string | undefined) => ['auth', 'onboarded', userId];
 
 /** Whether the signed-in user is new (onboarding pending) or returning. Cached for offline launches. */

@@ -18,3 +18,7 @@ overrides:
   react-dom: 19.2.3
   # Optional RN peer; keep in lockstep with the react-native version Expo installs.
   '@react-native/metro-config': 0.86.3
+
+minimumReleaseAgeExclude:
+  - lucide-react-native@1.51.0
+  - lucide-react@1.51.0
