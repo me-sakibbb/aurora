@@ -4,6 +4,7 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
 // TODO(before first Play Store upload): confirm the final application ID with the client.
 // It cannot be changed after the app is published.
 const APP_ID = 'com.aurora.app';
+const EAS_PROJECT_ID = '766e5e4c-9acf-45be-b96d-b95bcc251249';
 
 // FCM credentials for push (Expo Push uses FCM under the hood on Android). Download from the
 // Firebase console into apps/mobile/ (git-ignored), or provide it as an EAS file env var.
@@ -18,6 +19,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: 'aurora',
   version: '0.1.0',
   orientation: 'portrait',
+  // EAS Update: JS-only changes ship with `pnpm update:preview` instead of a rebuild. The
+  // fingerprint policy changes the runtime version whenever native code changes, so an update is
+  // only ever delivered to builds whose native side it matches.
+  runtimeVersion: { policy: 'fingerprint' },
+  updates: {
+    url: `https://u.expo.dev/${EAS_PROJECT_ID}`,
+  },
   userInterfaceStyle: 'light',
   android: {
     package: APP_ID,
@@ -51,7 +59,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   extra: {
     eas: {
-      projectId: '766e5e4c-9acf-45be-b96d-b95bcc251249',
+      projectId: EAS_PROJECT_ID,
     },
   },
 });

@@ -137,6 +137,7 @@ the workspace root. Review each added component: some need extra `@rn-primitives
 
 Native modules are already installed and configured, so the dev client doesn't need rebuilding
 for them later. **Rebuild the dev client whenever a native dependency is added or upgraded.**
+JS-only changes ship to installed APKs over the air; see [mobile-releases.md](mobile-releases.md).
 
 ## Known gotchas
 
@@ -149,7 +150,15 @@ for them later. **Rebuild the dev client whenever a native dependency is added o
   classes are present in the HTML but colors/`lg:` layout don't apply (page looks unstyled).
 - **One React copy:** `pnpm-workspace.yaml` pins `react`/`react-dom` via `overrides` to the Expo SDK's
   version. When upgrading Expo, run `npx expo install --fix` in `apps/mobile` and update the overrides.
+  Also bump the `expo` devDependency in `packages/api` to the same version: it pins `jest-expo`'s `expo`
+  peer. If it drifts, pnpm nests an older untransformed copy and every test fails with
+  "Cannot use import statement outside a module" in `expo/src/winter`.
 - **pnpm hoisted linker** (`nodeLinker: hoisted`) is required for Metro.
+- **EAS Update fingerprint on Windows:** `patches/@expo__fingerprint@0.20.13.patch` fixes a Windows
+  path bug that made the local runtime version differ from EAS's. Without it, EAS builds fail in
+  "Configure expo-updates" with "Runtime version mismatch". When Expo bumps `@expo/fingerprint`, check
+  whether the fix landed upstream; if not, recreate the patch (`pnpm patch @expo/fingerprint@<ver>`).
+  `apps/mobile/.gitignore` must keep `/android` and `/ios` for the same reason.
 - **Tailwind v3 + NativeWind v4:** NativeWind v5 (Tailwind v4) was still a release candidate at setup.
   Tailwind-merge stays on v2 to match Tailwind v3.
 - **React strict mode is off on web**, because Reanimated doesn't support it.

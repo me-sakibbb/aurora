@@ -7,6 +7,10 @@
     "languageToggle": "English",
     "languageToggleLabel": "View in English (ইংরেজিতে দেখুন)"
   },
+  "updates": {
+    "downloading": "আপডেট ডাউনলোড হচ্ছে…",
+    "restarting": "আবার চালু হচ্ছে…"
+  },
   "home": {
     "title": "অরোরাতে স্বাগতম",
     "subtitle": "একই কোড, ওয়েব এবং অ্যান্ড্রয়েডে চলছে।",

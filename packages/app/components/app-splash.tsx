@@ -1,16 +1,16 @@
 'use client';
 
 import { useTranslation } from '@aurora/i18n';
-import { Button, Text } from '@aurora/ui';
+import { Button, cn, Text } from '@aurora/ui';
 import { ActivityIndicator, View } from 'react-native';
 import { BrandMark } from './brand-mark';
 import { FadeIn } from './fade-in';
 
 /** Full-screen brand splash used while the session / account state is being worked out. */
-export function AppSplash({ message }: { message?: string }) {
+export function AppSplash({ message, className }: { message?: string; className?: string }) {
   const { t } = useTranslation();
   return (
-    <View className="bg-background flex-1 items-center justify-center gap-6 p-6">
+    <View className={cn('bg-background flex-1 items-center justify-center gap-6 p-6', className)}>
       <BrandMark size="lg" />
       <FadeIn delay={400} className="items-center gap-3">
         <ActivityIndicator className="text-accent" />

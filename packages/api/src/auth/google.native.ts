@@ -48,6 +48,8 @@ export async function signInWithGoogle(): Promise<GoogleSignInResult> {
     ) {
       return { cancelled: true };
     }
+    // The UI only shows a generic message; this keeps the real cause visible in `adb logcat`.
+    console.warn('[auth] Google sign-in failed', isErrorWithCode(error) ? error.code : '', error);
     throw error;
   }
 }

@@ -6,6 +6,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { useEffect, useState } from 'react';
 import { AuthGate } from '../features/auth/auth-gate';
 import { useAuthListener } from '../features/auth/session';
+import { UpdateOverlay } from '../features/updates/update-overlay';
 import { useRestoreLanguage } from '../lib/language';
 import { SafeArea } from './safe-area';
 
@@ -26,6 +27,8 @@ export function Provider({ children }: { children: React.ReactNode }) {
       >
         <AuthListener />
         <AuthGate>{children}</AuthGate>
+        {/* Last, so it draws above every screen while an OTA update downloads. */}
+        <UpdateOverlay />
       </PersistQueryClientProvider>
     </SafeArea>
   );

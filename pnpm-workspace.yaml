@@ -22,3 +22,6 @@ overrides:
 minimumReleaseAgeExclude:
   - lucide-react-native@1.51.0
   - lucide-react@1.51.0
+
+patchedDependencies:
+  '@expo/fingerprint@0.20.13': patches/@expo__fingerprint@0.20.13.patch

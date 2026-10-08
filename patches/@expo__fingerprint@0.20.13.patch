@@ -1,0 +1,14 @@
+diff --git a/build/ExpoConfigLoader.js b/build/ExpoConfigLoader.js
+index 0573570fdfec00b3c554bbbe5d6139adeff1dec2..3d7fca04ec870babe8c0a2f321c86ab3468dec51 100644
+--- a/build/ExpoConfigLoader.js
++++ b/build/ExpoConfigLoader.js
+@@ -58,7 +58,8 @@ async function runAsync(programName, args = []) {
+     ];
+     const filteredLoadedModules = loadedModules.filter((modulePath) => !virtualModuleNames.has(modulePath));
+     const existingLoadedModules = (await Promise.all(filteredLoadedModules.map(async (modulePath) => {
+-        const relativePath = path_1.default.relative(projectRoot, modulePath);
++        // Patched: posix separators so the ignore globs also match on Windows (matches EAS Linux).
++        const relativePath = (0, Path_1.toPosixPath)(path_1.default.relative(projectRoot, modulePath));
+         if ((0, Path_1.isIgnoredPath)(relativePath, ignoredPaths)) {
+             return null;
+         }

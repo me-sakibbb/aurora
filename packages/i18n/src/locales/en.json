@@ -7,6 +7,10 @@
     "languageToggle": "বাংলা",
     "languageToggleLabel": "দেখুন বাংলায় (View in Bengali)"
   },
+  "updates": {
+    "downloading": "Downloading an update…",
+    "restarting": "Restarting…"
+  },
   "home": {
     "title": "Welcome to Aurora",
     "subtitle": "One codebase, running on web and Android.",
