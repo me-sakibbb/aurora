@@ -1,6 +1,13 @@
 'use client';
 
-import { emptyDraft, kv, type OnboardingDraft, type StepId } from '@aurora/api';
+import {
+  emptyDraft,
+  kv,
+  type OnboardingDraft,
+  restoreDraft,
+  restoreStep,
+  type StepId,
+} from '@aurora/api';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -36,10 +43,10 @@ export const useOnboardingDraft = create<DraftState>()(
         removeItem: kv.remove,
       })),
       partialize: ({ draft, step }) => ({ draft, step }),
-      // Fill in fields added in later versions of the draft shape.
+      // Drafts saved by older versions may hold answers or steps that have since changed.
       merge: (persisted, current) => {
-        const saved = persisted as Partial<Pick<DraftState, 'draft' | 'step'>> | undefined;
-        return { ...current, step: saved?.step, draft: { ...emptyDraft(), ...saved?.draft } };
+        const saved = persisted as { draft?: unknown; step?: unknown } | undefined;
+        return { ...current, step: restoreStep(saved?.step), draft: restoreDraft(saved?.draft) };
       },
     },
   ),

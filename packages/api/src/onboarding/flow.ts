@@ -1,23 +1,20 @@
-import { type OnboardingDraft, tracksCycle } from './draft';
+import type { OnboardingDraft } from './draft';
 
 /**
  * Every onboarding step, in order. Steps up to `signUp` can be answered signed out; the rest need
- * an account. Which steps show depends on auth state, platform and earlier answers (`isStepVisible`).
+ * an account. Which steps show depends on auth state and platform (`isStepVisible`).
  */
 export const ONBOARDING_STEPS = [
   'welcome',
   'heardFrom',
   'goal',
-  'cookingStyle',
-  'oil',
+  'diet',
+  'kitchen',
   'sandbox',
   'sex',
-  'features',
-  'lastPeriod',
-  'cycleLength',
-  'discreetMode',
   'signUp',
   'bodyType',
+  'age',
   'height',
   'weight',
   'activity',
@@ -32,32 +29,38 @@ export type StepId = (typeof ONBOARDING_STEPS)[number];
 const order = (step: StepId) => ONBOARDING_STEPS.indexOf(step);
 const SIGN_UP_INDEX = order('signUp');
 
+/** Steps from older app versions, mapped to where a saved draft should pick up again. */
+const RETIRED_STEPS: Record<string, StepId> = {
+  cookingStyle: 'kitchen',
+  oil: 'kitchen',
+  // The cycle questions were removed (2026-10-09); they came right after `sex`.
+  features: 'sex',
+  lastPeriod: 'sex',
+  cycleLength: 'sex',
+  discreetMode: 'sex',
+};
+
+/** The saved step as a current step id (`undefined` if it can't be placed). */
+export function restoreStep(saved: unknown): StepId | undefined {
+  if (typeof saved !== 'string') return undefined;
+  if ((ONBOARDING_STEPS as readonly string[]).includes(saved)) return saved as StepId;
+  return RETIRED_STEPS[saved];
+}
+
 export type FlowContext = {
   signedIn: boolean;
   /** Home-screen widgets only exist on native. */
   platform: 'web' | 'native';
-  draft: Pick<OnboardingDraft, 'sex' | 'modules'>;
 };
 
-export function isStepVisible(step: StepId, { signedIn, platform, draft }: FlowContext): boolean {
+export function isStepVisible(step: StepId, { signedIn, platform }: FlowContext): boolean {
   const index = order(step);
   // Signed out: everything up to and including the sign-up gate. Signed in: everything but the
   // welcome and the gate (people who signed up directly still answer the pre-sign-up questions).
   if (!signedIn && index > SIGN_UP_INDEX) return false;
   if (signedIn && (step === 'welcome' || step === 'signUp')) return false;
 
-  switch (step) {
-    case 'features':
-      return draft.sex !== 'male';
-    case 'lastPeriod':
-    case 'cycleLength':
-    case 'discreetMode':
-      return tracksCycle(draft);
-    case 'widget':
-      return platform === 'native';
-    default:
-      return true;
-  }
+  return step !== 'widget' || platform === 'native';
 }
 
 export const visibleSteps = (ctx: FlowContext): StepId[] =>
@@ -65,8 +68,7 @@ export const visibleSteps = (ctx: FlowContext): StepId[] =>
 
 /**
  * The step to show. The saved step can stop being visible (e.g. the sign-up gate once the person
- * has an account, or the cycle steps after switching sex to male); then continue from the next
- * visible step after it.
+ * has an account); then continue from the next visible step after it.
  */
 export function resolveCurrentStep(saved: StepId | undefined, ctx: FlowContext): StepId {
   const steps = visibleSteps(ctx);
@@ -91,21 +93,19 @@ export function previousStep(current: StepId, ctx: FlowContext): StepId | null {
 export function isStepAnswered(step: StepId, draft: OnboardingDraft): boolean {
   switch (step) {
     case 'goal':
-      return draft.goal !== undefined;
-    case 'cookingStyle':
-      return draft.cookingStyle !== undefined;
-    case 'oil':
-      return draft.oil !== undefined;
+      return draft.goals.length > 0;
+    case 'diet':
+      return draft.dietaryPattern !== undefined;
+    case 'kitchen':
+      return draft.cookingStyle !== undefined && draft.oil !== undefined;
     case 'sandbox':
-      return draft.sampleMealIds.length > 0;
+      return draft.sampleMeals.length > 0;
     case 'sex':
       return draft.sex !== undefined;
-    case 'features':
-      return draft.modules.length > 0;
-    case 'lastPeriod':
-      return draft.lastPeriodUnknown || draft.lastPeriodStart !== undefined;
     case 'bodyType':
       return draft.bodyType !== undefined;
+    case 'age':
+      return draft.ageYears !== undefined;
     case 'height':
       return draft.heightCm !== undefined;
     case 'weight':

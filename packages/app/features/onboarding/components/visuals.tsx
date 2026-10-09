@@ -83,7 +83,7 @@ const FIGURES: Record<BodyType, IconComponent> = {
   slim: BodySlim,
   average: BodyAverage,
   athletic: BodyAthletic,
-  full: BodyFull,
+  fuller: BodyFull,
 };
 
 /** A body silhouette for each body type. */

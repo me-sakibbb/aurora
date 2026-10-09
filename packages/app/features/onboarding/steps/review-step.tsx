@@ -1,20 +1,18 @@
 'use client';
 
-import { effectiveModules, type StepId, tracksCycle } from '@aurora/api';
+import type { StepId } from '@aurora/api';
 import { useTranslation } from '@aurora/i18n';
 import {
   Activity,
   Button,
-  CalendarDays,
-  CalendarHeart,
+  Cake,
   CookingPot,
   Droplet,
   Droplets,
-  EyeOff,
   HeartPulse,
   Icon,
   type IconComponent,
-  LayoutGrid,
+  Leaf,
   Pencil,
   Ruler,
   Target,
@@ -22,7 +20,6 @@ import {
   User,
   Weight,
 } from '@aurora/ui';
-import { format, parseISO } from 'date-fns';
 import { Pressable, View } from 'react-native';
 import { StepHeading } from '../components/layout';
 import type { StepDefinition, StepProps } from './types';
@@ -38,7 +35,6 @@ const KG_PER_LB = 0.45359237;
 export const calibrationStep: StepDefinition = {
   Body: function CalibrationBody({ draft, goTo }: StepProps) {
     const { t } = useTranslation();
-    const cycle = tracksCycle(draft);
 
     const height = (() => {
       if (draft.heightCm === undefined) return undefined;
@@ -66,16 +62,25 @@ export const calibrationStep: StepDefinition = {
             step: 'goal',
             icon: Target,
             label: t('onboarding.review.goal'),
-            value: draft.goal && t(`onboarding.options.goal.${draft.goal}`),
+            value:
+              draft.goals.length > 0
+                ? draft.goals.map((goal) => t(`onboarding.options.goal.${goal}`)).join(' · ')
+                : undefined,
           },
           {
-            step: 'cookingStyle',
+            step: 'diet',
+            icon: Leaf,
+            label: t('onboarding.review.diet'),
+            value: draft.dietaryPattern && t(`onboarding.options.diet.${draft.dietaryPattern}`),
+          },
+          {
+            step: 'kitchen',
             icon: CookingPot,
             label: t('onboarding.review.cookingStyle'),
             value: draft.cookingStyle && t(`onboarding.options.cookingStyle.${draft.cookingStyle}`),
           },
           {
-            step: 'oil',
+            step: 'kitchen',
             icon: Droplet,
             label: t('onboarding.review.oil'),
             value: draft.oil && t(`onboarding.options.oil.${draft.oil}`),
@@ -83,7 +88,7 @@ export const calibrationStep: StepDefinition = {
         ],
       },
       {
-        title: t('onboarding.review.groupYou'),
+        title: t('onboarding.review.groupBody'),
         rows: [
           {
             step: 'sex',
@@ -92,52 +97,19 @@ export const calibrationStep: StepDefinition = {
             value: draft.sex && t(`onboarding.options.sex.${draft.sex}`),
           },
           {
-            step: draft.sex === 'male' ? 'sex' : 'features',
-            icon: LayoutGrid,
-            label: t('onboarding.review.features'),
-            value: effectiveModules(draft)
-              .map((m) =>
-                m === 'food' ? t('onboarding.features.food') : t('onboarding.features.cycle'),
-              )
-              .join(' · '),
-          },
-          ...(cycle
-            ? ([
-                {
-                  step: 'lastPeriod',
-                  icon: CalendarDays,
-                  label: t('onboarding.review.lastPeriod'),
-                  value: draft.lastPeriodUnknown
-                    ? t('onboarding.lastPeriod.dontRecall')
-                    : draft.lastPeriodStart &&
-                      format(parseISO(draft.lastPeriodStart), 'd MMMM yyyy'),
-                },
-                {
-                  step: 'cycleLength',
-                  icon: CalendarHeart,
-                  label: t('onboarding.review.cycleLength'),
-                  value: t('onboarding.cycleLength.value', { count: draft.cycleLengthDays }),
-                },
-                {
-                  step: 'discreetMode',
-                  icon: EyeOff,
-                  label: t('onboarding.review.discreetMode'),
-                  value: draft.discreetMode
-                    ? t('onboarding.review.on')
-                    : t('onboarding.review.off'),
-                },
-              ] satisfies Row[])
-            : []),
-        ],
-      },
-      {
-        title: t('onboarding.review.groupBody'),
-        rows: [
-          {
             step: 'bodyType',
             icon: User,
             label: t('onboarding.review.bodyType'),
             value: draft.bodyType && t(`onboarding.options.bodyType.${draft.bodyType}`),
+          },
+          {
+            step: 'age',
+            icon: Cake,
+            label: t('onboarding.review.age'),
+            value:
+              draft.ageYears === undefined
+                ? undefined
+                : t('onboarding.age.value', { count: draft.ageYears }),
           },
           { step: 'height', icon: Ruler, label: t('onboarding.review.height'), value: height },
           { step: 'weight', icon: Weight, label: t('onboarding.review.weight'), value: weight },

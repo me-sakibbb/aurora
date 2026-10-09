@@ -1,22 +1,23 @@
-import { buildOnboardingPayload } from './api';
-import { emptyDraft, type OnboardingDraft } from './draft';
+import { buildOnboardingPayload, servingGrams } from './api';
+import { emptyDraft, type OnboardingDraft, restoreDraft, toggleGoal } from './draft';
 
 const answered: OnboardingDraft = {
   ...emptyDraft(),
   heardFrom: 'instagram',
-  goal: 'hormonal',
+  goals: ['hormonal', 'energy'],
+  dietaryPattern: 'no_beef',
   cookingStyle: 'meal_prep',
   oil: 'typical',
-  sampleMealIds: ['r1', 'r2'],
+  sampleMeals: [
+    { recipeId: 'r1', grams: 250 },
+    { recipeId: 'r2', grams: 180 },
+  ],
   sex: 'female',
-  modules: ['food', 'cycle'],
-  lastPeriodStart: '2026-09-20',
-  cycleLengthDays: 30,
-  discreetMode: true,
   bodyType: 'average',
+  ageYears: 29,
   heightCm: 158,
   weightKg: 55.5,
-  activityLevel: 'light',
+  activityLevel: 'lightly_active',
   bloodPressure: 'normal',
   hasDiabetes: false,
   notificationsEnabled: true,
@@ -28,42 +29,66 @@ describe('buildOnboardingPayload', () => {
     expect(buildOnboardingPayload(answered)).toEqual({
       heard_from: 'instagram',
       goal: 'hormonal',
+      goals: ['hormonal', 'energy'],
+      dietary_pattern: 'no_beef',
+      cooking_style: 'meal_prep',
       oil_percent: 'typical',
-      sample_meals: [{ recipe_id: 'r1' }, { recipe_id: 'r2' }],
-      modules: ['food', 'cycle'],
-      last_period_start: '2026-09-20',
-      last_period_unknown: false,
-      cycle_length_days: 30,
-      discreet_mode: true,
+      sample_meals: [
+        { recipe_id: 'r1', grams: 250 },
+        { recipe_id: 'r2', grams: 180 },
+      ],
       sex: 'female',
       body_type: 'average',
+      age_years: 29,
       height_cm: 158,
       weight_kg: 55.5,
-      activity_level: 'light',
+      activity_level: 'lightly_active',
       blood_pressure: 'normal',
       has_diabetes: false,
       notifications_enabled: true,
       widget_enabled: false,
-      extra: { cooking_style: 'meal_prep' },
     });
   });
 
-  it('leaves out cycle answers when not tracking the cycle', () => {
-    const payload = buildOnboardingPayload({ ...answered, sex: 'male' });
-    expect(payload.modules).toEqual(['food']);
-    expect(payload.last_period_start).toBeUndefined();
-    expect(payload.cycle_length_days).toBeUndefined();
-    expect(payload.discreet_mode).toBe(false);
-  });
-
-  it('sends "don\'t recall" without a date, and omits skipped questions', () => {
-    const payload = buildOnboardingPayload({
-      ...answered,
-      heardFrom: null,
-      lastPeriodUnknown: true,
-    });
-    expect(payload.last_period_unknown).toBe(true);
-    expect(payload.last_period_start).toBeUndefined();
+  it('omits skipped questions and sends height as whole centimetres', () => {
+    const payload = buildOnboardingPayload({ ...answered, heardFrom: null, heightCm: 157.5 });
     expect('heard_from' in payload).toBe(false);
+    expect(payload.height_cm).toBe(158);
+  });
+});
+
+describe('toggleGoal', () => {
+  it('adds and removes goals, keeping weight loss and gain apart', () => {
+    expect(toggleGoal(['hormonal'], 'energy')).toEqual(['hormonal', 'energy']);
+    expect(toggleGoal(['hormonal', 'energy'], 'hormonal')).toEqual(['energy']);
+    expect(toggleGoal(['weight_loss', 'mindful'], 'weight_gain')).toEqual([
+      'mindful',
+      'weight_gain',
+    ]);
+  });
+});
+
+describe('restoreDraft', () => {
+  it('drops answers saved with options that no longer exist', () => {
+    const draft = restoreDraft({
+      goal: 'weight',
+      activityLevel: 'light',
+      bodyType: 'full',
+      sampleMealIds: ['r1'],
+      modules: ['food', 'cycle'],
+      sex: 'female',
+    });
+    expect(draft).toEqual({ ...emptyDraft(), sex: 'female' });
+  });
+
+  it('carries a single saved goal over to the list', () => {
+    expect(restoreDraft({ goal: 'energy' }).goals).toEqual(['energy']);
+  });
+});
+
+describe('servingGrams', () => {
+  it("splits the recipe's weight over its servings", () => {
+    expect(servingGrams({ weight_g: 1000, servings: 4 })).toBe(250);
+    expect(servingGrams({ weight_g: null, servings: 4 })).toBe(100);
   });
 });

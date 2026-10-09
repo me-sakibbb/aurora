@@ -3,11 +3,10 @@
 import {
   ACTIVITY_LEVELS,
   type ActivityLevel,
-  type AppModule,
+  AGE_YEARS,
   BLOOD_PRESSURES,
   type BloodPressure,
   BODY_TYPES,
-  CYCLE_LENGTH,
   HEIGHT_CM,
   type HeightUnit,
   SEXES,
@@ -21,41 +20,32 @@ import {
   ArrowDown,
   ArrowUp,
   Bike,
-  Blend,
-  CalendarHeart,
-  Check,
   CircleHelp,
-  cn,
   Dumbbell,
-  EyeOff,
   Footprints,
   HeartPulse,
-  Icon,
   type IconComponent,
   Mars,
   NonBinary,
   Text,
-  Utensils,
   Venus,
 } from '@aurora/ui';
 import { useEffect } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import { ModeSwitch } from '../../auth/components/mode-switch';
-import { PastDateCalendar } from '../components/calendar';
-import { Choices, SingleChoice } from '../components/choices';
+import { SingleChoice } from '../components/choices';
 import { StepHeading } from '../components/layout';
 import { ValueSlider } from '../components/slider';
-import { ToggleRow } from '../components/toggle-row';
-import { BodyFigure, HeroIcon } from '../components/visuals';
+import { BodyFigure } from '../components/visuals';
 import type { StepDefinition } from './types';
 
 const SEX_ICONS: Record<Sex, IconComponent> = { female: Venus, male: Mars, other: NonBinary };
 
 const ACTIVITY_ICONS: Record<ActivityLevel, IconComponent> = {
-  sedentary: Armchair,
-  light: Footprints,
-  moderate: Bike,
-  active: Dumbbell,
+  mostly_sitting: Armchair,
+  lightly_active: Footprints,
+  moderately_active: Bike,
+  very_active: Dumbbell,
 };
 
 const BLOOD_PRESSURE_ICONS: Record<BloodPressure, IconComponent> = {
@@ -91,152 +81,6 @@ export const sexStep: StepDefinition = {
   },
 };
 
-type FeatureChoice = AppModule | 'both';
-
-export const featuresStep: StepDefinition = {
-  Body: function FeaturesBody({ draft, update }) {
-    const { t } = useTranslation();
-    const title = t('onboarding.features.title');
-    const both = draft.modules.includes('food') && draft.modules.includes('cycle');
-    const selected: FeatureChoice[] = both ? ['food', 'cycle', 'both'] : draft.modules;
-
-    function toggle(choice: FeatureChoice) {
-      if (choice === 'both') {
-        update({ modules: both ? [] : ['food', 'cycle'] });
-        return;
-      }
-      const modules = draft.modules.includes(choice)
-        ? draft.modules.filter((m) => m !== choice)
-        : [...draft.modules, choice];
-      // Keep a stable order for the payload.
-      update({ modules: (['food', 'cycle'] as const).filter((m) => modules.includes(m)) });
-    }
-
-    return (
-      <>
-        <StepHeading title={title} subtitle={t('onboarding.features.subtitle')} />
-        <Choices<FeatureChoice>
-          label={title}
-          multiple
-          selected={selected}
-          onToggle={toggle}
-          choices={[
-            {
-              value: 'food',
-              label: t('onboarding.features.food'),
-              description: t('onboarding.features.foodHint'),
-              icon: Utensils,
-            },
-            {
-              value: 'cycle',
-              label: t('onboarding.features.cycle'),
-              description: t('onboarding.features.cycleHint'),
-              icon: CalendarHeart,
-            },
-            {
-              value: 'both',
-              label: t('onboarding.features.both'),
-              description: t('onboarding.features.bothHint'),
-              icon: Blend,
-            },
-          ]}
-        />
-      </>
-    );
-  },
-};
-
-export const lastPeriodStep: StepDefinition = {
-  Body: function LastPeriodBody({ draft, update }) {
-    const { t } = useTranslation();
-    const title = t('onboarding.lastPeriod.title');
-    const unknown = draft.lastPeriodUnknown;
-    return (
-      <>
-        <StepHeading title={title} subtitle={t('onboarding.lastPeriod.subtitle')} />
-        <View className={cn(unknown && 'opacity-40')}>
-          <PastDateCalendar
-            label={title}
-            value={unknown ? undefined : draft.lastPeriodStart}
-            onChange={(lastPeriodStart) => update({ lastPeriodStart, lastPeriodUnknown: false })}
-          />
-        </View>
-        <Pressable
-          role="checkbox"
-          aria-checked={unknown}
-          onPress={() => update({ lastPeriodUnknown: !unknown, lastPeriodStart: undefined })}
-          className={cn(
-            'bg-card flex-row items-center gap-3 rounded-2xl border-2 px-4 py-3.5 active:opacity-90',
-            unknown ? 'border-primary' : 'border-border',
-          )}
-        >
-          <View
-            aria-hidden
-            className={cn(
-              'h-6 w-6 items-center justify-center rounded-md border-2',
-              unknown ? 'border-primary bg-primary' : 'border-border bg-background',
-            )}
-          >
-            {unknown ? (
-              <Icon as={Check} size={14} strokeWidth={3} className="text-primary-foreground" />
-            ) : null}
-          </View>
-          <View className="flex-1 gap-0.5">
-            <Text className="text-base font-medium">{t('onboarding.lastPeriod.dontRecall')}</Text>
-            <Text className="text-muted-foreground text-sm">
-              {t('onboarding.lastPeriod.dontRecallHint')}
-            </Text>
-          </View>
-        </Pressable>
-      </>
-    );
-  },
-};
-
-export const cycleLengthStep: StepDefinition = {
-  Body: function CycleLengthBody({ draft, update }) {
-    const { t } = useTranslation();
-    const title = t('onboarding.cycleLength.title');
-    return (
-      <>
-        <StepHeading title={title} subtitle={t('onboarding.cycleLength.subtitle')} />
-        <ValueSlider
-          label={title}
-          value={draft.cycleLengthDays}
-          min={CYCLE_LENGTH.min}
-          max={CYCLE_LENGTH.max}
-          onChange={(cycleLengthDays) => update({ cycleLengthDays })}
-          format={(days) => t('onboarding.cycleLength.value', { count: days })}
-        />
-        <Text className="text-muted-foreground text-center text-sm">
-          {t('onboarding.cycleLength.hint')}
-        </Text>
-      </>
-    );
-  },
-};
-
-export const discreetModeStep: StepDefinition = {
-  Body: function DiscreetModeBody({ draft, update }) {
-    const { t } = useTranslation();
-    return (
-      <>
-        <HeroIcon icon={EyeOff} />
-        <StepHeading
-          title={t('onboarding.discreetMode.title')}
-          subtitle={t('onboarding.discreetMode.subtitle')}
-        />
-        <ToggleRow
-          label={t('onboarding.discreetMode.toggle')}
-          description={t('onboarding.discreetMode.hint')}
-          value={draft.discreetMode}
-          onChange={(discreetMode) => update({ discreetMode })}
-        />
-      </>
-    );
-  },
-};
-
 export const bodyTypeStep: StepDefinition = {
   auto: true,
   Body: function BodyTypeBody({ draft, update, autoAdvance }) {
@@ -258,6 +102,32 @@ export const bodyTypeStep: StepDefinition = {
             label: t(`onboarding.options.bodyType.${value}`),
             visual: (selected) => <BodyFigure type={value} selected={selected} />,
           }))}
+        />
+      </>
+    );
+  },
+};
+
+export const ageStep: StepDefinition = {
+  Body: function AgeBody({ draft, update }) {
+    const { t } = useTranslation();
+    const title = t('onboarding.age.title');
+
+    // The slider shows a starting value, so record it as the answer until it's moved.
+    useEffect(() => {
+      if (draft.ageYears === undefined) update({ ageYears: AGE_YEARS.default });
+    }, [draft.ageYears, update]);
+
+    return (
+      <>
+        <StepHeading title={title} subtitle={t('onboarding.age.subtitle')} />
+        <ValueSlider
+          label={title}
+          value={draft.ageYears ?? AGE_YEARS.default}
+          min={AGE_YEARS.min}
+          max={AGE_YEARS.max}
+          onChange={(ageYears) => update({ ageYears })}
+          format={(value) => t('onboarding.age.value', { count: value })}
         />
       </>
     );

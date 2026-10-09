@@ -2,7 +2,6 @@
 
 import {
   type AuthErrorKind,
-  effectiveModules,
   signInWithGoogle,
   signOutOfGoogle,
   toAuthErrorKind,
@@ -68,10 +67,9 @@ export const signUpStep: StepDefinition = {
             {t('onboarding.signUp.summary')}
           </Text>
           {[
-            draft.goal && t(`onboarding.options.goal.${draft.goal}`),
-            ...effectiveModules(draft).map((m) =>
-              m === 'food' ? t('onboarding.features.food') : t('onboarding.features.cycle'),
-            ),
+            ...draft.goals.map((goal) => t(`onboarding.options.goal.${goal}`)),
+            draft.dietaryPattern && t(`onboarding.options.diet.${draft.dietaryPattern}`),
+            draft.cookingStyle && t(`onboarding.options.cookingStyle.${draft.cookingStyle}`),
           ]
             .filter((item): item is string => Boolean(item))
             .map((item) => (

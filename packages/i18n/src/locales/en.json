@@ -56,16 +56,18 @@
       "subtitle": "Optional, but it helps us reach more people like you."
     },
     "goal": {
-      "title": "What's your main focus?",
-      "subtitle": "Pick the one that matters most right now. You can change it later."
+      "title": "What are your goals?",
+      "subtitle": "Pick all that apply. You can change them later."
     },
-    "cookingStyle": {
-      "title": "What's your cooking style?",
-      "subtitle": "How do meals usually come together at home?"
+    "diet": {
+      "title": "How do you eat?",
+      "subtitle": "So the meal ideas we suggest suit you."
     },
-    "oil": {
-      "title": "How much oil do you usually cook with?",
-      "subtitle": "A rough idea is fine."
+    "kitchen": {
+      "title": "Your kitchen",
+      "subtitle": "How meals usually come together at home.",
+      "cookingStyle": "What's your cooking style?",
+      "oil": "How much oil do you usually cook with?"
     },
     "sandbox": {
       "title": "Try logging a meal",
@@ -84,36 +86,7 @@
     },
     "sex": {
       "title": "What's your sex?",
-      "subtitle": "This helps us show the features that fit you."
-    },
-    "features": {
-      "title": "Which features do you want?",
-      "subtitle": "You can change this later.",
-      "food": "Calorie & Nutrition Tracker",
-      "foodHint": "Log home-cooked meals and see what's in them.",
-      "cycle": "Cycle & Period Health Companion",
-      "cycleHint": "Track your period and understand your cycle.",
-      "both": "Both",
-      "bothHint": "The full Aurora experience."
-    },
-    "lastPeriod": {
-      "title": "When did your last period start?",
-      "subtitle": "Pick the first day of your last period.",
-      "dontRecall": "I don't recall",
-      "dontRecallHint": "That's fine, you can add it later."
-    },
-    "cycleLength": {
-      "title": "What's your typical cycle length?",
-      "subtitle": "From the first day of one period to the first day of the next.",
-      "value_one": "{{count}} day",
-      "value_other": "{{count}} days",
-      "hint": "Not sure? Leave it at 28 days. You can adjust it later."
-    },
-    "discreetMode": {
-      "title": "Turn on Discreet Mode?",
-      "subtitle": "For extra privacy on a shared or borrowed phone.",
-      "toggle": "Discreet Mode",
-      "hint": "Uses neutral wording for cycle features so they're less obvious to others. You can change this anytime."
+      "subtitle": "This helps estimate your energy needs."
     },
     "signUp": {
       "title": "Save your answers",
@@ -124,6 +97,12 @@
     "bodyType": {
       "title": "Which body type is closest to yours?",
       "subtitle": "Pick the one that fits best."
+    },
+    "age": {
+      "title": "How old are you?",
+      "subtitle": "Age helps estimate how much energy your body needs.",
+      "value_one": "{{count}} year",
+      "value_other": "{{count}} years"
     },
     "units": {
       "cm": "cm",
@@ -165,7 +144,8 @@
         "other": "Other"
       },
       "goal": {
-        "weight": "Weight management & fat loss",
+        "weight_loss": "Weight & fat loss",
+        "weight_gain": "Healthy weight gain",
         "hormonal": "Hormonal balance & cycle regularity",
         "mindful": "Mindful eating & home cooking",
         "energy": "Daily energy & vitality"
@@ -195,19 +175,19 @@
         "slim": "Slim",
         "average": "Average",
         "athletic": "Athletic",
-        "full": "Fuller"
+        "fuller": "Fuller"
       },
       "activity": {
-        "sedentary": "Mostly sitting",
-        "light": "Lightly active",
-        "moderate": "Moderately active",
-        "active": "Very active"
+        "mostly_sitting": "Mostly sitting",
+        "lightly_active": "Lightly active",
+        "moderately_active": "Moderately active",
+        "very_active": "Very active"
       },
       "activityHint": {
-        "sedentary": "Desk work, little walking",
-        "light": "Some walking or chores",
-        "moderate": "On my feet a lot",
-        "active": "Physical work or daily exercise"
+        "mostly_sitting": "Desk work, little walking",
+        "lightly_active": "Some walking or chores",
+        "moderately_active": "On my feet a lot",
+        "very_active": "Physical work or daily exercise"
       },
       "bloodPressure": {
         "normal": "Normal",
@@ -216,10 +196,21 @@
         "unknown": "I don't know"
       },
       "goalHint": {
-        "weight": "Reach a healthier weight, steadily.",
+        "weight_loss": "Reach a healthier weight, steadily.",
+        "weight_gain": "Build up to a healthier weight.",
         "hormonal": "Support a more regular, balanced cycle.",
         "mindful": "Cook and eat with more awareness.",
         "energy": "Feel more energetic through the day."
+      },
+      "diet": {
+        "omnivore": "I eat everything",
+        "vegetarian": "Vegetarian",
+        "no_beef": "No beef"
+      },
+      "dietHint": {
+        "omnivore": "Fish, meat, eggs and vegetables.",
+        "vegetarian": "No meat or fish.",
+        "no_beef": "Everything except beef."
       },
       "cookingStyleHint": {
         "quick": "Fast weekday meals",
@@ -231,33 +222,27 @@
     "review": {
       "title": "Your baseline",
       "subtitle": "Check everything looks right. Tap any answer to change it.",
-      "goal": "Main focus",
+      "goal": "Goals",
+      "diet": "Eating style",
       "cookingStyle": "Cooking style",
       "oil": "Cooking oil",
       "sex": "Sex",
-      "features": "Features",
-      "lastPeriod": "Last period started",
-      "cycleLength": "Typical cycle length",
-      "discreetMode": "Discreet Mode",
       "bodyType": "Body type",
+      "age": "Age",
       "height": "Height",
       "weight": "Weight",
       "activity": "Activity level",
       "bloodPressure": "Blood pressure",
       "diabetes": "Diabetes",
-      "on": "On",
-      "off": "Off",
       "editLabel": "Edit {{field}}",
       "lockIn": "Lock In My Baseline",
       "groupGoals": "Goals & kitchen",
-      "groupYou": "About you",
       "groupBody": "Your body"
     },
     "notifications": {
       "title": "Stay on track with gentle reminders",
       "subtitle": "Aurora can send you a nudge when it helps.",
       "pointMeals": "A reminder to log your meals",
-      "pointCycle": "Heads-ups about your cycle",
       "pointControl": "You choose which ones you get, anytime",
       "channel": "Reminders",
       "enable": "Turn on notifications",
@@ -287,7 +272,6 @@
       "start": "Getting started",
       "kitchen": "Your kitchen",
       "you": "About you",
-      "cycle": "Your cycle",
       "body": "Your body",
       "finish": "Almost done"
     },
@@ -318,7 +302,6 @@
       "items": {
         "answers": "Saving your answers",
         "kitchen": "Setting up your kitchen",
-        "cycle": "Getting your cycle tracker ready",
         "home": "Preparing your home screen"
       },
       "doneTitle": "You're all set!",

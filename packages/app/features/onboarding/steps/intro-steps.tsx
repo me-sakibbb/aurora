@@ -3,31 +3,40 @@
 import {
   COOKING_STYLES,
   type CookingStyle,
+  DIETARY_PATTERNS,
+  type DietaryPattern,
   GOALS,
   type Goal,
   HEARD_FROM,
   type HeardFrom,
   OIL_LEVELS,
+  toggleGoal,
 } from '@aurora/api';
 import { useTranslation } from '@aurora/i18n';
 import {
+  Beef,
   CalendarDays,
   Camera,
   CookingPot,
   Ellipsis,
   Flower2,
   type IconComponent,
+  Leaf,
   Music2,
   PiggyBank,
   Salad,
   Store,
+  Text,
   ThumbsUp,
   Timer,
+  TrendingDown,
+  TrendingUp,
   Users,
-  Weight,
+  Utensils,
   Zap,
 } from '@aurora/ui';
-import { SingleChoice } from '../components/choices';
+import { View } from 'react-native';
+import { Choices, SingleChoice } from '../components/choices';
 import { StepHeading } from '../components/layout';
 import { OilDrops } from '../components/visuals';
 import type { StepDefinition } from './types';
@@ -43,10 +52,17 @@ const HEARD_FROM_ICONS: Record<HeardFrom, IconComponent> = {
 };
 
 const GOAL_ICONS: Record<Goal, IconComponent> = {
-  weight: Weight,
+  weight_loss: TrendingDown,
+  weight_gain: TrendingUp,
   hormonal: Flower2,
   mindful: Salad,
   energy: Zap,
+};
+
+const DIET_ICONS: Record<DietaryPattern, IconComponent> = {
+  omnivore: Utensils,
+  vegetarian: Leaf,
+  no_beef: Beef,
 };
 
 const COOKING_ICONS: Record<CookingStyle, IconComponent> = {
@@ -85,20 +101,17 @@ export const heardFromStep: StepDefinition = {
 };
 
 export const goalStep: StepDefinition = {
-  auto: true,
-  Body: function GoalBody({ draft, update, autoAdvance }) {
+  Body: function GoalBody({ draft, update }) {
     const { t } = useTranslation();
     const title = t('onboarding.goal.title');
     return (
       <>
         <StepHeading title={title} subtitle={t('onboarding.goal.subtitle')} />
-        <SingleChoice
+        <Choices
           label={title}
-          value={draft.goal}
-          onChange={(goal) => {
-            update({ goal });
-            autoAdvance();
-          }}
+          multiple
+          selected={draft.goals}
+          onToggle={(goal) => update({ goals: toggleGoal(draft.goals, goal) })}
           choices={GOALS.map((value) => ({
             value,
             label: t(`onboarding.options.goal.${value}`),
@@ -111,27 +124,26 @@ export const goalStep: StepDefinition = {
   },
 };
 
-export const cookingStyleStep: StepDefinition = {
+export const dietStep: StepDefinition = {
   auto: true,
-  Body: function CookingStyleBody({ draft, update, autoAdvance }) {
+  Body: function DietBody({ draft, update, autoAdvance }) {
     const { t } = useTranslation();
-    const title = t('onboarding.cookingStyle.title');
+    const title = t('onboarding.diet.title');
     return (
       <>
-        <StepHeading title={title} subtitle={t('onboarding.cookingStyle.subtitle')} />
+        <StepHeading title={title} subtitle={t('onboarding.diet.subtitle')} />
         <SingleChoice
           label={title}
-          layout="grid"
-          value={draft.cookingStyle}
-          onChange={(cookingStyle) => {
-            update({ cookingStyle });
+          value={draft.dietaryPattern}
+          onChange={(dietaryPattern) => {
+            update({ dietaryPattern });
             autoAdvance();
           }}
-          choices={COOKING_STYLES.map((value) => ({
+          choices={DIETARY_PATTERNS.map((value) => ({
             value,
-            label: t(`onboarding.options.cookingStyle.${value}`),
-            description: t(`onboarding.options.cookingStyleHint.${value}`),
-            icon: COOKING_ICONS[value],
+            label: t(`onboarding.options.diet.${value}`),
+            description: t(`onboarding.options.dietHint.${value}`),
+            icon: DIET_ICONS[value],
           }))}
         />
       </>
@@ -139,28 +151,54 @@ export const cookingStyleStep: StepDefinition = {
   },
 };
 
-export const oilStep: StepDefinition = {
+/** Cooking style and oil on one screen; moves on once both are answered. */
+export const kitchenStep: StepDefinition = {
   auto: true,
-  Body: function OilBody({ draft, update, autoAdvance }) {
+  Body: function KitchenBody({ draft, update, autoAdvance }) {
     const { t } = useTranslation();
-    const title = t('onboarding.oil.title');
+    const styleLabel = t('onboarding.kitchen.cookingStyle');
+    const oilLabel = t('onboarding.kitchen.oil');
     return (
       <>
-        <StepHeading title={title} subtitle={t('onboarding.oil.subtitle')} />
-        <SingleChoice
-          label={title}
-          value={draft.oil}
-          onChange={(oil) => {
-            update({ oil });
-            autoAdvance();
-          }}
-          choices={OIL_LEVELS.map((value, i) => ({
-            value,
-            label: t(`onboarding.options.oil.${value}`),
-            description: t(`onboarding.options.oilHint.${value}`),
-            visual: (selected) => <OilDrops count={(i + 1) as 1 | 2 | 3} selected={selected} />,
-          }))}
+        <StepHeading
+          title={t('onboarding.kitchen.title')}
+          subtitle={t('onboarding.kitchen.subtitle')}
         />
+        <View className="gap-3">
+          <Text className="text-base font-semibold">{styleLabel}</Text>
+          <SingleChoice
+            label={styleLabel}
+            layout="grid"
+            value={draft.cookingStyle}
+            onChange={(cookingStyle) => {
+              update({ cookingStyle });
+              if (draft.oil !== undefined) autoAdvance();
+            }}
+            choices={COOKING_STYLES.map((value) => ({
+              value,
+              label: t(`onboarding.options.cookingStyle.${value}`),
+              description: t(`onboarding.options.cookingStyleHint.${value}`),
+              icon: COOKING_ICONS[value],
+            }))}
+          />
+        </View>
+        <View className="gap-3">
+          <Text className="text-base font-semibold">{oilLabel}</Text>
+          <SingleChoice
+            label={oilLabel}
+            value={draft.oil}
+            onChange={(oil) => {
+              update({ oil });
+              if (draft.cookingStyle !== undefined) autoAdvance();
+            }}
+            choices={OIL_LEVELS.map((value, i) => ({
+              value,
+              label: t(`onboarding.options.oil.${value}`),
+              description: t(`onboarding.options.oilHint.${value}`),
+              visual: (selected) => <OilDrops count={(i + 1) as 1 | 2 | 3} selected={selected} />,
+            }))}
+          />
+        </View>
       </>
     );
   },

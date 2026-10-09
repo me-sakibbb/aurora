@@ -1,11 +1,9 @@
 'use client';
 
-import { tracksCycle } from '@aurora/api';
 import { useTranslation } from '@aurora/i18n';
 import {
   BellRing,
   Button,
-  CalendarHeart,
   Flame,
   Icon,
   type IconComponent,
@@ -70,11 +68,12 @@ function ChoiceFooter({
  * registration is added once the backend has an endpoint for it (Phase 6).
  */
 export const notificationsStep: StepDefinition = {
-  Body: function NotificationsBody({ draft }) {
+  Body: function NotificationsBody() {
     const { t } = useTranslation();
-    const items: [IconComponent, string][] = [[Utensils, t('onboarding.notifications.pointMeals')]];
-    if (tracksCycle(draft)) items.push([CalendarHeart, t('onboarding.notifications.pointCycle')]);
-    items.push([SlidersHorizontal, t('onboarding.notifications.pointControl')]);
+    const items: [IconComponent, string][] = [
+      [Utensils, t('onboarding.notifications.pointMeals')],
+      [SlidersHorizontal, t('onboarding.notifications.pointControl')],
+    ];
     return (
       <>
         <HeroIcon icon={BellRing} />

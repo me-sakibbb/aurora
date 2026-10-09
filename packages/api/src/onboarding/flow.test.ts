@@ -5,13 +5,13 @@ import {
   nextStep,
   previousStep,
   resolveCurrentStep,
+  restoreStep,
   visibleSteps,
 } from './flow';
 
 const ctx = (overrides: Partial<FlowContext> = {}): FlowContext => ({
   signedIn: false,
   platform: 'native',
-  draft: { sex: 'female', modules: ['food', 'cycle'] },
   ...overrides,
 });
 
@@ -20,7 +20,7 @@ describe('visibleSteps', () => {
     const steps = visibleSteps(ctx());
     expect(steps[0]).toBe('welcome');
     expect(steps[steps.length - 1]).toBe('signUp');
-    expect(steps).toContain('lastPeriod');
+    expect(steps).toContain('kitchen');
   });
 
   it('skips welcome and the gate once signed in, but keeps the pre-sign-up questions', () => {
@@ -29,19 +29,6 @@ describe('visibleSteps', () => {
     expect(steps).not.toContain('signUp');
     expect(steps).toContain('goal');
     expect(steps[steps.length - 1]).toBe('widget');
-  });
-
-  it('hides feature selection and the cycle steps for male users', () => {
-    const steps = visibleSteps(ctx({ draft: { sex: 'male', modules: ['food', 'cycle'] } }));
-    expect(steps).not.toContain('features');
-    expect(steps).not.toContain('lastPeriod');
-    expect(steps).not.toContain('discreetMode');
-  });
-
-  it('hides the cycle steps when only food tracking is chosen', () => {
-    expect(visibleSteps(ctx({ draft: { sex: 'female', modules: ['food'] } }))).not.toContain(
-      'cycleLength',
-    );
   });
 
   it('ends with notifications on web (no widgets)', () => {
@@ -59,21 +46,22 @@ describe('resolveCurrentStep', () => {
   it('continues after the sign-up gate once the account exists', () => {
     expect(resolveCurrentStep('signUp', ctx({ signedIn: true }))).toBe('bodyType');
   });
+});
 
-  it('moves past steps that stopped applying', () => {
-    expect(resolveCurrentStep('lastPeriod', ctx({ draft: { sex: 'male', modules: [] } }))).toBe(
-      'signUp',
-    );
+describe('restoreStep', () => {
+  it('maps steps from older versions onto the current flow', () => {
+    expect(restoreStep('sandbox')).toBe('sandbox');
+    expect(restoreStep('oil')).toBe('kitchen');
+    expect(restoreStep('lastPeriod')).toBe('sex');
+    expect(restoreStep('nonsense')).toBeUndefined();
   });
 });
 
 describe('nextStep / previousStep', () => {
   it('walks the visible steps', () => {
-    expect(nextStep('features', ctx())).toBe('lastPeriod');
-    expect(nextStep('features', ctx({ draft: { sex: 'female', modules: ['food'] } }))).toBe(
-      'signUp',
-    );
-    expect(previousStep('bodyType', ctx({ signedIn: true }))).toBe('discreetMode');
+    expect(nextStep('goal', ctx())).toBe('diet');
+    expect(nextStep('sex', ctx())).toBe('signUp');
+    expect(previousStep('height', ctx({ signedIn: true }))).toBe('age');
     expect(previousStep('welcome', ctx())).toBeNull();
     expect(nextStep('widget', ctx({ signedIn: true }))).toBeNull();
   });
@@ -83,9 +71,10 @@ describe('isStepAnswered', () => {
   it('requires an answer for questions and allows skippable ones', () => {
     const draft = emptyDraft();
     expect(isStepAnswered('goal', draft)).toBe(false);
+    expect(isStepAnswered('goal', { ...draft, goals: ['energy'] })).toBe(true);
     expect(isStepAnswered('heardFrom', draft)).toBe(true);
-    expect(isStepAnswered('lastPeriod', draft)).toBe(false);
-    expect(isStepAnswered('lastPeriod', { ...draft, lastPeriodUnknown: true })).toBe(true);
+    expect(isStepAnswered('kitchen', { ...draft, cookingStyle: 'quick' })).toBe(false);
+    expect(isStepAnswered('kitchen', { ...draft, cookingStyle: 'quick', oil: 'low' })).toBe(true);
     expect(isStepAnswered('health', { ...draft, bloodPressure: 'normal' })).toBe(false);
     expect(
       isStepAnswered('health', { ...draft, bloodPressure: 'normal', hasDiabetes: false }),

@@ -2,7 +2,6 @@
 
 import {
   buildOnboardingPayload,
-  effectiveModules,
   type FlowContext,
   isStepAnswered,
   isStepVisible,
@@ -12,7 +11,6 @@ import {
   resolveCurrentStep,
   type StepId,
   submitOnboarding,
-  tracksCycle,
   visibleSteps,
 } from '@aurora/api';
 import { useTranslation } from '@aurora/i18n';
@@ -35,17 +33,14 @@ import { onboardingQueryKey, useAuthStore, useSignOut } from '../auth/session';
 import { type CelebrationTone, FinaleScreen, MilestoneScreen } from './components/celebration';
 import { OnboardingLayout } from './components/layout';
 import { useOnboardingDraft } from './draft-store';
-import { cookingStyleStep, goalStep, heardFromStep, oilStep } from './steps/intro-steps';
+import { dietStep, goalStep, heardFromStep, kitchenStep } from './steps/intro-steps';
 import { notificationsStep, widgetStep } from './steps/permission-steps';
 import {
   activityStep,
+  ageStep,
   bodyTypeStep,
-  cycleLengthStep,
-  discreetModeStep,
-  featuresStep,
   healthStep,
   heightStep,
-  lastPeriodStep,
   sexStep,
   weightStep,
 } from './steps/profile-steps';
@@ -59,16 +54,13 @@ const STEPS: Record<StepId, StepDefinition> = {
   welcome: welcomeStep,
   heardFrom: heardFromStep,
   goal: goalStep,
-  cookingStyle: cookingStyleStep,
-  oil: oilStep,
+  diet: dietStep,
+  kitchen: kitchenStep,
   sandbox: sandboxStep,
   sex: sexStep,
-  features: featuresStep,
-  lastPeriod: lastPeriodStep,
-  cycleLength: cycleLengthStep,
-  discreetMode: discreetModeStep,
   signUp: signUpStep,
   bodyType: bodyTypeStep,
+  age: ageStep,
   height: heightStep,
   weight: weightStep,
   activity: activityStep,
@@ -78,21 +70,18 @@ const STEPS: Record<StepId, StepDefinition> = {
   widget: widgetStep,
 };
 
-type Section = 'start' | 'kitchen' | 'you' | 'cycle' | 'body' | 'finish';
+type Section = 'start' | 'kitchen' | 'you' | 'body' | 'finish';
 
 /** Section label shown above each step. */
 const SECTIONS: Partial<Record<StepId, Section>> = {
   heardFrom: 'start',
   goal: 'start',
-  cookingStyle: 'kitchen',
-  oil: 'kitchen',
+  diet: 'kitchen',
+  kitchen: 'kitchen',
   sandbox: 'kitchen',
   sex: 'you',
-  features: 'you',
-  lastPeriod: 'cycle',
-  cycleLength: 'cycle',
-  discreetMode: 'cycle',
   bodyType: 'body',
+  age: 'body',
   height: 'body',
   weight: 'body',
   activity: 'body',
@@ -155,7 +144,6 @@ export function OnboardingScreen() {
   const ctx: FlowContext = {
     signedIn: status === 'signedIn',
     platform: Platform.OS === 'web' ? 'web' : 'native',
-    draft,
   };
   const current = resolveCurrentStep(savedStep, ctx);
   const isLast = nextStep(current, ctx) === null && ctx.signedIn;
@@ -190,12 +178,11 @@ export function OnboardingScreen() {
   });
 
   const startSubmit = () => {
-    const latest = useOnboardingDraft.getState().draft;
-    const items = [t('onboarding.finale.items.answers')];
-    if (effectiveModules(latest).includes('food')) items.push(t('onboarding.finale.items.kitchen'));
-    if (tracksCycle(latest)) items.push(t('onboarding.finale.items.cycle'));
-    items.push(t('onboarding.finale.items.home'));
-    setFinaleItems(items);
+    setFinaleItems([
+      t('onboarding.finale.items.answers'),
+      t('onboarding.finale.items.kitchen'),
+      t('onboarding.finale.items.home'),
+    ]);
     submit.mutate();
   };
 
@@ -220,21 +207,20 @@ export function OnboardingScreen() {
   const next = () => {
     clearTimeout(timer.current);
     // Read the latest answers: a step may have just updated the draft in the same handler.
-    const latest = { ...ctx, draft: useOnboardingDraft.getState().draft };
+    const latest = useOnboardingDraft.getState().draft;
 
     if (returnToReview && current !== 'calibration') {
-      // Back to the review, unless the edit opened up a question that still needs an answer
-      // (e.g. switching on cycle tracking).
-      const upcoming = visibleSteps(latest);
+      // Back to the review, unless a later question still needs an answer.
+      const upcoming = visibleSteps(ctx);
       const pending = upcoming
         .slice(upcoming.indexOf(current) + 1, upcoming.indexOf('calibration'))
-        .find((step) => !isStepAnswered(step, latest.draft));
+        .find((step) => !isStepAnswered(step, latest));
       if (!pending) setReturnToReview(false);
       goTo(pending ?? 'calibration');
       return;
     }
 
-    const following = nextStep(current, latest);
+    const following = nextStep(current, ctx);
     if (following) {
       goTo(following);
       // Each one plays once, so going back and forward again doesn't repeat it.
@@ -265,17 +251,12 @@ export function OnboardingScreen() {
   };
   const { Body, Footer } = definition;
 
-  // Progress counts question steps only (not Welcome), measured against the longest path
-  // (cycle steps included unless ruled out), so the bar never jumps back when a branch opens up.
+  // Progress counts question steps only (not Welcome), measured against the whole flow (the
+  // post-sign-up steps included while signed out), so the bar doesn't jump at the gate.
   const progressSteps = ONBOARDING_STEPS.filter((s) =>
     s === 'signUp'
       ? !ctx.signedIn
-      : s !== 'welcome' &&
-        isStepVisible(s, {
-          ...ctx,
-          signedIn: true,
-          draft: { sex: draft.sex, modules: ['food', 'cycle'] },
-        }),
+      : s !== 'welcome' && isStepVisible(s, { ...ctx, signedIn: true }),
   );
   const progress =
     current === 'welcome' ? undefined : (progressSteps.indexOf(current) + 1) / progressSteps.length;

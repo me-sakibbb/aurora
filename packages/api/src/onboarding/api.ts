@@ -1,11 +1,12 @@
 import { z } from 'zod';
 import { apiFetch } from '../backend';
-import { effectiveModules, type OnboardingDraft, tracksCycle } from './draft';
+import type { OnboardingDraft } from './draft';
 import type {
   ActivityLevel,
-  AppModule,
   BloodPressure,
   BodyType,
+  CookingStyle,
+  DietaryPattern,
   Goal,
   HeardFrom,
   OilLevel,
@@ -15,49 +16,49 @@ import type {
 /** Body of `POST /api/v1/onboarding` (mirrors the backend's `OnboardingIn`). */
 export type OnboardingPayload = {
   heard_from?: HeardFrom;
+  /**
+   * The first goal picked. The backend takes a single goal for now (it drives the calorie
+   * target); `goals` carries every pick and is ignored until the backend accepts a list.
+   */
   goal?: Goal;
+  goals: Goal[];
+  dietary_pattern?: DietaryPattern;
+  cooking_style?: CookingStyle;
   oil_percent?: OilLevel;
-  sample_meals: { recipe_id: string }[];
-  modules: AppModule[];
-  last_period_start?: string;
-  last_period_unknown: boolean;
-  cycle_length_days?: number;
-  discreet_mode: boolean;
+  sample_meals: { recipe_id: string; grams: number }[];
   sex?: Sex;
   body_type?: BodyType;
+  age_years?: number;
   height_cm?: number;
   weight_kg?: number;
   activity_level?: ActivityLevel;
   blood_pressure?: BloodPressure;
   has_diabetes?: boolean;
   notifications_enabled?: boolean;
+  /** Not a backend field yet (ignored there): the widget opt-in. */
   widget_enabled?: boolean;
-  extra: { cooking_style?: string };
 };
 
-/** Turns the on-device draft into the request body. Cycle answers are only sent when tracking it. */
+/** Turns the on-device draft into the request body. */
 export function buildOnboardingPayload(draft: OnboardingDraft): OnboardingPayload {
-  const cycle = tracksCycle(draft);
   const payload: OnboardingPayload = {
     heard_from: draft.heardFrom ?? undefined,
-    goal: draft.goal,
+    goal: draft.goals[0],
+    goals: draft.goals,
+    dietary_pattern: draft.dietaryPattern,
+    cooking_style: draft.cookingStyle,
     oil_percent: draft.oil,
-    sample_meals: draft.sampleMealIds.map((recipe_id) => ({ recipe_id })),
-    modules: effectiveModules(draft),
-    last_period_start: cycle && !draft.lastPeriodUnknown ? draft.lastPeriodStart : undefined,
-    last_period_unknown: cycle && draft.lastPeriodUnknown,
-    cycle_length_days: cycle ? draft.cycleLengthDays : undefined,
-    discreet_mode: cycle && draft.discreetMode,
+    sample_meals: draft.sampleMeals.map(({ recipeId, grams }) => ({ recipe_id: recipeId, grams })),
     sex: draft.sex,
     body_type: draft.bodyType,
-    height_cm: draft.heightCm,
+    age_years: draft.ageYears,
+    height_cm: draft.heightCm === undefined ? undefined : Math.round(draft.heightCm),
     weight_kg: draft.weightKg,
     activity_level: draft.activityLevel,
     blood_pressure: draft.bloodPressure,
     has_diabetes: draft.hasDiabetes,
     notifications_enabled: draft.notificationsEnabled,
     widget_enabled: draft.widgetEnabled,
-    extra: draft.cookingStyle ? { cooking_style: draft.cookingStyle } : {},
   };
   // Drop unanswered fields rather than sending explicit nulls.
   return JSON.parse(JSON.stringify(payload)) as OnboardingPayload;
@@ -72,11 +73,24 @@ const sampleRecipeSchema = z.object({
   name: z.string(),
   name_bn: z.string().nullish(),
   cooking_method: z.string().nullish(),
-  default_portion_g: z.number().nullish(),
-  image_url: z.string().nullish(),
+  servings: z.number().nullish(),
+  weight_g: z.number().nullish(),
 });
 
 export type SampleRecipe = z.infer<typeof sampleRecipeSchema>;
+
+/** Used when a recipe has no weight or servings to divide into a portion. */
+const FALLBACK_PORTION_G = 100;
+
+/**
+ * One serving of a recipe in grams (the recipe's weight split over its servings). This is the
+ * portion the sandbox shows and sends; calories for it are worked out by the backend.
+ */
+export function servingGrams(recipe: Pick<SampleRecipe, 'servings' | 'weight_g'>): number {
+  const { servings, weight_g } = recipe;
+  if (!servings || !weight_g || servings <= 0 || weight_g <= 0) return FALLBACK_PORTION_G;
+  return Math.round(weight_g / servings);
+}
 
 /** The preloaded meals for the onboarding sandbox carousel (`GET /api/v1/food/recipes`). */
 export async function fetchSampleRecipes(): Promise<SampleRecipe[]> {

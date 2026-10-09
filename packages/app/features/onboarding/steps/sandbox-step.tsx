@@ -1,6 +1,6 @@
 'use client';
 
-import { fetchSampleRecipes, MAX_SAMPLE_MEALS, type SampleRecipe } from '@aurora/api';
+import { fetchSampleRecipes, MAX_SAMPLE_MEALS, type SampleRecipe, servingGrams } from '@aurora/api';
 import { useTranslation } from '@aurora/i18n';
 import {
   Button,
@@ -58,16 +58,17 @@ export const sandboxStep: StepDefinition = {
     // Wide screens: a grid (a sideways carousel is awkward with a mouse). Phones: swipeable row.
     const grid = useWindowDimensions().width >= 1024;
 
-    const selected = draft.sampleMealIds;
+    const selected = draft.sampleMeals.map((meal) => meal.recipeId);
     const full = selected.length >= MAX_SAMPLE_MEALS;
-    const toggle = (id: string) =>
-      update({
-        sampleMealIds: selected.includes(id)
-          ? selected.filter((x) => x !== id)
-          : full
-            ? selected
-            : [...selected, id],
-      });
+    const toggle = (recipe: SampleRecipe) => {
+      if (selected.includes(recipe.id)) {
+        update({ sampleMeals: draft.sampleMeals.filter((meal) => meal.recipeId !== recipe.id) });
+      } else if (!full) {
+        update({
+          sampleMeals: [...draft.sampleMeals, { recipeId: recipe.id, grams: servingGrams(recipe) }],
+        });
+      }
+    };
     const name = (recipe: SampleRecipe) =>
       language === 'bn' && recipe.name_bn ? recipe.name_bn : recipe.name;
 
@@ -109,7 +110,7 @@ export const sandboxStep: StepDefinition = {
                   aria-checked={isSelected}
                   aria-label={name(recipe)}
                   disabled={disabled}
-                  onPress={() => toggle(recipe.id)}
+                  onPress={() => toggle(recipe)}
                   className={cn(
                     'bg-card gap-3 rounded-2xl border-2 p-3 shadow-sm shadow-black/5 active:scale-[0.98]',
                     grid ? 'w-[48.5%]' : 'w-40',
@@ -117,7 +118,7 @@ export const sandboxStep: StepDefinition = {
                     disabled && 'opacity-45',
                   )}
                 >
-                  {/* Recipes have no photos yet (image_url is null): an icon per cooking method. */}
+                  {/* Recipes have no photos yet: an icon per cooking method. */}
                   <View
                     aria-hidden
                     className={cn(
@@ -141,11 +142,9 @@ export const sandboxStep: StepDefinition = {
                     <Text className="text-base font-semibold" numberOfLines={2}>
                       {name(recipe)}
                     </Text>
-                    {recipe.default_portion_g ? (
-                      <Text className="text-muted-foreground text-sm">
-                        {t('onboarding.sandbox.portion', { grams: recipe.default_portion_g })}
-                      </Text>
-                    ) : null}
+                    <Text className="text-muted-foreground text-sm">
+                      {t('onboarding.sandbox.portion', { grams: servingGrams(recipe) })}
+                    </Text>
                   </View>
                   <View
                     className={cn(
@@ -188,7 +187,7 @@ export const sandboxStep: StepDefinition = {
                     <Pressable
                       role="button"
                       aria-label={t('onboarding.sandbox.removeLabel', { name: name(recipe) })}
-                      onPress={() => toggle(recipe.id)}
+                      onPress={() => toggle(recipe)}
                       hitSlop={8}
                       className="h-9 justify-center px-2 active:opacity-60"
                     >
@@ -244,7 +243,7 @@ function SandboxFooter({ draft, next }: StepProps) {
     );
   }
   return (
-    <Button size="lg" onPress={next} disabled={draft.sampleMealIds.length === 0}>
+    <Button size="lg" onPress={next} disabled={draft.sampleMeals.length === 0}>
       <Text>{t('onboarding.continue')}</Text>
     </Button>
   );
