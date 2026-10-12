@@ -103,16 +103,23 @@ export const calibrationStep: StepDefinition = {
             value: draft.bodyType && t(`onboarding.options.bodyType.${draft.bodyType}`),
           },
           {
-            step: 'age',
+            step: 'birthYear',
             icon: Cake,
-            label: t('onboarding.review.age'),
-            value:
-              draft.ageYears === undefined
-                ? undefined
-                : t('onboarding.age.value', { count: draft.ageYears }),
+            label: t('onboarding.review.birthYear'),
+            value: draft.birthYear === undefined ? undefined : String(draft.birthYear),
           },
-          { step: 'height', icon: Ruler, label: t('onboarding.review.height'), value: height },
-          { step: 'weight', icon: Weight, label: t('onboarding.review.weight'), value: weight },
+          {
+            step: 'measurements',
+            icon: Ruler,
+            label: t('onboarding.review.height'),
+            value: height,
+          },
+          {
+            step: 'measurements',
+            icon: Weight,
+            label: t('onboarding.review.weight'),
+            value: weight,
+          },
           {
             step: 'activity',
             icon: Activity,

@@ -44,7 +44,7 @@ describe('resolveCurrentStep', () => {
   });
 
   it('continues after the sign-up gate once the account exists', () => {
-    expect(resolveCurrentStep('signUp', ctx({ signedIn: true }))).toBe('bodyType');
+    expect(resolveCurrentStep('signUp', ctx({ signedIn: true }))).toBe('sex');
   });
 });
 
@@ -53,6 +53,8 @@ describe('restoreStep', () => {
     expect(restoreStep('sandbox')).toBe('sandbox');
     expect(restoreStep('oil')).toBe('kitchen');
     expect(restoreStep('lastPeriod')).toBe('sex');
+    expect(restoreStep('age')).toBe('birthYear');
+    expect(restoreStep('height')).toBe('measurements');
     expect(restoreStep('nonsense')).toBeUndefined();
   });
 });
@@ -60,8 +62,11 @@ describe('restoreStep', () => {
 describe('nextStep / previousStep', () => {
   it('walks the visible steps', () => {
     expect(nextStep('goal', ctx())).toBe('diet');
-    expect(nextStep('sex', ctx())).toBe('signUp');
-    expect(previousStep('height', ctx({ signedIn: true }))).toBe('age');
+    expect(nextStep('sandbox', ctx())).toBe('signUp');
+    expect(nextStep('sex', ctx({ signedIn: true }))).toBe('bodyType');
+    expect(nextStep('bodyType', ctx({ signedIn: true }))).toBe('birthYear');
+    expect(nextStep('birthYear', ctx({ signedIn: true }))).toBe('measurements');
+    expect(previousStep('activity', ctx({ signedIn: true }))).toBe('measurements');
     expect(previousStep('welcome', ctx())).toBeNull();
     expect(nextStep('widget', ctx({ signedIn: true }))).toBeNull();
   });
@@ -75,6 +80,9 @@ describe('isStepAnswered', () => {
     expect(isStepAnswered('heardFrom', draft)).toBe(true);
     expect(isStepAnswered('kitchen', { ...draft, cookingStyle: 'quick' })).toBe(false);
     expect(isStepAnswered('kitchen', { ...draft, cookingStyle: 'quick', oil: 'low' })).toBe(true);
+    expect(isStepAnswered('birthYear', draft)).toBe(false);
+    expect(isStepAnswered('measurements', { ...draft, heightCm: 160 })).toBe(false);
+    expect(isStepAnswered('measurements', { ...draft, heightCm: 160, weightKg: 60 })).toBe(true);
     expect(isStepAnswered('health', { ...draft, bloodPressure: 'normal' })).toBe(false);
     expect(
       isStepAnswered('health', { ...draft, bloodPressure: 'normal', hasDiabetes: false }),

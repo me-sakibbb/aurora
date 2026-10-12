@@ -36,6 +36,7 @@ export type ActivityLevel = (typeof ACTIVITY_LEVELS)[number];
 export type BloodPressure = (typeof BLOOD_PRESSURES)[number];
 
 /** Input ranges (UI limits, not health rules). Values are always stored in cm / kg. */
+/** Ages the backend accepts. Asked as a birth year (see `birthYearRange`). */
 export const AGE_YEARS = { min: 13, max: 80, default: 25 } as const;
 export const HEIGHT_CM = { min: 120, max: 220, default: 160 } as const;
 export const WEIGHT_KG = { min: 30, max: 200, default: 60 } as const;

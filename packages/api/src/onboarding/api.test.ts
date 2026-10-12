@@ -1,5 +1,12 @@
 import { buildOnboardingPayload, servingGrams } from './api';
-import { emptyDraft, type OnboardingDraft, restoreDraft, toggleGoal } from './draft';
+import {
+  ageFromBirthYear,
+  birthYearRange,
+  emptyDraft,
+  type OnboardingDraft,
+  restoreDraft,
+  toggleGoal,
+} from './draft';
 
 const answered: OnboardingDraft = {
   ...emptyDraft(),
@@ -14,7 +21,7 @@ const answered: OnboardingDraft = {
   ],
   sex: 'female',
   bodyType: 'average',
-  ageYears: 29,
+  birthYear: new Date().getFullYear() - 29,
   heightCm: 158,
   weightKg: 55.5,
   activityLevel: 'lightly_active',
@@ -28,7 +35,6 @@ describe('buildOnboardingPayload', () => {
   it('maps every answer to the backend field names', () => {
     expect(buildOnboardingPayload(answered)).toEqual({
       heard_from: 'instagram',
-      goal: 'hormonal',
       goals: ['hormonal', 'energy'],
       dietary_pattern: 'no_beef',
       cooking_style: 'meal_prep',
@@ -83,6 +89,24 @@ describe('restoreDraft', () => {
 
   it('carries a single saved goal over to the list', () => {
     expect(restoreDraft({ goal: 'energy' }).goals).toEqual(['energy']);
+  });
+
+  it('turns a saved age into a birth year', () => {
+    expect(restoreDraft({ ageYears: 30 }).birthYear).toBe(new Date().getFullYear() - 30);
+  });
+});
+
+describe('birth year', () => {
+  const now = new Date(2026, 9, 12);
+
+  it('offers the years for ages the backend accepts', () => {
+    expect(birthYearRange(now)).toEqual({ min: 1946, max: 2013, default: 2001 });
+  });
+
+  it('sends the age reached this year, within range', () => {
+    expect(ageFromBirthYear(1997, now)).toBe(29);
+    expect(ageFromBirthYear(2020, now)).toBe(13);
+    expect(ageFromBirthYear(1900, now)).toBe(80);
   });
 });
 

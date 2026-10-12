@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { apiFetch } from '../backend';
-import type { OnboardingDraft } from './draft';
+import { ageFromBirthYear, type OnboardingDraft } from './draft';
 import type {
   ActivityLevel,
   BloodPressure,
@@ -16,11 +16,7 @@ import type {
 /** Body of `POST /api/v1/onboarding` (mirrors the backend's `OnboardingIn`). */
 export type OnboardingPayload = {
   heard_from?: HeardFrom;
-  /**
-   * The first goal picked. The backend takes a single goal for now (it drives the calorie
-   * target); `goals` carries every pick and is ignored until the backend accepts a list.
-   */
-  goal?: Goal;
+  /** In the order picked. */
   goals: Goal[];
   dietary_pattern?: DietaryPattern;
   cooking_style?: CookingStyle;
@@ -43,7 +39,6 @@ export type OnboardingPayload = {
 export function buildOnboardingPayload(draft: OnboardingDraft): OnboardingPayload {
   const payload: OnboardingPayload = {
     heard_from: draft.heardFrom ?? undefined,
-    goal: draft.goals[0],
     goals: draft.goals,
     dietary_pattern: draft.dietaryPattern,
     cooking_style: draft.cookingStyle,
@@ -51,7 +46,7 @@ export function buildOnboardingPayload(draft: OnboardingDraft): OnboardingPayloa
     sample_meals: draft.sampleMeals.map(({ recipeId, grams }) => ({ recipe_id: recipeId, grams })),
     sex: draft.sex,
     body_type: draft.bodyType,
-    age_years: draft.ageYears,
+    age_years: draft.birthYear === undefined ? undefined : ageFromBirthYear(draft.birthYear),
     height_cm: draft.heightCm === undefined ? undefined : Math.round(draft.heightCm),
     weight_kg: draft.weightKg,
     activity_level: draft.activityLevel,

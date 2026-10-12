@@ -11,12 +11,11 @@ export const ONBOARDING_STEPS = [
   'diet',
   'kitchen',
   'sandbox',
-  'sex',
   'signUp',
+  'sex',
   'bodyType',
-  'age',
-  'height',
-  'weight',
+  'birthYear',
+  'measurements',
   'activity',
   'health',
   'calibration',
@@ -33,6 +32,9 @@ const SIGN_UP_INDEX = order('signUp');
 const RETIRED_STEPS: Record<string, StepId> = {
   cookingStyle: 'kitchen',
   oil: 'kitchen',
+  age: 'birthYear',
+  height: 'measurements',
+  weight: 'measurements',
   // The cycle questions were removed (2026-10-09); they came right after `sex`.
   features: 'sex',
   lastPeriod: 'sex',
@@ -104,12 +106,10 @@ export function isStepAnswered(step: StepId, draft: OnboardingDraft): boolean {
       return draft.sex !== undefined;
     case 'bodyType':
       return draft.bodyType !== undefined;
-    case 'age':
-      return draft.ageYears !== undefined;
-    case 'height':
-      return draft.heightCm !== undefined;
-    case 'weight':
-      return draft.weightKg !== undefined;
+    case 'birthYear':
+      return draft.birthYear !== undefined;
+    case 'measurements':
+      return draft.heightCm !== undefined && draft.weightKg !== undefined;
     case 'activity':
       return draft.activityLevel !== undefined;
     case 'health':

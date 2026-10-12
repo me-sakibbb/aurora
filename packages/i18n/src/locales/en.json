@@ -98,11 +98,15 @@
       "title": "Which body type is closest to yours?",
       "subtitle": "Pick the one that fits best."
     },
-    "age": {
-      "title": "How old are you?",
-      "subtitle": "Age helps estimate how much energy your body needs.",
-      "value_one": "{{count}} year",
-      "value_other": "{{count}} years"
+    "birthYear": {
+      "title": "What year were you born?",
+      "subtitle": "Age helps estimate how much energy your body needs. Scroll or tap to pick a year."
+    },
+    "measurements": {
+      "title": "Your height and weight",
+      "subtitle": "Your starting point. Drag the sliders or use − and +.",
+      "height": "Height",
+      "weight": "Weight"
     },
     "units": {
       "cm": "cm",
@@ -111,16 +115,12 @@
       "lb": "lb"
     },
     "height": {
-      "title": "How tall are you?",
       "cmValue": "{{value}} cm",
-      "ftinValue": "{{feet}} ft {{inches}} in",
-      "subtitle": "Drag the slider or use − and +."
+      "ftinValue": "{{feet}} ft {{inches}} in"
     },
     "weight": {
-      "title": "What's your current weight?",
       "kgValue": "{{value}} kg",
-      "lbValue": "{{value}} lb",
-      "subtitle": "Your starting point. You can update it anytime."
+      "lbValue": "{{value}} lb"
     },
     "activity": {
       "title": "How active are you on a typical day?",
@@ -228,7 +228,7 @@
       "oil": "Cooking oil",
       "sex": "Sex",
       "bodyType": "Body type",
-      "age": "Age",
+      "birthYear": "Year of birth",
       "height": "Height",
       "weight": "Weight",
       "activity": "Activity level",
@@ -271,7 +271,6 @@
     "sections": {
       "start": "Getting started",
       "kitchen": "Your kitchen",
-      "you": "About you",
       "body": "Your body",
       "finish": "Almost done"
     },
@@ -279,12 +278,7 @@
       "kitchen": {
         "eyebrow": "Kitchen set up",
         "title": "Your kitchen is set",
-        "subtitle": "Great picks. Next, a little about you."
-      },
-      "profile": {
-        "eyebrow": "Profile started",
-        "title": "Your profile is taking shape",
-        "subtitle": "Create a free account so your answers are kept safe."
+        "subtitle": "Great picks. Create a free account to keep your answers safe."
       },
       "account": {
         "eyebrow": "Account created",

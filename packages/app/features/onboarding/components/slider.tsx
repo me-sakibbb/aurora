@@ -10,6 +10,7 @@ const clamp = (value: number, min: number, max: number) => Math.min(max, Math.ma
 /**
  * Value picker: a big readout, a draggable track, and −/+ buttons for precise or keyboard use.
  * Built on PanResponder (no native slider dependency) so it works the same on web and Android.
+ * `size="sm"` shrinks the readout so several fit on one screen.
  */
 export function ValueSlider({
   label,
@@ -19,6 +20,7 @@ export function ValueSlider({
   step = 1,
   onChange,
   format,
+  size = 'lg',
 }: {
   label: string;
   value: number;
@@ -27,6 +29,7 @@ export function ValueSlider({
   step?: number;
   onChange: (value: number) => void;
   format: (value: number) => string;
+  size?: 'lg' | 'sm';
 }) {
   const { t } = useTranslation();
   const [width, setWidth] = useState(0);
@@ -62,10 +65,15 @@ export function ValueSlider({
   const nudge = (direction: 1 | -1) => onChange(snap(value + direction * step));
 
   return (
-    <View className="gap-8">
+    <View className={size === 'sm' ? 'gap-3' : 'gap-8'}>
       {/* The slider announces its own value; this readout is visual only. */}
-      <View aria-hidden className="items-center gap-1 py-2">
-        <Text className="text-5xl font-semibold leading-[56px] tracking-tight">
+      <View aria-hidden className={cn('items-center gap-1', size === 'lg' && 'py-2')}>
+        <Text
+          className={cn(
+            'font-semibold tracking-tight',
+            size === 'sm' ? 'text-3xl leading-10' : 'text-5xl leading-[56px]',
+          )}
+        >
           {format(value)}
         </Text>
       </View>

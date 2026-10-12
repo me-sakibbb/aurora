@@ -14,15 +14,7 @@ import {
   visibleSteps,
 } from '@aurora/api';
 import { useTranslation } from '@aurora/i18n';
-import {
-  Button,
-  ChefHat,
-  ClipboardCheck,
-  type IconComponent,
-  PartyPopper,
-  Text,
-  UserRoundCheck,
-} from '@aurora/ui';
+import { Button, ChefHat, ClipboardCheck, type IconComponent, PartyPopper, Text } from '@aurora/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable } from 'react-native';
@@ -37,12 +29,11 @@ import { dietStep, goalStep, heardFromStep, kitchenStep } from './steps/intro-st
 import { notificationsStep, widgetStep } from './steps/permission-steps';
 import {
   activityStep,
-  ageStep,
+  birthYearStep,
   bodyTypeStep,
   healthStep,
-  heightStep,
+  measurementsStep,
   sexStep,
-  weightStep,
 } from './steps/profile-steps';
 import { calibrationStep } from './steps/review-step';
 import { sandboxStep } from './steps/sandbox-step';
@@ -60,9 +51,8 @@ const STEPS: Record<StepId, StepDefinition> = {
   sex: sexStep,
   signUp: signUpStep,
   bodyType: bodyTypeStep,
-  age: ageStep,
-  height: heightStep,
-  weight: weightStep,
+  birthYear: birthYearStep,
+  measurements: measurementsStep,
   activity: activityStep,
   health: healthStep,
   calibration: calibrationStep,
@@ -70,7 +60,7 @@ const STEPS: Record<StepId, StepDefinition> = {
   widget: widgetStep,
 };
 
-type Section = 'start' | 'kitchen' | 'you' | 'body' | 'finish';
+type Section = 'start' | 'kitchen' | 'body' | 'finish';
 
 /** Section label shown above each step. */
 const SECTIONS: Partial<Record<StepId, Section>> = {
@@ -79,11 +69,10 @@ const SECTIONS: Partial<Record<StepId, Section>> = {
   diet: 'kitchen',
   kitchen: 'kitchen',
   sandbox: 'kitchen',
-  sex: 'you',
+  sex: 'body',
   bodyType: 'body',
-  age: 'body',
-  height: 'body',
-  weight: 'body',
+  birthYear: 'body',
+  measurements: 'body',
   activity: 'body',
   health: 'body',
   calibration: 'finish',
@@ -91,18 +80,19 @@ const SECTIONS: Partial<Record<StepId, Section>> = {
   widget: 'finish',
 };
 
-type Milestone = 'kitchen' | 'profile' | 'account' | 'almost';
+type Milestone = 'kitchen' | 'account' | 'almost';
 
 /**
- * Short celebration screens at the end of a section (all copy is static). Olive and light
- * alternate so they don't all look the same; confetti is kept for creating the account.
+ * Short celebration screens at the end of a section (all copy is static), one per stretch of
+ * questions: after the kitchen (just before the sign-up gate), after creating the account, and
+ * before the review. The finale follows the submit. Light and olive alternate (kitchen, account,
+ * almost, finale) so they don't all look the same; confetti is kept for creating the account.
  */
 const MILESTONES: Record<
   Milestone,
   { icon: IconComponent; tone: CelebrationTone; burst: 'confetti' | 'dots' }
 > = {
-  kitchen: { icon: ChefHat, tone: 'olive', burst: 'dots' },
-  profile: { icon: UserRoundCheck, tone: 'light', burst: 'dots' },
+  kitchen: { icon: ChefHat, tone: 'light', burst: 'dots' },
   account: { icon: PartyPopper, tone: 'olive', burst: 'confetti' },
   almost: { icon: ClipboardCheck, tone: 'light', burst: 'dots' },
 };
@@ -110,7 +100,6 @@ const MILESTONES: Record<
 /** The milestone to celebrate when moving forward from `from` to `to`, if any. */
 function milestoneBetween(from: StepId, to: StepId): Milestone | undefined {
   if (from === 'sandbox') return 'kitchen';
-  if (to === 'signUp') return 'profile';
   if (to === 'calibration') return 'almost';
   return undefined;
 }

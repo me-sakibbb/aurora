@@ -11,6 +11,7 @@ import type {
 } from './options';
 import {
   ACTIVITY_LEVELS,
+  AGE_YEARS,
   BLOOD_PRESSURES,
   BODY_TYPES,
   COOKING_STYLES,
@@ -43,7 +44,7 @@ export type OnboardingDraft = {
   sampleMeals: SampleMeal[];
   sex?: Sex;
   bodyType?: BodyType;
-  ageYears?: number;
+  birthYear?: number;
   heightCm?: number;
   weightKg?: number;
   heightUnit: HeightUnit;
@@ -61,6 +62,25 @@ export const emptyDraft = (): OnboardingDraft => ({
   heightUnit: 'cm',
   weightUnit: 'kg',
 });
+
+/** The birth years that can be picked this year, and the starting value. */
+export function birthYearRange(now = new Date()) {
+  const year = now.getFullYear();
+  return {
+    min: year - AGE_YEARS.max,
+    max: year - AGE_YEARS.min,
+    default: year - AGE_YEARS.default,
+  };
+}
+
+/**
+ * Age for the backend from the birth year: the age reached this year (no birth date is asked,
+ * so it can be a year ahead until the birthday), kept within the accepted range.
+ */
+export function ageFromBirthYear(birthYear: number, now = new Date()): number {
+  const age = now.getFullYear() - birthYear;
+  return Math.min(AGE_YEARS.max, Math.max(AGE_YEARS.min, age));
+}
 
 /** Adds or removes a goal. Picking one of an exclusive pair drops the other. */
 export function toggleGoal(goals: readonly Goal[], goal: Goal): Goal[] {
@@ -101,7 +121,10 @@ export function restoreDraft(saved: unknown): OnboardingDraft {
     : [];
   draft.sex = oneOf(SEXES, raw.sex);
   draft.bodyType = oneOf(BODY_TYPES, raw.bodyType);
-  draft.ageYears = num(raw.ageYears);
+  // Before the birth-year picker this was an age.
+  const age = num(raw.ageYears);
+  draft.birthYear =
+    num(raw.birthYear) ?? (age === undefined ? undefined : new Date().getFullYear() - age);
   draft.heightCm = num(raw.heightCm);
   draft.weightKg = num(raw.weightKg);
   draft.heightUnit = raw.heightUnit === 'ftin' ? 'ftin' : 'cm';
