@@ -13,6 +13,9 @@ export function usePathname(): string {
 const appRouter = {
   push: (href: string) => router.push(href as Href),
   replace: (href: string) => router.replace(href as Href),
+  /** Switch to a top-level section (a tab) without stacking history entries. */
+  navigate: (href: string) => router.navigate(href as Href),
+  back: () => (router.canGoBack() ? router.back() : router.replace('/' as Href)),
 };
 
 export function useAppRouter() {

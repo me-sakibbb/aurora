@@ -5,16 +5,164 @@
     "offline": "You're offline. We'll save this once you're back online.",
     "loading": "Loading…",
     "languageToggle": "বাংলা",
-    "languageToggleLabel": "দেখুন বাংলায় (View in Bengali)"
+    "languageToggleLabel": "দেখুন বাংলায় (View in Bengali)",
+    "close": "Close"
   },
   "updates": {
     "downloading": "Downloading an update…",
     "restarting": "Restarting…"
   },
   "home": {
-    "title": "Welcome to Aurora",
-    "subtitle": "One codebase, running on web and Android.",
-    "switchLanguage": "বাংলায় দেখুন"
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening",
+      "named": "{{greeting}}, {{name}}"
+    },
+    "kcal": "{{value}} kcal",
+    "kcalRange": "{{min}}–{{max}} kcal",
+    "preview": "Preview",
+    "seeAll": "See all",
+    "offlineBanner": "You're offline. Showing what was saved on this device.",
+    "today": {
+      "title": "Today",
+      "kcalSoFar": "kcal so far",
+      "target": "Daily target",
+      "logMeal": "Log a meal"
+    },
+    "meals": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "snack": "Snacks",
+      "dinner": "Dinner"
+    },
+    "quick": {
+      "food": "Log food",
+      "mood": "Mood check-in",
+      "chat": "Ask Aurora"
+    },
+    "noticed": {
+      "title": "Aurora noticed",
+      "ask": "Ask Aurora about this"
+    },
+    "week": {
+      "title": "This week",
+      "streak_one": "{{count}}-day streak",
+      "streak_other": "{{count}}-day streak",
+      "streakHint": "Days in a row with something logged",
+      "chips_one": "You have {{count}} Flex Day chip to protect a busy day.",
+      "chips_other": "You have {{count}} Flex Day chips to protect busy days.",
+      "logged": "logged",
+      "notLogged": "nothing logged"
+    },
+    "mood": {
+      "section": "Mood check-in",
+      "title": "How are you feeling?",
+      "done": "Today's check-in",
+      "low": "Rough",
+      "high": "Great",
+      "options": {
+        "1": "Very low",
+        "2": "Low",
+        "3": "Okay",
+        "4": "Good",
+        "5": "Great"
+      }
+    },
+    "cycle": {
+      "title": "Your cycle",
+      "fertileWindow": "Estimated fertile window",
+      "range": "{{start}} – {{end}}",
+      "notEnough": "There isn't enough information for an estimate yet."
+    },
+    "suggestions": {
+      "title": "Suggested for today",
+      "portion": "{{kcal}} kcal · {{grams}} g",
+      "unnamed": "A dish for you",
+      "emptyTitle": "Suggestions are on their way",
+      "emptyBody": "Once Aurora knows your meals a little better, ideas for your goals will show up here."
+    },
+    "recent": {
+      "title": "Today's log",
+      "emptyTitle": "Nothing logged yet today",
+      "emptyBody": "Your meals will show up here as you log them."
+    },
+    "discreet": {
+      "hidden": "Hidden by Discreet Mode. Tap to show.",
+      "reveal": "Show {{section}}"
+    },
+    "state": {
+      "error": "This couldn't load right now.",
+      "offline": "You're offline. This will load when you're back online."
+    },
+    "demo": {
+      "noticedTitle": "Your lunches are getting more balanced",
+      "noticedBody": "Three of your last four lunches had dal or shak alongside rice. That's a steady, filling pattern.",
+      "insight1Title": "Breakfast is your most consistent meal",
+      "insight1Body": "You logged breakfast on 6 of the last 7 days.",
+      "insight2Title": "Evenings are often unlogged",
+      "insight2Body": "Dinner was missing on 3 days this week. A quick log keeps the picture complete."
+    }
+  },
+  "shell": {
+    "navLabel": "Main",
+    "nav": {
+      "home": "Home",
+      "food": "Food",
+      "chat": "Ask Aurora",
+      "cycle": "Cycle",
+      "insights": "Insights"
+    },
+    "log": "Log",
+    "logSomething": "Log something",
+    "openProfile": "Open your profile",
+    "you": "You",
+    "soon": "Coming soon",
+    "quickLog": {
+      "title": "What would you like to log?",
+      "subtitle": "It only takes a few seconds.",
+      "food": {
+        "title": "Food",
+        "body": "Search a dish or pick from recipes"
+      },
+      "mood": {
+        "title": "Mood",
+        "body": "A 10-second check-in"
+      },
+      "chat": {
+        "title": "Ask Aurora",
+        "body": "Questions about food, cycle or wellbeing"
+      }
+    },
+    "profile": {
+      "title": "Your profile",
+      "target": "Daily target",
+      "settings": "Health & goals",
+      "language": "Language"
+    }
+  },
+  "placeholders": {
+    "backHome": "Back to Home",
+    "food": {
+      "title": "Food logging",
+      "body": "Search Bangladeshi dishes in Bengali or English, adjust portions and oil, and see your day meal by meal."
+    },
+    "chat": {
+      "title": "Ask Aurora",
+      "body": "Ask about food, your cycle or how you're feeling, in English, Bengali or a mix, and get answers with sources."
+    },
+    "cycle": {
+      "title": "Cycle tracking",
+      "body": "Log your period and symptoms, see your current phase, and review your history."
+    },
+    "insights": {
+      "title": "Insights",
+      "body": "A fuller look at your patterns over the week and month, building on the summary on Home."
+    },
+    "mood": {
+      "title": "Mood check-in",
+      "body": "Mood, energy, stress and sleep in a few taps, plus an optional note."
+    }
   },
   "onboarding": {
     "back": "Back",

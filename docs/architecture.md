@@ -118,6 +118,20 @@ the workspace root. Review each added component: some need extra `@rn-primitives
   `https://<web-domain>/auth/callback`, `http://localhost:3000/auth/callback`; Google provider with the
   Web client ID (plus the Android client with package name + SHA-1 in the same Google Cloud project).
 
+## App shell & Home (F4)
+
+- **Shell** (`packages/app/features/shell`): Home, Food, Ask Aurora, and either Cycle (only when
+  `GET /ovulation` says `enabled`, F13) or Insights, around a central Log button that opens the
+  quick-log sheet. Native: `apps/mobile/app/(tabs)/_layout.tsx` (Expo Router `Tabs` with the shared
+  `AppTabBar`). Web: the `(app)` route group's layout renders `AppShell` (sidebar at `lg+`, tab bar
+  below). Sheets (quick log, F24 profile) live in a zustand store and are drawn once by the shell.
+- **Home** (`features/home`): live data comes from `GET /profile` (target, goals, discreet mode),
+  `GET /ovulation` (cycle preview) and `GET /food/suggestions/{user_id}`. Sections with no endpoint
+  yet (daily summary, week/streak/chips, insights, Aurora noticed, recent logs, mood) use
+  `features/home/demo.ts`, shaped like `packages/api/src/home/types.ts` (the proposed contract), and
+  show a "Preview" badge. Suggestions fall back to the sample while the endpoint fails.
+- Food, Chat, Cycle, Insights and Mood are "coming soon" placeholders (`features/placeholders`).
+
 ## i18n (`packages/i18n`)
 
 - English is the default. Bengali is a user toggle (`useLanguage()` in `packages/app/lib/language.ts`),

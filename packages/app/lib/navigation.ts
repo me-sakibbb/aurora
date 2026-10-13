@@ -16,6 +16,10 @@ export function useAppRouter() {
     () => ({
       push: (href: string) => router.push(href),
       replace: (href: string) => router.replace(href),
+      /** Switch to a top-level section (a tab) without stacking history entries. */
+      navigate: (href: string) => router.push(href),
+      // Opened directly (no in-app history): go home rather than leave the site.
+      back: () => (window.history.length > 1 ? router.back() : router.replace('/')),
     }),
     [router],
   );

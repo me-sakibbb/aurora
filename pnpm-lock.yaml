@@ -420,6 +420,9 @@ importers:
       '@aurora/i18n':
         specifier: workspace:*
         version: link:../i18n
+      '@aurora/tokens':
+        specifier: workspace:*
+        version: link:../tokens
       '@aurora/ui':
         specifier: workspace:*
         version: link:../ui
