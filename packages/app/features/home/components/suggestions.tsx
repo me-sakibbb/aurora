@@ -6,8 +6,8 @@ import { cn, Icon, Text } from '@aurora/ui';
 import { Platform, Pressable, ScrollView, View } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';
 import { Skeleton } from '../../../components/skeleton';
-import type { WithSource } from '../queries';
-import { InlineState, MEAL_ICONS, PreviewBadge, SectionHeader } from './primitives';
+import type { SectionState } from '../queries';
+import { InlineState, MEAL_ICONS, SectionHeader } from './primitives';
 
 const SLOT_TONE = {
   breakfast: 'bg-taupe/35',
@@ -18,19 +18,24 @@ const SLOT_TONE = {
 
 /** F18 goal-based suggestions for today: a swipeable row of meal cards, explained as returned. */
 export function SuggestionsSection({
-  result,
+  data,
+  noProfile,
   state,
+  onRetry,
   onOpen,
 }: {
-  result: WithSource<MealSuggestions> | null;
-  state: 'ready' | 'loading' | 'offline';
+  data: MealSuggestions | undefined;
+  /** The backend has no profile (so no target) to plan suggestions around. */
+  noProfile: boolean;
+  state: SectionState;
+  onRetry: () => void;
   onOpen: () => void;
 }) {
   const { t, i18n } = useTranslation();
-  const items = result?.data.suggestions ?? [];
+  const items = data?.suggestions ?? [];
 
   let body: React.ReactNode;
-  if (result && items.length > 0) {
+  if (data && items.length > 0) {
     body = (
       <ScrollView
         horizontal
@@ -93,12 +98,14 @@ export function SuggestionsSection({
         })}
       </ScrollView>
     );
-  } else if (result) {
+  } else if (data || noProfile) {
     body = (
       <View className="bg-card border-border rounded-3xl border p-5">
-        <Text className="font-semibold">{t('home.suggestions.emptyTitle')}</Text>
+        <Text className="font-semibold">
+          {t(noProfile ? 'home.suggestions.noProfileTitle' : 'home.suggestions.emptyTitle')}
+        </Text>
         <Text variant="muted" className="mt-1 leading-5">
-          {t('home.suggestions.emptyBody')}
+          {t(noProfile ? 'home.suggestions.noProfileBody' : 'home.suggestions.emptyBody')}
         </Text>
       </View>
     );
@@ -110,15 +117,12 @@ export function SuggestionsSection({
       </View>
     );
   } else {
-    body = <InlineState kind="offline" />;
+    body = <InlineState kind={state === 'offline' ? 'offline' : 'error'} onRetry={onRetry} />;
   }
 
   return (
     <View>
-      <SectionHeader
-        title={t('home.suggestions.title')}
-        badge={result?.demo ? <PreviewBadge /> : null}
-      />
+      <SectionHeader title={t('home.suggestions.title')} />
       {body}
     </View>
   );

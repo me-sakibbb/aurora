@@ -80,7 +80,9 @@
       "portion": "{{kcal}} kcal · {{grams}} g",
       "unnamed": "A dish for you",
       "emptyTitle": "Suggestions are on their way",
-      "emptyBody": "Once Aurora knows your meals a little better, ideas for your goals will show up here."
+      "emptyBody": "Once Aurora knows your meals a little better, ideas for your goals will show up here.",
+      "noProfileTitle": "Your daily target isn't set up yet",
+      "noProfileBody": "Aurora plans suggestions around your daily target, which comes from your height, weight, age and activity. They'll show up here once those are saved."
     },
     "recent": {
       "title": "Today's log",
@@ -141,12 +143,81 @@
       "language": "Language"
     }
   },
+  "food": {
+    "title": "Food",
+    "subtitle": "Search any dish in Bengali, English or a mix.",
+    "kcalPer100g": "{{kcal}} kcal / 100 g",
+    "search": {
+      "label": "Search foods",
+      "placeholder": "Search dal, ভাত, bhorta…",
+      "clear": "Clear search",
+      "searching": "Searching",
+      "examples": "ডাল, bhorta, cha, বিরিয়ানি, khichuri, ডিম",
+      "recent": "Recently viewed",
+      "clearRecent": "Clear",
+      "browse": "Browse by type",
+      "all": "All",
+      "results_one": "{{count}} match",
+      "results_other": "{{count}} matches",
+      "partial": "Showing dishes saved on this device. Some matches may be missing.",
+      "offline": "You're offline, so we're searching the dishes saved on this device.",
+      "notListed": "Not what you're looking for?",
+      "tryPrefix": "Try",
+      "tryLabel": "Search for {{example}}",
+      "allDishes": "All dishes",
+      "resultsMore_one": "{{count}}+ match",
+      "resultsMore_other": "{{count}}+ matches",
+      "loadingMore": "Loading more foods",
+      "end": "That's everything for now"
+    },
+    "empty": {
+      "title": "Nothing for “{{query}}” yet",
+      "body": "Try the Bengali or English name, a different spelling, or fewer words.",
+      "offline": "You're offline, so only dishes saved on this device were searched. Try again once you're connected.",
+      "failed": "We couldn't reach the full food list, so only dishes saved on this device were searched.",
+      "flagTitle": "Can't find it?",
+      "flagBody": "Tell us what's missing and we'll work on adding it.",
+      "flag": "Flag a missing food"
+    },
+    "missing": {
+      "title": "Flag a missing food",
+      "subtitle": "Tell us what you were looking for. Write it however you like, in Bengali, English or a mix.",
+      "name": "Food name",
+      "namePlaceholder": "e.g. bhapa pitha, ভাপা পিঠা",
+      "note": "Anything else? (optional)",
+      "noteHint": "How it's cooked, where it's from, or a brand.",
+      "notePlaceholder": "e.g. cooked with mustard oil",
+      "send": "Send",
+      "soonNote": "Sending isn't available yet. What you've typed stays here until it is."
+    },
+    "detail": {
+      "calories": "Calories",
+      "serving": "Typical serving",
+      "grams": "{{grams}} g",
+      "unknown": "Not available",
+      "per100g": "Per 100 g",
+      "protein_g": "Protein",
+      "carbs_g": "Carbs",
+      "fat_g": "Fat",
+      "fiber_g": "Fibre",
+      "loggingSoon": "Logging meals from here is coming soon.",
+      "back": "Close"
+    },
+    "methods": {
+      "bhat": "Rice",
+      "dal": "Dal",
+      "bhorta": "Bhorta",
+      "bhaji": "Fried",
+      "torkari": "Torkari",
+      "curry": "Curry",
+      "bhuna": "Bhuna",
+      "jhol": "Jhol",
+      "polao_biryani": "Polao & biryani",
+      "other": "Other"
+    }
+  },
   "placeholders": {
     "backHome": "Back to Home",
-    "food": {
-      "title": "Food logging",
-      "body": "Search Bangladeshi dishes in Bengali or English, adjust portions and oil, and see your day meal by meal."
-    },
     "chat": {
       "title": "Ask Aurora",
       "body": "Ask about food, your cycle or how you're feeling, in English, Bengali or a mix, and get answers with sources."

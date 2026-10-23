@@ -78,3 +78,49 @@ export async function fetchMealSuggestions(userId: string): Promise<MealSuggesti
   const json = await apiFetch(`/food/suggestions/${encodeURIComponent(userId)}`);
   return suggestionsSchema.parse(json);
 }
+
+const dashboardSchema = z
+  .object({
+    date: z.string(),
+    timezone: z.string(),
+    target_kcal: z.coerce.number().nullish(),
+    consumed_kcal: z.coerce.number(),
+    // The backend names the slot `snacks`; everywhere else (suggestions, i18n) it's `snack`.
+    meals: z.object({
+      breakfast: z.boolean(),
+      lunch: z.boolean(),
+      snacks: z.boolean(),
+      dinner: z.boolean(),
+    }),
+  })
+  .transform(({ meals, target_kcal, ...rest }) => ({
+    ...rest,
+    target_kcal: target_kcal ?? null,
+    meals: MEAL_SLOTS.map((slot) => ({
+      slot,
+      logged: slot === 'snack' ? meals.snacks : meals[slot],
+    })),
+  }));
+
+export type DailySummary = z.infer<typeof dashboardSchema>;
+
+/**
+ * `GET /api/v1/dashboard`: the day at a glance (F4) — target, kcal consumed and which meal slots
+ * have a log, all worked out by the backend for the local day in `tz`. `null` when there's no
+ * profile yet (404).
+ */
+export async function fetchDailySummary({
+  date,
+  tz,
+}: {
+  date: string;
+  tz: string;
+}): Promise<DailySummary | null> {
+  const params = new URLSearchParams({ date, tz });
+  try {
+    return dashboardSchema.parse(await apiFetch(`/dashboard?${params}`));
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return null;
+    throw error;
+  }
+}

@@ -25,7 +25,13 @@ export async function apiFetch(
   {
     method = 'GET',
     body,
-  }: { method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; body?: unknown } = {},
+    signal,
+  }: {
+    method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    body?: unknown;
+    /** Cancels the request (TanStack Query passes one, so stale searches are dropped). */
+    signal?: AbortSignal;
+  } = {},
 ): Promise<unknown> {
   if (!env.apiUrl) {
     throw new Error(
@@ -45,6 +51,7 @@ export async function apiFetch(
     method,
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),
+    signal,
   });
 
   if (!response.ok) {

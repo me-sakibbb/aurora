@@ -22,7 +22,13 @@ import {
 } from './components/sections';
 import { SuggestionsSection } from './components/suggestions';
 import { TodayCard } from './components/today-card';
-import { useCycleStatus, useHomeDemo, useMealSuggestions, useProfile } from './queries';
+import {
+  useCycleStatus,
+  useDailySummary,
+  useHomeDemo,
+  useMealSuggestions,
+  useProfile,
+} from './queries';
 import { useDateLocale } from './use-date-locale';
 
 /** Greeting by local time of day (wording only; nothing health-related is derived). */
@@ -36,7 +42,7 @@ function greetingKey(hour: number) {
  * F4 Home dashboard: the day at a glance, quick ways into food / mood / chat, Aurora's
  * observation, the week, suggestions and today's log. Wide screens get two columns.
  *
- * Live data: profile (target, goals, discreet mode), cycle status, meal suggestions. Sections
+ * Live data: profile (discreet mode), daily summary, cycle status, meal suggestions. Sections
  * without a backend endpoint yet show sample data marked "Preview" (see ./demo.ts).
  */
 export function HomeScreen() {
@@ -50,21 +56,22 @@ export function HomeScreen() {
 
   const profile = useProfile();
   const cycle = useCycleStatus();
+  const summary = useDailySummary();
   const suggestions = useMealSuggestions();
   const demo = useHomeDemo();
   const [refreshing, setRefreshing] = useState(false);
 
   const now = new Date();
   const discreet = profile.data?.discreet_mode === true;
-  // The real target from the profile wins over the sample one.
-  const summary = {
-    ...demo.summary,
-    target_kcal: profile.data?.target_kcal ?? demo.summary.target_kcal,
-  };
 
   const refresh = async () => {
     setRefreshing(true);
-    await Promise.allSettled([profile.refetch(), cycle.refetch(), suggestions.refetch()]);
+    await Promise.allSettled([
+      profile.refetch(),
+      summary.refetch(),
+      cycle.refetch(),
+      suggestions.refetch(),
+    ]);
     setRefreshing(false);
   };
 
@@ -131,7 +138,12 @@ export function HomeScreen() {
             {/* Main column */}
             <View className="gap-5 lg:min-w-0 lg:flex-[3]">
               <FadeIn>
-                <TodayCard summary={summary} demo onLog={() => go('/food')} />
+                <TodayCard
+                  summary={summary.data}
+                  state={summary.state}
+                  onRetry={() => summary.refetch()}
+                  onLog={() => go('/food')}
+                />
               </FadeIn>
               <FadeIn delay={60}>
                 <QuickActions onNavigate={go} />
@@ -141,8 +153,10 @@ export function HomeScreen() {
               </FadeIn>
               <FadeIn delay={180}>
                 <SuggestionsSection
-                  result={suggestions.result}
+                  data={suggestions.data}
+                  noProfile={suggestions.noProfile}
                   state={suggestions.state}
+                  onRetry={() => suggestions.refetch()}
                   onOpen={() => go('/food')}
                 />
               </FadeIn>

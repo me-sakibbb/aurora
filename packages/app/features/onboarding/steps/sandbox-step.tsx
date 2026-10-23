@@ -2,38 +2,18 @@
 
 import { fetchSampleRecipes, MAX_SAMPLE_MEALS, type SampleRecipe, servingGrams } from '@aurora/api';
 import { useTranslation } from '@aurora/i18n';
-import {
-  Button,
-  Carrot,
-  Check,
-  cn,
-  Drumstick,
-  Icon,
-  type IconComponent,
-  Plus,
-  Soup,
-  Text,
-  UtensilsCrossed,
-  Wheat,
-} from '@aurora/ui';
+import { Button, Check, cn, Icon, Plus, Text, UtensilsCrossed } from '@aurora/ui';
 import { useQuery } from '@tanstack/react-query';
 import { ActivityIndicator, Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';
 import { useLanguage } from '../../../lib/language';
 import { useIsOnline } from '../../../lib/use-online';
 import { FormMessage } from '../../auth/components/form';
+import { methodIcon } from '../../food/method-icons';
 import { StepHeading } from '../components/layout';
 import type { StepDefinition, StepProps } from './types';
 
-// Display only: a picture for each cooking method until recipes have photos.
-const METHOD_ICONS: Record<string, IconComponent> = {
-  dal: Soup,
-  curry: Drumstick,
-  bhat: Wheat,
-  torkari: Carrot,
-};
-const mealIcon = (recipe: SampleRecipe) =>
-  (recipe.cooking_method && METHOD_ICONS[recipe.cooking_method]) || UtensilsCrossed;
+const mealIcon = (recipe: SampleRecipe) => methodIcon(recipe.cooking_method);
 
 export const sampleRecipesQueryKey = ['food', 'recipes', 'samples'];
 

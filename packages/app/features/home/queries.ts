@@ -2,21 +2,24 @@
 
 import {
   type CycleStatus,
+  type DailySummary,
   fetchCycleStatus,
+  fetchDailySummary,
   fetchMealSuggestions,
   fetchProfile,
   isApiConfigured,
   type MealSuggestions,
 } from '@aurora/api';
-import { useQuery } from '@tanstack/react-query';
+import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { useMemo } from 'react';
 import { useIsOnline } from '../../lib/use-online';
 import { useSession } from '../auth/session';
-import { demoSuggestions, useDemoHome } from './demo';
+import { useDemoHome } from './demo';
 
 export const profileQueryKey = (userId: string | undefined) => ['profile', userId];
 export const cycleStatusQueryKey = (userId: string | undefined) => ['cycle-status', userId];
+/** Prefix of every day's summary; invalidate it after a meal is logged. */
+export const dailySummaryQueryKey = (userId: string | undefined) => ['daily-summary', userId];
 
 /** `GET /profile`: target, goals, discreet mode. `null` data = no profile built yet. */
 export function useProfile() {
@@ -45,43 +48,58 @@ export function useCycleVisible() {
   return useCycleStatus().data?.enabled === true;
 }
 
-export type WithSource<T> = { data: T; demo: boolean };
+export type SectionState = 'ready' | 'loading' | 'offline' | 'error';
 
 /**
- * Today's suggestions (F18). The endpoint exists but can't serve yet (empty recipe table, server
- * error), so while it fails we show sample suggestions, flagged as a preview. Offline with nothing
- * cached is a real offline state instead.
+ * What a Home section should render (F15). Cached data always wins, even offline or after a failed
+ * refetch, since queries are persisted.
+ */
+function sectionState(query: UseQueryResult<unknown>, online: boolean): SectionState {
+  if (query.data !== undefined) return 'ready';
+  if (!online) return 'offline';
+  if (query.isError) return 'error';
+  return 'loading';
+}
+
+/** Today's local date and IANA timezone, so the backend draws the day's boundaries the same way. */
+function useLocalDay() {
+  const date = format(new Date(), 'yyyy-MM-dd');
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Dhaka';
+  return { date, tz };
+}
+
+/** `GET /dashboard`: today's target, kcal consumed and logged meal slots (F4). */
+export function useDailySummary() {
+  const userId = useSession()?.user.id;
+  const online = useIsOnline();
+  const { date, tz } = useLocalDay();
+  const query = useQuery<DailySummary | null>({
+    queryKey: [...dailySummaryQueryKey(userId), date, tz],
+    queryFn: () => fetchDailySummary({ date, tz }),
+    enabled: Boolean(userId) && isApiConfigured(),
+    staleTime: 60_000,
+  });
+  return { ...query, state: sectionState(query, online) };
+}
+
+/**
+ * `GET /food/suggestions/{user_id}`: today's goal-based suggestions (F18). The backend plans them
+ * around the profile's target, so with no profile there's nothing to ask for (`noProfile`).
  */
 export function useMealSuggestions() {
   const userId = useSession()?.user.id;
   const online = useIsOnline();
-  const today = format(new Date(), 'yyyy-MM-dd');
+  const { date } = useLocalDay();
+  const profile = useProfile();
   const query = useQuery<MealSuggestions>({
-    queryKey: ['meal-suggestions', userId, today],
+    queryKey: ['meal-suggestions', userId, date],
     queryFn: () => fetchMealSuggestions(userId as string),
-    enabled: Boolean(userId) && isApiConfigured(),
+    enabled: Boolean(userId) && isApiConfigured() && Boolean(profile.data),
     staleTime: 10 * 60_000,
-    retry: 1,
   });
-
-  const fallback = useMemo(() => demoSuggestions(today), [today]);
-
-  let state: 'ready' | 'loading' | 'offline';
-  let result: WithSource<MealSuggestions> | null = null;
-  if (query.data) {
-    state = 'ready';
-    result = { data: query.data, demo: false };
-  } else if (!online) {
-    state = 'offline';
-  } else if (query.fetchStatus === 'fetching' && query.failureCount === 0) {
-    // First attempt still in flight.
-    state = 'loading';
-  } else {
-    // Failed, retrying, or paused mid-retry (an unfocused tab pauses retries): show the sample.
-    state = 'ready';
-    result = { data: fallback, demo: true };
-  }
-  return { ...query, state, result };
+  const noProfile = profile.data === null;
+  const state = sectionState(profile.isError ? profile : query, online);
+  return { ...query, noProfile, state: noProfile ? ('ready' as const) : state };
 }
 
 /**

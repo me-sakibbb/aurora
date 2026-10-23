@@ -13,7 +13,6 @@ import {
   Smile,
   Sparkles,
   Text,
-  Utensils,
 } from '@aurora/ui';
 import { ScrollView, View } from 'react-native';
 import { FadeIn } from '../../components/fade-in';
@@ -21,10 +20,9 @@ import { Pop } from '../../components/pop';
 import { useInsets } from '../../lib/insets';
 import { useAppRouter } from '../../lib/navigation';
 
-type Section = 'food' | 'chat' | 'cycle' | 'insights' | 'mood';
+type Section = 'chat' | 'cycle' | 'insights' | 'mood';
 
 const ART: Record<Section, { icon: IconComponent; tile: string; iconClass: string }> = {
-  food: { icon: Utensils, tile: 'bg-primary', iconClass: 'text-primary-foreground' },
   chat: { icon: MessageCircleHeart, tile: 'bg-sage', iconClass: 'text-ivory' },
   cycle: { icon: Flower2, tile: 'bg-taupe', iconClass: 'text-olive' },
   insights: { icon: ChartNoAxesColumn, tile: 'bg-primary', iconClass: 'text-primary-foreground' },
@@ -88,7 +86,6 @@ function ComingSoon({ section, standalone = false }: { section: Section; standal
   );
 }
 
-export const FoodScreen = () => <ComingSoon section="food" />;
 export const ChatScreen = () => <ComingSoon section="chat" />;
 export const CycleScreen = () => <ComingSoon section="cycle" />;
 export const InsightsScreen = () => <ComingSoon section="insights" />;

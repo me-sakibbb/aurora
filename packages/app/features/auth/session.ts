@@ -12,6 +12,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { create } from 'zustand';
+import { useRecentFoods } from '../food/queries';
 import { useOnboardingDraft } from '../onboarding/draft-store';
 
 type AuthState = { status: AuthStatus; session: Session | null };
@@ -24,8 +25,8 @@ export const useSession = () => useAuthStore((s) => s.session);
 /**
  * Mirrors Supabase's auth state into the store. The session itself persists in SecureStore
  * (native) / localStorage (web) and survives restarts and offline launches.
- * Signing out wipes the query cache and any onboarding answers, so the next person on a shared
- * phone sees nothing.
+ * Signing out wipes the query cache, onboarding answers and recent foods, so the next person on a
+ * shared phone sees nothing.
  */
 export function useAuthListener() {
   const queryClient = useQueryClient();
@@ -42,6 +43,7 @@ export function useAuthListener() {
       if (event === 'SIGNED_OUT') {
         queryClient.clear();
         useOnboardingDraft.getState().reset();
+        useRecentFoods.getState().clear();
       }
     });
     return () => subscription.unsubscribe();

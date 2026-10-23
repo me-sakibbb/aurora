@@ -22,6 +22,7 @@ export function Sheet({
   label,
   children,
   className,
+  flush = false,
 }: {
   open: boolean;
   onClose: () => void;
@@ -29,6 +30,11 @@ export function Sheet({
   label: string;
   children: React.ReactNode;
   className?: string;
+  /**
+   * Edge-to-edge content (e.g. a hero photo): no padding, and the drag handle floats over the top.
+   * The content handles its own padding and bottom inset.
+   */
+  flush?: boolean;
 }) {
   const { t } = useTranslation();
   const insets = useInsets();
@@ -79,13 +85,26 @@ export function Sheet({
           role="dialog"
           aria-modal
           aria-label={label}
-          style={{ transform: [{ translateY }], paddingBottom: Math.max(insets.bottom, 16) + 8 }}
+          style={{
+            transform: [{ translateY }],
+            paddingBottom: flush ? 0 : Math.max(insets.bottom, 16) + 8,
+          }}
           className={cn(
             'bg-card w-full rounded-t-[28px] px-5 pt-3 shadow-2xl shadow-black/30 lg:max-w-md lg:rounded-[28px] lg:pt-6',
+            flush && 'overflow-hidden px-0 pt-0 lg:pt-0',
             className,
           )}
         >
-          <View className="bg-border mx-auto mb-5 h-1.5 w-10 rounded-full lg:hidden" />
+          {flush ? (
+            <View
+              pointerEvents="none"
+              className="absolute left-0 right-0 top-2.5 z-10 items-center lg:hidden"
+            >
+              <View className="bg-card/80 h-1.5 w-10 rounded-full" />
+            </View>
+          ) : (
+            <View className="bg-border mx-auto mb-5 h-1.5 w-10 rounded-full lg:hidden" />
+          )}
           {children}
         </Animated.View>
       </View>

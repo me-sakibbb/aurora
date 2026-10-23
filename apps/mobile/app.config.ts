@@ -46,6 +46,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       { faceIDPermission: 'Allow Aurora to use Face ID to unlock the app.' },
     ],
     'expo-notifications',
+    'expo-image',
     // @react-native-google-signin/google-signin needs no config plugin on Android (autolinked).
     // If iOS is added later, add ['@react-native-google-signin/google-signin', { iosUrlScheme }].
     // Placeholder transparent logo until designs land; Android fails resource linking without an image.
