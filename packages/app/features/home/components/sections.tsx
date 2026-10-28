@@ -285,7 +285,16 @@ export function MoodCard({
 
 // ─── Cycle preview (F4/F11, only for opted-in accounts) ─────────────────────────────────────────
 
-export function CyclePreview({ status, onOpen }: { status: CycleStatus; onOpen: () => void }) {
+export function CyclePreview({
+  status,
+  fertilityOptIn,
+  onOpen,
+}: {
+  status: CycleStatus;
+  /** The person chose to see the fertile-window estimate (F11). */
+  fertilityOptIn: boolean;
+  onOpen: () => void;
+}) {
   const { t } = useTranslation();
   const locale = useDateLocale();
   const window = status.fertility_window;
@@ -317,7 +326,9 @@ export function CyclePreview({ status, onOpen }: { status: CycleStatus; onOpen: 
             ) : null}
           </>
         ) : (
-          <Text className="text-muted-foreground leading-5">{t('home.cycle.notEnough')}</Text>
+          <Text className="text-muted-foreground leading-5">
+            {fertilityOptIn ? t('home.cycle.notEnough') : t('cycle.fertile.off')}
+          </Text>
         )}
       </Panel>
     </Pressable>

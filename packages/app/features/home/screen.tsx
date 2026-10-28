@@ -4,13 +4,12 @@ import { useTranslation } from '@aurora/i18n';
 import { Flame, Icon, Text, WifiOff } from '@aurora/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { Pressable, RefreshControl, ScrollView, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { FadeIn } from '../../components/fade-in';
-import { useInsets } from '../../lib/insets';
 import { useAppRouter } from '../../lib/navigation';
 import { useIsOnline } from '../../lib/use-online';
-import { Avatar, useAccount } from '../shell/account';
-import { useSheets } from '../shell/sheets';
+import { useCycleStatus } from '../cycle/queries';
+import { useAccount } from '../shell/account';
 import { HomeSkeleton, Veil } from './components/primitives';
 import {
   CyclePreview,
@@ -22,13 +21,7 @@ import {
 } from './components/sections';
 import { SuggestionsSection } from './components/suggestions';
 import { TodayCard } from './components/today-card';
-import {
-  useCycleStatus,
-  useDailySummary,
-  useHomeDemo,
-  useMealSuggestions,
-  useProfile,
-} from './queries';
+import { useDailySummary, useHomeDemo, useMealSuggestions, useProfile } from './queries';
 import { useDateLocale } from './use-date-locale';
 
 /** Greeting by local time of day (wording only; nothing health-related is derived). */
@@ -47,11 +40,9 @@ function greetingKey(hour: number) {
  */
 export function HomeScreen() {
   const { t } = useTranslation();
-  const insets = useInsets();
   const router = useAppRouter();
   const online = useIsOnline();
   const locale = useDateLocale();
-  const showSheet = useSheets((s) => s.show);
   const { firstName } = useAccount();
 
   const profile = useProfile();
@@ -81,7 +72,7 @@ export function HomeScreen() {
   return (
     <ScrollView
       className="bg-background flex-1"
-      contentContainerStyle={{ paddingTop: insets.top + 16 }}
+      contentContainerStyle={{ paddingTop: 16 }}
       contentContainerClassName="pb-10"
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
     >
@@ -113,13 +104,6 @@ export function HomeScreen() {
             <Icon as={Flame} size={16} className="text-accent" />
             <Text className="text-sm font-bold">{demo.week.streak_days}</Text>
           </View>
-          <Pressable
-            onPress={() => showSheet('profile')}
-            aria-label={t('shell.openProfile')}
-            className="rounded-full active:opacity-80 lg:hidden"
-          >
-            <Avatar />
-          </Pressable>
         </View>
 
         {!online ? (
@@ -180,7 +164,11 @@ export function HomeScreen() {
               {cycle.data?.enabled ? (
                 <FadeIn delay={180}>
                   <Veil hidden={discreet} label={t('home.cycle.title')}>
-                    <CyclePreview status={cycle.data} onOpen={() => go('/cycle')} />
+                    <CyclePreview
+                      status={cycle.data}
+                      fertilityOptIn={profile.data?.wants_fertility_estimate === true}
+                      onOpen={() => go('/cycle')}
+                    />
                   </Veil>
                 </FadeIn>
               ) : null}

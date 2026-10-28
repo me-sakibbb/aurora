@@ -1,9 +1,7 @@
 'use client';
 
 import {
-  type CycleStatus,
   type DailySummary,
-  fetchCycleStatus,
   fetchDailySummary,
   fetchMealSuggestions,
   fetchProfile,
@@ -17,7 +15,6 @@ import { useSession } from '../auth/session';
 import { useDemoHome } from './demo';
 
 export const profileQueryKey = (userId: string | undefined) => ['profile', userId];
-export const cycleStatusQueryKey = (userId: string | undefined) => ['cycle-status', userId];
 /** Prefix of every day's summary; invalidate it after a meal is logged. */
 export const dailySummaryQueryKey = (userId: string | undefined) => ['daily-summary', userId];
 
@@ -30,22 +27,6 @@ export function useProfile() {
     enabled: Boolean(userId) && isApiConfigured(),
     staleTime: 5 * 60_000,
   });
-}
-
-/** `GET /ovulation`: whether cycle content exists for this account at all (F13). */
-export function useCycleStatus() {
-  const userId = useSession()?.user.id;
-  return useQuery<CycleStatus>({
-    queryKey: cycleStatusQueryKey(userId),
-    queryFn: fetchCycleStatus,
-    enabled: Boolean(userId) && isApiConfigured(),
-    staleTime: 5 * 60_000,
-  });
-}
-
-/** True only when the backend says the account opted in. Unknown (loading/error) → hidden. */
-export function useCycleVisible() {
-  return useCycleStatus().data?.enabled === true;
 }
 
 export type SectionState = 'ready' | 'loading' | 'offline' | 'error';

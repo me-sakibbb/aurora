@@ -6,7 +6,10 @@
     "loading": "লোড হচ্ছে…",
     "languageToggle": "English",
     "languageToggleLabel": "View in English (ইংরেজিতে দেখুন)",
-    "close": "বন্ধ করুন"
+    "close": "বন্ধ করুন",
+    "cancel": "Cancel",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month"
   },
   "updates": {
     "downloading": "আপডেট ডাউনলোড হচ্ছে…",
@@ -216,15 +219,125 @@
       "other": "Other"
     }
   },
+  "cycle": {
+    "title": "Your cycle",
+    "offline": "You're offline. Anything you log is saved on this device and sent once you're back online.",
+    "saveFailed": "Something you logged couldn't be saved. Nothing is lost; you can try again.",
+    "discard": "Discard",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "errors": {
+      "future": "That date hasn't happened yet. Pick today or an earlier day.",
+      "endBeforeStart": "The end date can't be before the start date."
+    },
+    "setup": {
+      "progress": "{{step}} of {{total}}",
+      "save": "Turn on cycle tracking",
+      "saveFailed": "We couldn't save that. Your answers are still here; please try again.",
+      "intro": {
+        "title": "Track your cycle",
+        "body": "Log when your period starts and ends, and look back on your history whenever you like.",
+        "pointLog": "Logging takes a couple of taps.",
+        "pointPrivate": "Your cycle data is private to your account.",
+        "start": "Set it up",
+        "notNow": "Not now"
+      },
+      "lastPeriod": {
+        "title": "When was your last period?",
+        "unknown": "I don't remember",
+        "pickStart": "Tap the day it started.",
+        "pickEnd": "Now tap the day it ended, or choose \"It's still going\"."
+      },
+      "length": {
+        "title": "How long is your cycle usually?",
+        "subtitle": "Count from the first day of one period to the first day of the next.",
+        "unsure": "I'm not sure"
+      },
+      "fertility": {
+        "title": "Show an estimated fertile window?",
+        "subtitle": "Aurora can show the range of dates your fertile window is estimated to fall in. You can change this any time.",
+        "yes": "Yes, show it",
+        "no": "No, thanks"
+      }
+    },
+    "settings": {
+      "title": "Cycle settings",
+      "profileRow": "Cycle tracking",
+      "on": "On",
+      "off": "Off",
+      "save": "Save changes",
+      "turnOff": "Turn off cycle tracking",
+      "offConfirmTitle": "Turn off cycle tracking?",
+      "offConfirmBody": "The Cycle tab and cycle cards will be hidden. Periods you've logged are kept, and you can turn it back on any time."
+    },
+    "period": {
+      "title": "Your period",
+      "logStart": "Log period start",
+      "logEnd": "Log period end",
+      "edit": "Edit period",
+      "started": "Started",
+      "ended": "Ended",
+      "ongoing": "Ongoing",
+      "stillOngoing": "It's still going",
+      "ongoingSince": "Started {{date}}",
+      "lastStarted": "Last period started {{date}}",
+      "noneYet": "No period logged yet",
+      "startHint": "Pick the day it started. It's set to today.",
+      "endHint": "This period started on {{date}}. Pick the day it ended.",
+      "save": "Save",
+      "delete": "Delete period",
+      "deleteTitle": "Delete this period?",
+      "deleteBody": "It will be removed from your history for good. This can't be undone.",
+      "lastEnded": "Ended {{date}}"
+    },
+    "phase": {
+      "title": "Current phase",
+      "day": "Day {{day}} of your cycle",
+      "names": {
+        "menstrual": "Menstrual phase",
+        "follicular": "Follicular phase",
+        "ovulatory": "Ovulatory phase",
+        "luteal": "Luteal phase"
+      }
+    },
+    "fertile": {
+      "title": "Estimated fertile window",
+      "notEnough": "There isn't enough information for an estimate yet.",
+      "off": "You've chosen not to see a fertile window estimate.",
+      "turnOn": "Change in settings"
+    },
+    "history": {
+      "title": "History",
+      "end": "That's every period you've logged",
+      "emptyTitle": "Nothing logged yet",
+      "emptyBody": "Periods you log will show up here, newest first.",
+      "editLabel": "Period that started {{date}}. Tap to edit or delete."
+    },
+    "unavailable": {
+      "title": "Cycle tracking isn't available",
+      "body": "Cycle tracking isn't turned on for this account."
+    },
+    "calendar": {
+      "period": "Period",
+      "fertile": "Estimated fertile window",
+      "today": "Today"
+    },
+    "day": {
+      "today": "Today, {{date}}",
+      "nothing": "Nothing logged for this day.",
+      "future": "This day hasn't come yet.",
+      "period": "Period: {{start}} – {{end}}",
+      "periodOngoing": "Period since {{start}}",
+      "fertile": "In your estimated fertile window.",
+      "edit": "Edit this period",
+      "logStart": "Log a period starting this day"
+    }
+  },
   "placeholders": {
     "backHome": "Back to Home",
     "chat": {
       "title": "Ask Aurora",
       "body": "Ask about food, your cycle or how you're feeling, in English, Bengali or a mix, and get answers with sources."
-    },
-    "cycle": {
-      "title": "Cycle tracking",
-      "body": "Log your period and symptoms, see your current phase, and review your history."
     },
     "insights": {
       "title": "Insights",

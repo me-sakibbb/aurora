@@ -1,6 +1,7 @@
 export type { Session, User } from '@supabase/supabase-js';
 export * from './auth';
 export { ApiError, apiFetch, isApiConfigured } from './backend';
+export * from './cycle';
 export type { Database } from './database.types';
 export * from './food';
 export * from './home';

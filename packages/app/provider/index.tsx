@@ -8,11 +8,16 @@ import { AuthGate } from '../features/auth/auth-gate';
 import { useAuthListener } from '../features/auth/session';
 import { UpdateOverlay } from '../features/updates/update-overlay';
 import { useRestoreLanguage } from '../lib/language';
+import { registerMutationDefaults } from './mutations';
 import { SafeArea } from './safe-area';
 
 /** Every provider both apps need. Each app's root layout renders this once. */
 export function Provider({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(createQueryClient);
+  const [queryClient] = useState(() => {
+    const client = createQueryClient();
+    registerMutationDefaults(client);
+    return client;
+  });
 
   useEffect(() => setupAppLifecycle(), []);
   useRestoreLanguage();

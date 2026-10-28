@@ -13,6 +13,10 @@ const profileSchema = z.object({
     .transform((goals) => (goals ?? []).filter((g) => (GOALS as readonly string[]).includes(g))),
   target_kcal: z.coerce.number().nullish(),
   discreet_mode: z.boolean().nullish(),
+  /** Decides who is offered cycle tracking before opting in (F13). */
+  sex: z.enum(['female', 'male', 'other']).nullish().catch(null),
+  /** Opt-in for the estimated fertile window (F11). */
+  wants_fertility_estimate: z.boolean().nullish(),
 });
 
 export type Profile = z.infer<typeof profileSchema> & { goals: (typeof GOALS)[number][] };
@@ -28,30 +32,6 @@ export async function fetchProfile(): Promise<Profile | null> {
     if (error instanceof ApiError && error.status === 404) return null;
     throw error;
   }
-}
-
-const fertileWindowSchema = z.object({
-  start: z.string(),
-  end: z.string(),
-  confidence: z.string().nullish(),
-  /** Explanatory wording written by the backend. Shown in full when present. */
-  note: z.string().nullish(),
-});
-
-const cycleStatusSchema = z.object({
-  enabled: z.boolean(),
-  fertility_window: fertileWindowSchema.nullish(),
-});
-
-export type FertileWindow = z.infer<typeof fertileWindowSchema>;
-export type CycleStatus = z.infer<typeof cycleStatusSchema>;
-
-/**
- * `GET /api/v1/ovulation`. `enabled` decides whether the cycle preview and Cycle tab exist at all
- * (F13). Only the window's start and end are kept: the app never shows a single predicted day (F11).
- */
-export async function fetchCycleStatus(): Promise<CycleStatus> {
-  return cycleStatusSchema.parse(await apiFetch('/ovulation'));
 }
 
 export const MEAL_SLOTS = ['breakfast', 'lunch', 'snack', 'dinner'] as const;

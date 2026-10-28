@@ -120,8 +120,13 @@ the workspace root. Review each added component: some need extra `@rn-primitives
 
 ## App shell & Home (F4)
 
-- **Shell** (`packages/app/features/shell`): Home, Food, Ask Aurora, and either Cycle (only when
-  `GET /ovulation` says `enabled`, F13) or Insights, around a central Log button that opens the
+- **Top bar** (`shell/top-bar.tsx`): one fixed `AppTopBar` drawn by the shell (web `AppShell`,
+  native `(tabs)/_layout.tsx`): section title from the route, route actions (Cycle's settings
+  button once opted in) and `ProfileButton` (avatar → profile sheet, hidden at `lg` where the
+  sidebar shows it). Content scrolls under it, so screens don't add the top safe-area inset or their
+  own title row. Pushed screens in `STANDALONE_PATHS` (mood) render `<AppTopBar back />` themselves.
+- **Shell** (`packages/app/features/shell`): Home, Food, Ask Aurora, and either Cycle (see the
+  Cycle section for who sees it, F13) or Insights, around a central Log button that opens the
   quick-log sheet. Native: `apps/mobile/app/(tabs)/_layout.tsx` (Expo Router `Tabs` with the shared
   `AppTabBar`). Web: the `(app)` route group's layout renders `AppShell` (sidebar at `lg+`, tab bar
   below). Sheets (quick log, F24 profile) live in a zustand store and are drawn once by the shell.
@@ -130,7 +135,38 @@ the workspace root. Review each added component: some need extra `@rn-primitives
   yet (daily summary, week/streak/chips, insights, Aurora noticed, recent logs, mood) use
   `features/home/demo.ts`, shaped like `packages/api/src/home/types.ts` (the proposed contract), and
   show a "Preview" badge. Suggestions fall back to the sample while the endpoint fails.
-- Food, Chat, Cycle, Insights and Mood are "coming soon" placeholders (`features/placeholders`).
+- Chat, Insights and Mood are "coming soon" placeholders (`features/placeholders`).
+
+## Cycle tracking (F10, F11, F13)
+
+- **Data**: settings, opt-in and the fertile window come from FastAPI `GET/POST /ovulation`
+  (`packages/api/src/cycle/api.ts`). Period start/end dates are read and written straight to the
+  Supabase `cycle_logs` table (RLS: own rows only) because the backend has no cycle-log endpoints.
+  The fertile-window opt-in is written to the person's own `profiles.wants_fertility_estimate` row
+  for the same reason. Symptoms and flow aren't built yet.
+- **Setup** marks the last period as a start→end span on the calendar (or "still going" / "don't
+  remember"). Saving sends the start to `POST /ovulation` *and* writes it as the first `cycle_logs`
+  entry, so it shows in History. After setup, period dates are only edited in History; the settings
+  sheet covers cycle length, the fertile-window choice and turning tracking off.
+- **Who sees it** (`cycleAccess` in `packages/api/src/cycle/access.ts`, unit tested): opted-in
+  accounts get the tab and cycle cards; accounts whose profile `sex` is female/other are offered the
+  tab, and opening it runs the setup questions; everyone else sees nothing (Home's cycle preview is
+  opted-in only). Swap the sex check for a backend eligibility flag when one exists.
+- **Tab layout**: today card (log start/end) → month calendar (`components/cycle-calendar.tsx`:
+  logged period days filled, an ongoing one up to today; the backend's fertile range dashed; tap a
+  day for details and "log a period starting this day" / "edit this period") → phase and
+  fertile window → infinite history. Cycle settings open from the top bar's settings button and
+  the profile sheet. Each month loads its own periods
+  (`usePeriodsInMonth`, `fetchPeriodsBetween`); marks come from `periodDays` in
+  `packages/api/src/cycle/calendar.ts` (unit tested). Nothing is predicted in the app.
+- **Display rules**: the fertile window is only ever a date range (Zod drops `ovulation_start/end`),
+  with the backend's `note` shown in full. The current phase isn't returned yet, so the phase card
+  shows sample data (`features/cycle/demo.ts`, proposed shape in `packages/api/src/cycle/types.ts`)
+  with a Preview badge.
+- **Writes** (save/delete period, save settings, turn off) are keyed mutations registered in
+  `registerCycleMutations` (`features/cycle/queries.ts`, called from `provider/mutations.ts`), with
+  optimistic cache updates. Periods use device-made ids and upsert, so a replay never duplicates.
+  Writes that fail for good show a banner with Try again / Discard (`useFailedCycleWrites`).
 
 ## i18n (`packages/i18n`)
 

@@ -33,10 +33,10 @@ import {
 } from '@aurora/ui';
 import { useEffect } from 'react';
 import { View } from 'react-native';
+import { ValueSlider } from '../../../components/value-slider';
 import { ModeSwitch } from '../../auth/components/mode-switch';
 import { SingleChoice } from '../components/choices';
 import { StepHeading } from '../components/layout';
-import { ValueSlider } from '../components/slider';
 import { BodyFigure } from '../components/visuals';
 import { YearWheel } from '../components/year-wheel';
 import type { StepDefinition } from './types';

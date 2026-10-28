@@ -4,6 +4,7 @@ import { useTranslation } from '@aurora/i18n';
 import {
   ChevronRight,
   cn,
+  Flower2,
   Icon,
   type IconComponent,
   Languages,
@@ -15,7 +16,9 @@ import {
 import { ActivityIndicator, Pressable, View } from 'react-native';
 import { Sheet } from '../../components/sheet';
 import { useLanguage } from '../../lib/language';
+import { useAppRouter } from '../../lib/navigation';
 import { useSignOut } from '../auth/session';
+import { useCycleAccess } from '../cycle/queries';
 import { useProfile } from '../home/queries';
 import { Avatar, useAccount } from './account';
 import { useSheets } from './sheets';
@@ -25,6 +28,9 @@ export function ProfileSheet() {
   const { t } = useTranslation();
   const open = useSheets((s) => s.open === 'profile');
   const close = useSheets((s) => s.close);
+  const show = useSheets((s) => s.show);
+  const router = useAppRouter();
+  const cycle = useCycleAccess();
   const { fullName, email } = useAccount();
   const profile = useProfile();
   const { language, setLanguage } = useLanguage();
@@ -79,6 +85,23 @@ export function ProfileSheet() {
           hint={t('shell.soon')}
           disabled
         />
+        {cycle !== 'hidden' ? (
+          <Row
+            icon={Flower2}
+            label={t('cycle.settings.profileRow')}
+            hint={cycle === 'enabled' ? t('cycle.settings.on') : t('cycle.settings.off')}
+            onPress={() => {
+              // Opted in: edit the settings. Not yet: the Cycle tab asks the setup questions.
+              if (cycle === 'enabled') {
+                show('cycleSettings');
+              } else {
+                close();
+                router.navigate('/cycle');
+              }
+            }}
+            border
+          />
+        ) : null}
         <Row
           icon={Languages}
           label={t('shell.profile.language')}

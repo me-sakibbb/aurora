@@ -6,7 +6,7 @@ import {
   MessageCircleHeart,
   Utensils,
 } from '@aurora/ui';
-import { useCycleVisible } from '../home/queries';
+import { useCycleAccess } from '../cycle/queries';
 
 export type NavKey = 'home' | 'food' | 'chat' | 'cycle' | 'insights';
 
@@ -21,11 +21,11 @@ const ITEMS: Record<NavKey, NavItem> = {
 };
 
 /**
- * The app's top-level sections. Cycle only exists for accounts the backend marks as opted in
- * (F13); for everyone else that slot in the bottom bar shows Insights instead.
+ * The app's top-level sections. Cycle exists for opted-in accounts and for those it's offered to
+ * (F13, see `cycleAccess`); for everyone else that slot in the bottom bar shows Insights instead.
  */
 export function useNavItems() {
-  const cycle = useCycleVisible();
+  const cycle = useCycleAccess() !== 'hidden';
   return {
     /** Bottom bar: two either side of the central Log button. */
     bar: {

@@ -84,6 +84,7 @@ export {
   Target,
   ThumbsUp,
   Timer,
+  Trash2,
   TrendingDown,
   TrendingUp,
   User,
