@@ -244,7 +244,7 @@ function useExamples() {
     .filter(Boolean);
 }
 
-/** "Try ডাল · bhorta · cha": a single line of tappable example searches. */
+/** "Try [ডাল] [bhorta] [cha]": a single line of tappable example-search badges. */
 function TryLine({
   onTry,
   limit,
@@ -259,27 +259,23 @@ function TryLine({
   return (
     <View
       className={cn(
-        'flex-row flex-wrap items-center gap-x-1 gap-y-1 px-1.5',
+        'flex-row flex-wrap items-center gap-x-1.5 gap-y-1.5 px-1.5',
         center && 'justify-center',
       )}
     >
       <Icon as={Sparkles} size={15} className="text-muted-foreground mr-1" />
       <Text className="text-muted-foreground text-sm">{t('food.search.tryPrefix')}</Text>
-      {examples.map((example, index) => (
-        <View key={example} className="flex-row items-center">
-          <Pressable
-            onPress={() => onTry(example)}
-            role="button"
-            aria-label={t('food.search.tryLabel', { example })}
-            hitSlop={6}
-            className="rounded-md px-1 py-0.5 hover:bg-muted active:bg-muted"
-          >
-            <Text className="text-foreground text-sm font-semibold underline">{example}</Text>
-          </Pressable>
-          {index < examples.length - 1 ? (
-            <Text className="text-muted-foreground text-sm">·</Text>
-          ) : null}
-        </View>
+      {examples.map((example) => (
+        <Pressable
+          key={example}
+          onPress={() => onTry(example)}
+          role="button"
+          aria-label={t('food.search.tryLabel', { example })}
+          hitSlop={4}
+          className="bg-card border-border rounded-full border px-3 py-1 hover:bg-muted active:bg-muted"
+        >
+          <Text className="text-foreground text-xs font-semibold">{example}</Text>
+        </Pressable>
       ))}
     </View>
   );

@@ -3,18 +3,55 @@
 import { useTranslation } from '@aurora/i18n';
 import { cn } from '@aurora/ui';
 import { cssInterop } from 'nativewind';
-import { useEffect, useRef, useState } from 'react';
-import { Animated, Easing, Modal, Platform, Pressable, View } from 'react-native';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import {
+  Animated,
+  Easing,
+  Modal,
+  PanResponder,
+  Platform,
+  Pressable,
+  ScrollView,
+  type ScrollViewProps,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { useInsets } from '../lib/insets';
+import { useScrollLock } from '../lib/scroll-lock';
 import { useReducedMotion } from '../lib/use-reduced-motion';
 
 cssInterop(Animated.View, { className: 'style' });
 
 const useNativeDriver = Platform.OS !== 'web';
 
+/** Tailwind's `lg` breakpoint: from here the sheet is a centered dialog and can't be swiped. */
+const LG = 1024;
+/** How far (px) or how fast (px/ms) a downward swipe must go to close the sheet. */
+const CLOSE_DISTANCE = 120;
+const CLOSE_VELOCITY = 0.8;
+
+/** The sheet's scroll position, so a downward swipe scrolls content first and closes only at the top. */
+const ScrollTopContext = createContext<{ current: number } | null>(null);
+
+/** A ScrollView for sheet content: swiping down closes the sheet only once it's scrolled to the top. */
+export function SheetScrollView({ onScroll, ...props }: ScrollViewProps) {
+  const scrollTop = useContext(ScrollTopContext);
+  return (
+    <ScrollView
+      scrollEventThrottle={16}
+      {...props}
+      onScroll={(event) => {
+        if (scrollTop) scrollTop.current = event.nativeEvent.contentOffset.y;
+        onScroll?.(event);
+      }}
+    />
+  );
+}
+
 /**
  * A bottom sheet on phones, a centered dialog on wide screens (`lg`). The backdrop fades while the
- * panel springs up; closing plays it back before unmounting. Back button / Esc / backdrop close it.
+ * panel springs up; closing plays it back before unmounting. Back button / Esc / backdrop close it,
+ * and on phones so does swiping it down.
  */
 export function Sheet({
   open,
@@ -41,9 +78,43 @@ export function Sheet({
   const reduced = useReducedMotion();
   const [mounted, setMounted] = useState(open);
   const progress = useRef(new Animated.Value(0)).current;
+  const drag = useRef(new Animated.Value(0)).current;
+  const scrollTop = useRef(0);
+  const { width } = useWindowDimensions();
+  useScrollLock(mounted);
+
+  // Read through refs so the responder, created once, always sees the latest values.
+  const swipeable = useRef(false);
+  swipeable.current = width < LG;
+  const close = useRef(onClose);
+  close.current = onClose;
+
+  const pan = useRef(
+    PanResponder.create({
+      // Capture only a clearly downward drag while the content is at its top; anything else
+      // (taps, horizontal moves, scrolling back up) stays with the content.
+      onMoveShouldSetPanResponderCapture: (_, g) =>
+        swipeable.current &&
+        scrollTop.current <= 0 &&
+        g.dy > 8 &&
+        Math.abs(g.dy) > Math.abs(g.dx) * 1.5,
+      onPanResponderMove: (_, g) => drag.setValue(Math.max(0, g.dy)),
+      onPanResponderRelease: (_, g) => {
+        if (g.dy > CLOSE_DISTANCE || g.vy > CLOSE_VELOCITY) {
+          close.current();
+          return;
+        }
+        Animated.spring(drag, { toValue: 0, friction: 9, tension: 120, useNativeDriver }).start();
+      },
+      onPanResponderTerminate: () =>
+        Animated.spring(drag, { toValue: 0, friction: 9, tension: 120, useNativeDriver }).start(),
+    }),
+  ).current;
 
   useEffect(() => {
     if (open) {
+      drag.setValue(0);
+      scrollTop.current = 0;
       setMounted(true);
       const animation = reduced
         ? Animated.timing(progress, { toValue: 1, duration: 0, useNativeDriver })
@@ -59,9 +130,13 @@ export function Sheet({
     });
     animation.start(({ finished }) => finished && setMounted(false));
     return () => animation.stop();
-  }, [open, progress, reduced]);
+  }, [open, progress, drag, reduced]);
 
-  const translateY = progress.interpolate({ inputRange: [0, 1], outputRange: [480, 0] });
+  // Closing after a swipe carries on from wherever the finger let go.
+  const translateY = Animated.add(
+    progress.interpolate({ inputRange: [0, 1], outputRange: [480, 0] }),
+    drag,
+  );
 
   return (
     <Modal
@@ -82,6 +157,7 @@ export function Sheet({
           />
         </Animated.View>
         <Animated.View
+          {...pan.panHandlers}
           role="dialog"
           aria-modal
           aria-label={label}
@@ -105,7 +181,7 @@ export function Sheet({
           ) : (
             <View className="bg-border mx-auto mb-5 h-1.5 w-10 rounded-full lg:hidden" />
           )}
-          {children}
+          <ScrollTopContext.Provider value={scrollTop}>{children}</ScrollTopContext.Provider>
         </Animated.View>
       </View>
     </Modal>

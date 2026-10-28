@@ -3,9 +3,9 @@
 import { type FoodItem, servingGrams } from '@aurora/api';
 import { useTranslation } from '@aurora/i18n';
 import { Icon, Info, Text, X } from '@aurora/ui';
-import { Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
+import { Pressable, useWindowDimensions, View } from 'react-native';
 import { FoodImage } from '../../../components/food-image';
-import { Sheet } from '../../../components/sheet';
+import { Sheet, SheetScrollView } from '../../../components/sheet';
 import { useInsets } from '../../../lib/insets';
 import { useLanguage } from '../../../lib/language';
 import { foodNames, kcalLabel, methodLabel } from '../display';
@@ -46,7 +46,7 @@ export function FoodDetailSheet({
 
   return (
     <Sheet open={open} onClose={onClose} label={primary} flush className="lg:max-w-lg">
-      <ScrollView
+      <SheetScrollView
         style={{ maxHeight: height * 0.92 }}
         contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 16) + 12 }}
         showsVerticalScrollIndicator={false}
@@ -127,7 +127,7 @@ export function FoodDetailSheet({
             </Text>
           </View>
         </View>
-      </ScrollView>
+      </SheetScrollView>
       {/* Outside the scroll view so it stays put while the content scrolls. */}
       <Pressable
         onPress={onClose}
