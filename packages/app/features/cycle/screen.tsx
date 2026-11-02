@@ -1,6 +1,6 @@
 'use client';
 
-import { periodOn } from '@aurora/api';
+import { buildPhaseRequest, periodOn } from '@aurora/api';
 import { useTranslation } from '@aurora/i18n';
 import { Button, Flower2, Icon, Text, WifiOff } from '@aurora/ui';
 import { format, isSameMonth, parseISO, startOfMonth } from 'date-fns';
@@ -25,9 +25,9 @@ import { CycleCalendar } from './components/cycle-calendar';
 import { PeriodSheet, type PeriodSheetMode } from './components/period-sheet';
 import { today as todayIso } from './components/setup-fields';
 import { SetupFlow } from './components/setup-flow';
-import { DEMO_PHASE } from './demo';
 import {
   useCycleAccess,
+  useCyclePhase,
   useCycleStatus,
   useFailedCycleWrites,
   usePeriods,
@@ -86,6 +86,11 @@ function CycleHome() {
   const items = periods.data?.pages.flat() ?? [];
   const firstLoad = periods.data === undefined && !periods.isError;
   const fertileWindow = status.data?.fertility_window;
+  // Asked once the periods are in, so the first request already uses the newest logged start.
+  const phaseRequest = firstLoad
+    ? null
+    : buildPhaseRequest({ periods: items, settings: status.data?.ovulation });
+  const phase = useCyclePhase(phaseRequest, today);
 
   // The calendar month's periods (shared cache with the calendar) plus the history list.
   const monthPeriods = usePeriodsInMonth({
@@ -109,7 +114,12 @@ function CycleHome() {
 
   const refresh = async () => {
     setRefreshing(true);
-    await Promise.allSettled([status.refetch(), profile.refetch(), periods.refetch()]);
+    await Promise.allSettled([
+      status.refetch(),
+      profile.refetch(),
+      periods.refetch(),
+      phaseRequest ? phase.refetch() : undefined,
+    ]);
     setRefreshing(false);
   };
 
@@ -184,7 +194,19 @@ function CycleHome() {
         {/* Side column: phase and fertile window */}
         <View className="gap-5 lg:min-w-0 lg:flex-[2]">
           <FadeIn delay={120}>
-            <PhaseCard phase={DEMO_PHASE} demo />
+            {phaseRequest === null ? (
+              firstLoad ? (
+                <Skeleton className="h-44 rounded-3xl" />
+              ) : (
+                <PhaseCard phase={undefined} />
+              )
+            ) : phase.data ? (
+              <PhaseCard phase={phase.data} />
+            ) : phase.isError || !online ? (
+              <InlineState kind={online ? 'error' : 'offline'} onRetry={() => phase.refetch()} />
+            ) : (
+              <Skeleton className="h-44 rounded-3xl" />
+            )}
           </FadeIn>
           <FadeIn delay={180}>
             <FertileWindowCard

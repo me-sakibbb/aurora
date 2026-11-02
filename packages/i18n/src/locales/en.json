@@ -293,6 +293,14 @@
     "phase": {
       "title": "Current phase",
       "day": "Day {{day}} of your cycle",
+      "phaseDay": "day {{day}} of this phase",
+      "needsPeriod": "Log when your last period started to see which phase you're in.",
+      "next_one": "{{phase}} starts in {{count}} day",
+      "next_other": "{{phase}} starts in {{count}} days",
+      "nextPeriod_one": "Next period expected around {{date}}, in {{count}} day",
+      "nextPeriod_other": "Next period expected around {{date}}, in {{count}} days",
+      "symptoms": "Common in this phase",
+      "tips": "Tips",
       "names": {
         "menstrual": "Menstrual phase",
         "follicular": "Follicular phase",

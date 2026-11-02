@@ -160,9 +160,12 @@ the workspace root. Review each added component: some need extra `@rn-primitives
   (`usePeriodsInMonth`, `fetchPeriodsBetween`); marks come from `periodDays` in
   `packages/api/src/cycle/calendar.ts` (unit tested). Nothing is predicted in the app.
 - **Display rules**: the fertile window is only ever a date range (Zod drops `ovulation_start/end`),
-  with the backend's `note` shown in full. The current phase isn't returned yet, so the phase card
-  shows sample data (`features/cycle/demo.ts`, proposed shape in `packages/api/src/cycle/types.ts`)
-  with a Preview badge.
+  with the backend's `note` shown in full.
+- **Phase** comes from the stateless `POST /cycle/phase` (`fetchCyclePhase`, `useCyclePhase`). The
+  body (`buildPhaseRequest`, unit tested) is only the person's own data: newest logged start (else
+  the setup start), their cycle length, and their latest finished period's length; anything unknown
+  or out of range is left to the backend default. No start → the card asks them to log one. The
+  query key includes today's date. Description, symptoms and tips are shown exactly as returned.
 - **Writes** (save/delete period, save settings, turn off) are keyed mutations registered in
   `registerCycleMutations` (`features/cycle/queries.ts`, called from `provider/mutations.ts`), with
   optimistic cache updates. Periods use device-made ids and upsert, so a replay never duplicates.

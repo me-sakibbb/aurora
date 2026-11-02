@@ -19,7 +19,7 @@ import {
 } from '@aurora/ui';
 import { format, parseISO } from 'date-fns';
 import { Pressable, View } from 'react-native';
-import { Panel, PreviewBadge } from '../../home/components/primitives';
+import { Panel } from '../../home/components/primitives';
 import { useDateLocale } from '../../home/use-date-locale';
 
 function useLongDate() {
@@ -174,24 +174,76 @@ const PHASE_ICONS: Record<CurrentPhase['phase'], IconComponent> = {
   luteal: Moon,
 };
 
-/** Where the person is in their cycle, as worked out by the backend (F10). */
-export function PhaseCard({ phase, demo }: { phase: CurrentPhase; demo: boolean }) {
+/**
+ * Where the person is in their cycle, as worked out by the backend (F10). Timing, description,
+ * symptoms and tips are shown exactly as returned. Without a logged period there's nothing to ask
+ * the backend for, so it says how to get one.
+ */
+export function PhaseCard({ phase }: { phase: CurrentPhase | undefined }) {
   const { t } = useTranslation();
+  const long = useLongDate();
+
+  if (!phase) {
+    return (
+      <Panel className="gap-3">
+        <CardTitle icon={Sparkles} title={t('cycle.phase.title')} />
+        <Text className="text-muted-foreground leading-6">{t('cycle.phase.needsPeriod')}</Text>
+      </Panel>
+    );
+  }
+
   return (
-    <Panel className="gap-3">
-      <CardTitle
-        icon={PHASE_ICONS[phase.phase]}
-        title={t('cycle.phase.title')}
-        badge={demo ? <PreviewBadge /> : null}
-      />
+    <Panel className="gap-4">
+      <CardTitle icon={PHASE_ICONS[phase.phase]} title={t('cycle.phase.title')} />
       <View className="gap-0.5">
         <Text className="text-lg font-medium">{t(`cycle.phase.names.${phase.phase}`)}</Text>
-        {phase.day_of_cycle !== null ? (
-          <Text variant="muted">{t('cycle.phase.day', { day: phase.day_of_cycle })}</Text>
-        ) : null}
+        <Text variant="muted">
+          {t('cycle.phase.day', { day: phase.cycle_day })} ·{' '}
+          {t('cycle.phase.phaseDay', { day: phase.phase_day })}
+        </Text>
       </View>
-      {phase.note ? <Text className="leading-6">{phase.note}</Text> : null}
+      <Text className="leading-6">{phase.description}</Text>
+
+      <View className="bg-background gap-2 rounded-2xl p-4">
+        <Text>
+          {t('cycle.phase.next', {
+            phase: t(`cycle.phase.names.${phase.next_phase}`),
+            count: phase.days_until_next_phase,
+          })}
+        </Text>
+        <Text>
+          {t('cycle.phase.nextPeriod', {
+            date: long(phase.next_period_date),
+            count: phase.days_until_next_period,
+          })}
+        </Text>
+      </View>
+
+      {phase.symptoms.length > 0 ? (
+        <PhaseList title={t('cycle.phase.symptoms')} items={phase.symptoms} />
+      ) : null}
+      {phase.tips.length > 0 ? (
+        <PhaseList title={t('cycle.phase.tips')} items={phase.tips} />
+      ) : null}
     </Panel>
+  );
+}
+
+function PhaseList({ title, items }: { title: string; items: readonly string[] }) {
+  return (
+    <View className="gap-2">
+      <Text className="text-muted-foreground text-sm font-medium">{title}</Text>
+      <View role="list" className="gap-1.5">
+        {items.map((item) => (
+          <View key={item} role="listitem" className="flex-row gap-2">
+            <Text className="text-olive" aria-hidden>
+              •
+            </Text>
+            <Text className="flex-1 leading-6">{item}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
   );
 }
 

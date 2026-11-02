@@ -3,8 +3,9 @@ import { apiFetch } from '../backend';
 import { getSupabase } from '../supabase';
 
 // Cycle tracking (F10, F11, F13). Settings and the fertile-window estimate come from the FastAPI
-// `/ovulation` endpoints; period start/end dates live in Supabase `cycle_logs` (RLS: own rows only),
-// since the backend has no cycle-log endpoints yet. Nothing is estimated in the app.
+// `/ovulation` endpoints, the current phase from `POST /cycle/phase`. Period start/end dates live in
+// Supabase `cycle_logs` (RLS: own rows only), since the backend has no cycle-log endpoints yet.
+// Nothing is estimated in the app.
 
 const settingsSchema = z.object({
   last_period_start: z.string().nullish(),
@@ -41,6 +42,84 @@ export async function fetchCycleStatus(): Promise<CycleStatus> {
 }
 
 export const CYCLE_LENGTH = { min: 21, max: 45, default: 28 } as const;
+/** What `POST /cycle/phase` accepts for `period_length_days`. */
+export const PERIOD_LENGTH = { min: 2, max: 10 } as const;
+
+// ─── Current phase (`POST /cycle/phase`) ────────────────────────────────────────────────────────
+
+export const CYCLE_PHASES = ['menstrual', 'follicular', 'ovulatory', 'luteal'] as const;
+export type CyclePhaseKey = (typeof CYCLE_PHASES)[number];
+
+const cyclePhaseSchema = z.object({
+  phase: z.enum(CYCLE_PHASES),
+  phase_day: z.number(),
+  cycle_day: z.number(),
+  days_until_next_period: z.number(),
+  days_until_next_phase: z.number(),
+  /** `yyyy-MM-dd`, estimated by the backend. */
+  next_period_date: z.string(),
+  next_phase: z.enum(CYCLE_PHASES),
+  /** Wording written by the backend; shown in full, as returned. */
+  description: z.string(),
+  symptoms: z.array(z.string()),
+  tips: z.array(z.string()),
+});
+
+export type CurrentPhase = z.infer<typeof cyclePhaseSchema>;
+
+export type CyclePhaseRequest = {
+  last_period_start: string;
+  cycle_length_days?: number;
+  period_length_days?: number;
+};
+
+function inRange(value: number | null | undefined, { min, max }: { min: number; max: number }) {
+  return typeof value === 'number' && value >= min && value <= max ? value : undefined;
+}
+
+/** Days from `start` to `end`, counting both (`yyyy-MM-dd`). */
+function inclusiveDays(start: string, end: string) {
+  return (
+    Math.round((Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86_400_000) + 1
+  );
+}
+
+/**
+ * The body for `POST /cycle/phase`, from what the person logged and set; nothing is estimated.
+ * - Start: the newest logged period, else the start given at setup. None → null (no phase to ask for).
+ * - Cycle length: their setting. Period length: their latest finished period. Either is left out
+ *   (the backend uses its default) when unknown or outside what the endpoint accepts.
+ */
+export function buildPhaseRequest({
+  periods,
+  settings,
+}: {
+  /** Logged periods, newest first. */
+  periods: readonly Period[];
+  settings: CycleSettings | null | undefined;
+}): CyclePhaseRequest | null {
+  const start = periods[0]?.started_on ?? settings?.last_period_start ?? null;
+  if (!start) return null;
+  const finished = periods.find((p) => p.ended_on !== null);
+  const body: CyclePhaseRequest = { last_period_start: start };
+  const cycleLength = inRange(settings?.cycle_length_days, CYCLE_LENGTH);
+  if (cycleLength !== undefined) body.cycle_length_days = cycleLength;
+  const periodLength = finished?.ended_on
+    ? inRange(inclusiveDays(finished.started_on, finished.ended_on), PERIOD_LENGTH)
+    : undefined;
+  if (periodLength !== undefined) body.period_length_days = periodLength;
+  return body;
+}
+
+/** `POST /api/v1/cycle/phase`: the current phase, worked out by the backend (stateless). */
+export async function fetchCyclePhase(
+  body: CyclePhaseRequest,
+  signal?: AbortSignal,
+): Promise<CurrentPhase> {
+  return cyclePhaseSchema.parse(await apiFetch('/cycle/phase', { method: 'POST', body, signal }));
+}
+
+// ─── Settings (`POST /ovulation`) ───────────────────────────────────────────────────────────────
 
 export type CycleSetupInput = {
   userId: string;

@@ -1,5 +1,11 @@
 import { apiFetch } from '../backend';
-import { buildCycleSettingsBody, fetchCycleStatus, validatePeriodDates } from './api';
+import {
+  buildCycleSettingsBody,
+  buildPhaseRequest,
+  fetchCyclePhase,
+  fetchCycleStatus,
+  validatePeriodDates,
+} from './api';
 import { newId } from './ids';
 
 jest.mock('../backend', () => ({
@@ -110,5 +116,71 @@ describe('newId', () => {
     const a = newId();
     expect(a).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
     expect(newId()).not.toBe(a);
+  });
+});
+
+describe('buildPhaseRequest', () => {
+  const settings = { last_period_start: '2026-09-01', cycle_length_days: 30 };
+
+  it('uses the newest logged start, the cycle length and the latest finished period length', () => {
+    expect(
+      buildPhaseRequest({
+        periods: [
+          { id: 'c', started_on: '2026-10-26', ended_on: null },
+          { id: 'b', started_on: '2026-09-28', ended_on: '2026-10-04' },
+          { id: 'a', started_on: '2026-08-30', ended_on: '2026-09-02' },
+        ],
+        settings,
+      }),
+    ).toEqual({ last_period_start: '2026-10-26', cycle_length_days: 30, period_length_days: 7 });
+  });
+
+  it('falls back to the setup start and leaves unknown lengths to the backend', () => {
+    expect(
+      buildPhaseRequest({ periods: [], settings: { ...settings, cycle_length_days: null } }),
+    ).toEqual({ last_period_start: '2026-09-01' });
+  });
+
+  it('leaves out lengths the endpoint would reject', () => {
+    expect(
+      buildPhaseRequest({
+        periods: [{ id: 'a', started_on: '2026-10-01', ended_on: '2026-10-14' }],
+        settings: { cycle_length_days: 60 },
+      }),
+    ).toEqual({ last_period_start: '2026-10-01' });
+  });
+
+  it('asks for nothing without a known start', () => {
+    expect(buildPhaseRequest({ periods: [], settings: { last_period_unknown: true } })).toBeNull();
+    expect(buildPhaseRequest({ periods: [], settings: null })).toBeNull();
+  });
+});
+
+describe('fetchCyclePhase', () => {
+  it('posts the body and keeps the backend wording as returned', async () => {
+    const phase = {
+      phase: 'ovulatory',
+      phase_day: 2,
+      cycle_day: 14,
+      days_until_next_period: 15,
+      days_until_next_phase: 4,
+      next_period_date: '2026-11-15',
+      next_phase: 'luteal',
+      description: 'You are at peak fertility.',
+      symptoms: ['heightened senses'],
+      tips: ['Zinc-rich foods support ovarian health'],
+    };
+    mockFetch.mockResolvedValueOnce(phase);
+    await expect(fetchCyclePhase({ last_period_start: '2026-10-18' })).resolves.toEqual(phase);
+    expect(mockFetch).toHaveBeenCalledWith('/cycle/phase', {
+      method: 'POST',
+      body: { last_period_start: '2026-10-18' },
+      signal: undefined,
+    });
+  });
+
+  it('rejects a phase it does not know', async () => {
+    mockFetch.mockResolvedValueOnce({ phase: 'unknown' });
+    await expect(fetchCyclePhase({ last_period_start: '2026-10-18' })).rejects.toThrow();
   });
 });

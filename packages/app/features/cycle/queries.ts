@@ -1,11 +1,14 @@
 'use client';
 
 import {
+  type CurrentPhase,
   type CycleAccess,
+  type CyclePhaseRequest,
   type CycleSetupInput,
   type CycleStatus,
   cycleAccess,
   deletePeriod,
+  fetchCyclePhase,
   fetchCycleStatus,
   fetchPeriodPage,
   fetchPeriodsBetween,
@@ -44,6 +47,21 @@ export function useCycleStatus() {
     queryFn: fetchCycleStatus,
     enabled: Boolean(userId) && isApiConfigured(),
     staleTime: 5 * 60_000,
+  });
+}
+
+/**
+ * `POST /cycle/phase` for the given inputs (see `buildPhaseRequest`). The answer depends on the
+ * date, so the day is part of the key: a new day asks again instead of showing yesterday's phase.
+ * Changing a period or the cycle length changes the body, which is a new query too.
+ */
+export function useCyclePhase(body: CyclePhaseRequest | null, today: string) {
+  const userId = useSession()?.user.id;
+  return useQuery<CurrentPhase>({
+    queryKey: ['cycle-phase', userId, today, body],
+    queryFn: ({ signal }) => fetchCyclePhase(body as CyclePhaseRequest, signal),
+    enabled: Boolean(userId) && body !== null && isApiConfigured(),
+    staleTime: 60 * 60_000,
   });
 }
 
