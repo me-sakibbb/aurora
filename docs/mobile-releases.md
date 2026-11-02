@@ -6,9 +6,8 @@ All commands run in `apps/mobile`.
 
 - [x] Rebuild the preview APK once so it includes `expo-updates`: `pnpm build:apk`. APKs built
       before this can't receive OTA updates.
-- [ ] Add `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` to the
-      **production** EAS environment before the first release build. Production currently only has
-      `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`.
+- [x] Add `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` to the
+      **production** EAS environment (2026-11-02, copied from preview: there is one backend).
 - [x] **Google sign-in** working on the preview APK (2026-10-04). Setup, for reference (error code 10 `DEVELOPER_ERROR` in `adb logcat` = one of these is wrong):
   1. Google Cloud → APIs & Services → Credentials: create a **Web application** OAuth client. Put its
      client ID and secret in Supabase → Authentication → Providers → Google (enable it).
@@ -35,7 +34,7 @@ MyBela one, and it only receives updates once rebuilt.
       SHA-1 `C9:8B:14:B7:28:82:AA:96:EC:4E:1A:EB:88:ED:2E:86:80:6D:A0:3E`
       (SHA-256 `29:13:96:05:6B:B8:4C:9A:BE:98:02:72:83:DB:16:13:F8:AF:A0:2D:08:1E:DD:30:0B:95:9D:E1:BA:94:34:9D`).
       `eas credentials -p android` shows it again.
-- [ ] Google Cloud: create a new **Android** OAuth client for `com.mybela.app` with that SHA-1 (step 2
+- [x] Google Cloud: create a new **Android** OAuth client for `com.mybela.app` with that SHA-1 (step 2
       below). The old one is tied to `com.aurora.app`; until this exists, Google sign-in fails with
       `DEVELOPER_ERROR` (code 10).
 
@@ -85,14 +84,16 @@ Testers install through **TestFlight**; there is no iOS equivalent of the APK li
 
 **Then:**
 
-1. Google Cloud (same project as Android): create an **iOS** OAuth client with bundle ID
-   `com.mybela.app`. Add its client ID to EAS for every environment:
+1. ✅ (2026-11-02) Google Cloud (same project as Android, `helloaurora`): **iOS** OAuth client
+   `690088084641-33pm…hgqh` for bundle ID `com.mybela.app`, added to EAS for every environment and to
+   `.env.local` (the downloaded client files live in the git-ignored `secrets/`). For reference:
    `eas env:create --name EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID --value <id> --environment preview --environment development --environment production --visibility plaintext`
-   Also add it to Supabase → Auth → Google → *Client IDs* (comma-separated, next to the web one).
+   Supabase needs no change: with `webClientId` set, the iOS ID token's audience is the web client.
+   If iOS sign-in fails with a **nonce** error, turn on *Skip nonce checks* under Supabase → Auth →
+   Providers → Google (the iOS Google SDK adds a nonce to its ID tokens).
    Setting this variable adds the Google URL scheme to `app.config.ts`, which **changes the native
    fingerprint on Android too**: rebuild the APK (`pnpm build:apk`) before the next Android OTA update.
-2. Fill in the missing **production** EAS env vars (see the list at the top). TestFlight builds use the
-   `production` profile and channel.
+2. ✅ Production EAS env vars filled in. TestFlight builds use the `production` profile and channel.
 3. `pnpm build:ios`. The first run signs in to Apple and lets EAS create the distribution
    certificate, provisioning profile and **APNs push key**. Expo Push uses that key, so iOS push needs
    no backend change as long as the backend sends through Expo Push.
