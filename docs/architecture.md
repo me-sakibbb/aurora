@@ -59,7 +59,7 @@ cd packages/ui
 npx @react-native-reusables/cli@latest add <component>
 ```
 
-Components import each other as `@aurora/ui/...`. That works because `@aurora/ui` is also linked at
+Components import each other as `@mybela/ui/...`. That works because `@mybela/ui` is also linked at
 the workspace root. Review each added component: some need extra `@rn-primitives/*` deps.
 
 ## Data layer (`packages/api`)
@@ -114,7 +114,7 @@ the workspace root. Review each added component: some need extra `@rn-primitives
   list" panel, separate from `invalid_credentials` (wrong password). See `auth/errors.ts`.
 - **Session** lives in SecureStore/localStorage and survives offline launches; sign-out clears the query
   cache (shared phones).
-- **Supabase dashboard setup** (backend): Redirect URLs `aurora://auth/callback`,
+- **Supabase dashboard setup** (backend): Redirect URLs `mybela://auth/callback`,
   `https://<web-domain>/auth/callback`, `http://localhost:3000/auth/callback`; Google provider with the
   Web client ID (plus the Android client with package name + SHA-1 in the same Google Cloud project).
 
@@ -125,14 +125,14 @@ the workspace root. Review each added component: some need extra `@rn-primitives
   button once opted in) and `ProfileButton` (avatar → profile sheet, hidden at `lg` where the
   sidebar shows it). Content scrolls under it, so screens don't add the top safe-area inset or their
   own title row. Pushed screens in `STANDALONE_PATHS` (mood) render `<AppTopBar back />` themselves.
-- **Shell** (`packages/app/features/shell`): Home, Food, Ask Aurora, and either Cycle (see the
+- **Shell** (`packages/app/features/shell`): Home, Food, Ask MyBela, and either Cycle (see the
   Cycle section for who sees it, F13) or Insights, around a central Log button that opens the
   quick-log sheet. Native: `apps/mobile/app/(tabs)/_layout.tsx` (Expo Router `Tabs` with the shared
   `AppTabBar`). Web: the `(app)` route group's layout renders `AppShell` (sidebar at `lg+`, tab bar
   below). Sheets (quick log, F24 profile) live in a zustand store and are drawn once by the shell.
 - **Home** (`features/home`): live data comes from `GET /profile` (target, goals, discreet mode),
   `GET /ovulation` (cycle preview) and `GET /food/suggestions/{user_id}`. Sections with no endpoint
-  yet (daily summary, week/streak/chips, insights, Aurora noticed, recent logs, mood) use
+  yet (daily summary, week/streak/chips, insights, MyBela noticed, recent logs, mood) use
   `features/home/demo.ts`, shaped like `packages/api/src/home/types.ts` (the proposed contract), and
   show a "Preview" badge. Suggestions fall back to the sample while the endpoint fails.
 - Chat, Insights and Mood are "coming soon" placeholders (`features/placeholders`).
@@ -218,7 +218,7 @@ JS-only changes ship to installed APKs over the air; see [mobile-releases.md](mo
 
 ## Open decisions / TODO before launch
 
-- [ ] **Android application ID**: placeholder `com.aurora.app` in `apps/mobile/app.config.ts`. It must
+- [ ] **Android application ID**: placeholder `com.mybela.app` in `apps/mobile/app.config.ts`. It must
       be final before the first Play Store upload.
 - [ ] **Final Bengali font** (currently Noto Sans Bengali).
 - [ ] **Designs / real tokens**: none yet. Tokens are placeholders.

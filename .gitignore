@@ -38,3 +38,5 @@ coverage/
 docs/client/
 
 .vercel
+
+secrets

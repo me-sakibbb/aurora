@@ -1,7 +1,7 @@
 'use client';
 
-import '@aurora/i18n';
-import { createQueryClient, persistOptions, setupAppLifecycle } from '@aurora/api';
+import '@mybela/i18n';
+import { createQueryClient, persistOptions, setupAppLifecycle } from '@mybela/api';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useEffect, useState } from 'react';
 import { AuthGate } from '../features/auth/auth-gate';

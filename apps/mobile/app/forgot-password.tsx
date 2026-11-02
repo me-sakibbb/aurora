@@ -1,1 +1,1 @@
-export { ForgotPasswordScreen as default } from '@aurora/app/features/auth/forgot-password-screen';
+export { ForgotPasswordScreen as default } from '@mybela/app/features/auth/forgot-password-screen';

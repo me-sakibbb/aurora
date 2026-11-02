@@ -1,1 +1,1 @@
-export { AuthCallbackScreen as default } from '@aurora/app/features/auth/callback-screen';
+export { AuthCallbackScreen as default } from '@mybela/app/features/auth/callback-screen';

@@ -1,5 +1,5 @@
-import { TextClassContext } from '@aurora/ui/components/text';
-import { cn } from '@aurora/ui/lib/utils';
+import { TextClassContext } from '@mybela/ui/components/text';
+import { cn } from '@mybela/ui/lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import type * as React from 'react';
 import { Platform, Pressable } from 'react-native';

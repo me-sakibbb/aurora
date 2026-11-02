@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { Button, cn, GoogleIcon, Input, type InputProps, Label, Text } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { Button, cn, GoogleIcon, Input, type InputProps, Label, Text } from '@mybela/ui';
 import { forwardRef, useState } from 'react';
 import { ActivityIndicator, Pressable, type TextInput, View } from 'react-native';
 

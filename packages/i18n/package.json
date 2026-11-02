@@ -1,5 +1,5 @@
 {
-  "name": "@aurora/i18n",
+  "name": "@mybela/i18n",
   "version": "0.0.0",
   "private": true,
   "sideEffects": [
@@ -16,7 +16,7 @@
     "react": "*"
   },
   "devDependencies": {
-    "@aurora/tsconfig": "workspace:*"
+    "@mybela/tsconfig": "workspace:*"
   },
   "main": "src/index.ts"
 }

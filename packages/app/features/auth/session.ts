@@ -1,6 +1,6 @@
 'use client';
 
-import type { Session } from '@aurora/api';
+import type { Session } from '@mybela/api';
 import {
   type AuthStatus,
   fetchHasOnboarded,
@@ -8,7 +8,7 @@ import {
   isSupabaseConfigured,
   type OnboardingState,
   signOut,
-} from '@aurora/api';
+} from '@mybela/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { create } from 'zustand';

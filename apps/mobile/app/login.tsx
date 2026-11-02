@@ -1,1 +1,1 @@
-export { LoginScreen as default } from '@aurora/app/features/auth/login-screen';
+export { LoginScreen as default } from '@mybela/app/features/auth/login-screen';

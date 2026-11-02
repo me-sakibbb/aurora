@@ -1,7 +1,7 @@
 'use client';
 
-import type { MealSlot } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
+import type { MealSlot } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
 import {
   Button,
   ChevronRight,
@@ -16,7 +16,7 @@ import {
   Sunrise,
   Text,
   WifiOff,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Skeleton } from '../../../components/skeleton';

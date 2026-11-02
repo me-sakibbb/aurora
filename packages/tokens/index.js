@@ -1,4 +1,4 @@
-// Single source of truth for Aurora's design tokens.
+// Single source of truth for MyBela's design tokens.
 // Every consumer (Tailwind preset → NativeWind on native, Tailwind on web) reads from here.
 //
 // Colors are HSL triplets ("H S% L%") so Tailwind can apply opacity: `bg-primary/50`.

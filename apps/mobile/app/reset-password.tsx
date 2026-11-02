@@ -1,1 +1,1 @@
-export { ResetPasswordScreen as default } from '@aurora/app/features/auth/reset-password-screen';
+export { ResetPasswordScreen as default } from '@mybela/app/features/auth/reset-password-screen';

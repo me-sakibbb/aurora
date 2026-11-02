@@ -1,4 +1,4 @@
-import { useTranslation } from '@aurora/i18n';
+import { useTranslation } from '@mybela/i18n';
 import { bn, enUS } from 'date-fns/locale';
 
 /** date-fns locale matching the app language, for day and month names. */

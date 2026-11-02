@@ -1,5 +1,5 @@
-import { kv } from '@aurora/api';
-import { i18n, isLanguage, type Language, useTranslation } from '@aurora/i18n';
+import { kv } from '@mybela/api';
+import { i18n, isLanguage, type Language, useTranslation } from '@mybela/i18n';
 import { useCallback, useEffect } from 'react';
 
 const STORAGE_KEY = 'aurora.language';

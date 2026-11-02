@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, cn, Icon, type IconComponent, Text } from '@aurora/ui';
+import { Check, cn, Icon, type IconComponent, Text } from '@mybela/ui';
 import { Platform, Pressable, View } from 'react-native';
 import { Pop } from '../../../components/pop';
 import { tapHaptic } from '../../../lib/haptics';

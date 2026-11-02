@@ -1,4 +1,4 @@
-# Aurora front-end: notes for Claude
+# MyBela front-end: notes for Claude
 
 Universal app: one codebase → Next.js web app + Android app (Expo). Read `docs/architecture.md` first.
 
@@ -15,7 +15,7 @@ supabase-js · MMKV 4 / IndexedDB · i18next · Biome · Jest (jest-expo).
   `exports` maps to workspace packages (Metro skips platform extensions for them).
 - Style with NativeWind `className` using token names (`bg-primary`, `text-muted-foreground`). No raw
   hex colors or ad-hoc font families; add tokens in `packages/tokens` instead.
-- All user-facing text via `t()` from `@aurora/i18n`. Add keys to both `en.json` and `bn.json`.
+- All user-facing text via `t()` from `@mybela/i18n`. Add keys to both `en.json` and `bn.json`.
 - No business logic in the client: calorie ranges, streaks, chips, fertile windows, eligibility,
   suggestions and chat safety decisions all come from the backend and are displayed as returned.
   Disclaimer and fertile-window wording must be shown in full, exactly as provided.
@@ -26,7 +26,7 @@ supabase-js · MMKV 4 / IndexedDB · i18next · Biome · Jest (jest-expo).
 - React must stay a single copy. Don't bump `react` without updating `overrides` in `pnpm-workspace.yaml`.
 
 ## Verify changes
-`pnpm typecheck && pnpm lint && pnpm test`, then `pnpm --filter @aurora/web build`. For native bundling:
+`pnpm typecheck && pnpm lint && pnpm test`, then `pnpm --filter @mybela/web build`. For native bundling:
 `cd apps/mobile && npx expo export --platform android --output-dir <tmp>`. After a web build, a
 `className` check in `.next/server/app/index.html` confirms NativeWind is active on web.
 

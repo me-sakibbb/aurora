@@ -10,10 +10,10 @@
     "cssVariables": true
   },
   "aliases": {
-    "components": "@aurora/ui/components",
-    "utils": "@aurora/ui/lib/utils",
-    "ui": "@aurora/ui/components",
-    "lib": "@aurora/ui/lib",
-    "hooks": "@aurora/ui/hooks"
+    "components": "@mybela/ui/components",
+    "utils": "@mybela/ui/lib/utils",
+    "ui": "@mybela/ui/components",
+    "lib": "@mybela/ui/lib",
+    "hooks": "@mybela/ui/hooks"
   }
 }

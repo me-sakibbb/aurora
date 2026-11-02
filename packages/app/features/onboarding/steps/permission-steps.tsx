@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
+import { useTranslation } from '@mybela/i18n';
 import {
   BellRing,
   Button,
@@ -10,7 +10,7 @@ import {
   SlidersHorizontal,
   Text,
   Utensils,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { BrandMark } from '../../../components/brand-mark';

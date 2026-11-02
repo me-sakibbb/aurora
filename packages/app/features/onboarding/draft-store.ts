@@ -7,7 +7,7 @@ import {
   restoreDraft,
   restoreStep,
   type StepId,
-} from '@aurora/api';
+} from '@mybela/api';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 

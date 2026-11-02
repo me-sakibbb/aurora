@@ -1,5 +1,4 @@
 import '../global.css';
-import { Provider } from '@aurora/app/provider';
 import {
   NotoSansBengali_400Regular,
   NotoSansBengali_500Medium,
@@ -8,6 +7,7 @@ import {
   useFonts,
 } from '@expo-google-fonts/noto-sans-bengali';
 import * as Clarity from '@microsoft/react-native-clarity';
+import { Provider } from '@mybela/app/provider';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';

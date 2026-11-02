@@ -1,6 +1,6 @@
 'use client';
 
-import { cn, Text } from '@aurora/ui';
+import { cn, Text } from '@mybela/ui';
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, Pressable, View } from 'react-native';
 

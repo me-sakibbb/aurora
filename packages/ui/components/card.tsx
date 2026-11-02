@@ -1,5 +1,5 @@
-import { Text, TextClassContext } from '@aurora/ui/components/text';
-import { cn } from '@aurora/ui/lib/utils';
+import { Text, TextClassContext } from '@mybela/ui/components/text';
+import { cn } from '@mybela/ui/lib/utils';
 import type * as React from 'react';
 import { View } from 'react-native';
 

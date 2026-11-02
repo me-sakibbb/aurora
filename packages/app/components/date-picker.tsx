@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { Button, ChevronLeft, ChevronRight, cn, Icon, Text } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { Button, ChevronLeft, ChevronRight, cn, Icon, Text } from '@mybela/ui';
 import {
   addDays,
   addMonths,

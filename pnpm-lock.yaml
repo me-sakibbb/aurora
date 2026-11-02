@@ -174,12 +174,12 @@ importers:
 
   .:
     devDependencies:
-      '@aurora/ui':
-        specifier: workspace:*
-        version: link:packages/ui
       '@biomejs/biome':
         specifier: ^2.5.14
         version: 2.5.14
+      '@mybela/ui':
+        specifier: workspace:*
+        version: link:packages/ui
       '@types/react':
         specifier: ~19.2.18
         version: 19.2.18
@@ -192,27 +192,27 @@ importers:
 
   apps/mobile:
     dependencies:
-      '@aurora/api':
-        specifier: workspace:*
-        version: link:../../packages/api
-      '@aurora/app':
-        specifier: workspace:*
-        version: link:../../packages/app
-      '@aurora/i18n':
-        specifier: workspace:*
-        version: link:../../packages/i18n
-      '@aurora/tokens':
-        specifier: workspace:*
-        version: link:../../packages/tokens
-      '@aurora/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@expo-google-fonts/noto-sans-bengali':
         specifier: ^0.4.4
         version: 0.4.4
       '@microsoft/react-native-clarity':
         specifier: ^4.9.0
         version: 4.9.0(react-native-svg@15.15.4(react-native@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/jest-preset@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(react@19.2.3)(supports-color@8.1.1))(@react-native/metro-config@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/jest-preset@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(react@19.2.3)(supports-color@8.1.1))(@react-native/metro-config@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1))(react@19.2.3)
+      '@mybela/api':
+        specifier: workspace:*
+        version: link:../../packages/api
+      '@mybela/app':
+        specifier: workspace:*
+        version: link:../../packages/app
+      '@mybela/i18n':
+        specifier: workspace:*
+        version: link:../../packages/i18n
+      '@mybela/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
+      '@mybela/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       '@react-native-community/netinfo':
         specifier: 12.0.1
         version: 12.0.1(react-native@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/jest-preset@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(react@19.2.3)(supports-color@8.1.1))(@react-native/metro-config@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1))(react@19.2.3)
@@ -316,25 +316,25 @@ importers:
         specifier: ^3.4.19
         version: 3.4.19(yaml@2.9.1)
     devDependencies:
-      '@aurora/tsconfig':
+      '@mybela/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
 
   apps/web:
     dependencies:
-      '@aurora/api':
+      '@mybela/api':
         specifier: workspace:*
         version: link:../../packages/api
-      '@aurora/app':
+      '@mybela/app':
         specifier: workspace:*
         version: link:../../packages/app
-      '@aurora/i18n':
+      '@mybela/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
-      '@aurora/tokens':
+      '@mybela/tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
-      '@aurora/ui':
+      '@mybela/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       autoprefixer:
@@ -371,7 +371,7 @@ importers:
         specifier: ^3.4.19
         version: 3.4.19(yaml@2.9.1)
     devDependencies:
-      '@aurora/tsconfig':
+      '@mybela/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
 
@@ -396,7 +396,7 @@ importers:
         specifier: ^4.6.5
         version: 4.6.5
     devDependencies:
-      '@aurora/tsconfig':
+      '@mybela/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       '@types/jest':
@@ -417,21 +417,21 @@ importers:
 
   packages/app:
     dependencies:
-      '@aurora/api':
-        specifier: workspace:*
-        version: link:../api
-      '@aurora/i18n':
-        specifier: workspace:*
-        version: link:../i18n
-      '@aurora/tokens':
-        specifier: workspace:*
-        version: link:../tokens
-      '@aurora/ui':
-        specifier: workspace:*
-        version: link:../ui
       '@hookform/resolvers':
         specifier: ^5.9.1
         version: 5.9.1(@sinclair/typebox@0.34.52)(react-hook-form@7.88.0(react@19.2.3))(zod@4.6.5)
+      '@mybela/api':
+        specifier: workspace:*
+        version: link:../api
+      '@mybela/i18n':
+        specifier: workspace:*
+        version: link:../i18n
+      '@mybela/tokens':
+        specifier: workspace:*
+        version: link:../tokens
+      '@mybela/ui':
+        specifier: workspace:*
+        version: link:../ui
       '@tanstack/react-query':
         specifier: ^5.103.2
         version: 5.103.2(react@19.2.3)
@@ -454,7 +454,7 @@ importers:
         specifier: ^5.0.15
         version: 5.0.15(@types/react@19.2.18)(react@19.2.3)(use-sync-external-store@1.7.0(react@19.2.3))
     devDependencies:
-      '@aurora/tsconfig':
+      '@mybela/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
 
@@ -470,7 +470,7 @@ importers:
         specifier: ^17.0.15
         version: 17.0.15(i18next@26.4.2(typescript@5.9.3))(react-dom@19.2.3(react@19.2.3))(react-native@0.87.1(@babel/core@7.29.7(supports-color@8.1.1))(@react-native/metro-config@0.86.3(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@types/react@19.2.18)(react@19.2.3)(supports-color@8.1.1))(react@19.2.3)(typescript@5.9.3)
     devDependencies:
-      '@aurora/tsconfig':
+      '@mybela/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
 
@@ -515,7 +515,7 @@ importers:
         specifier: ^2.6.1
         version: 2.6.1
     devDependencies:
-      '@aurora/tsconfig':
+      '@mybela/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
 

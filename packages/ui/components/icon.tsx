@@ -1,7 +1,7 @@
 // Web: lucide-react renders plain inline SVG, so react-native-svg stays out of the web bundle.
 // Native twin: icon.native.tsx (lucide-react-native). Both export the same API.
 // Icons draw with `currentColor`, so a text color class (`text-primary`) sets their color.
-import { cn } from '@aurora/ui/lib/utils';
+import { cn } from '@mybela/ui/lib/utils';
 import type { IconComponent } from './icon-types';
 
 export type { IconComponent } from './icon-types';

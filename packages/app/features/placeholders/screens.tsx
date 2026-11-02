@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
+import { useTranslation } from '@mybela/i18n';
 import {
   Button,
   ChartNoAxesColumn,
@@ -11,7 +11,7 @@ import {
   Smile,
   Sparkles,
   Text,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { ScrollView, View } from 'react-native';
 import { FadeIn } from '../../components/fade-in';
 import { Pop } from '../../components/pop';

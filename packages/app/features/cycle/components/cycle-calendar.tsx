@@ -1,8 +1,8 @@
 'use client';
 
-import { type FertileWindow, periodDays } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { Button, ChevronLeft, ChevronRight, cn, Icon, Text } from '@aurora/ui';
+import { type FertileWindow, periodDays } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { Button, ChevronLeft, ChevronRight, cn, Icon, Text } from '@mybela/ui';
 import {
   addDays,
   addMonths,

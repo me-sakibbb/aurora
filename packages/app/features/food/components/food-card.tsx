@@ -1,8 +1,8 @@
 'use client';
 
-import type { FoodItem } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { cn, Icon, Text } from '@aurora/ui';
+import type { FoodItem } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { cn, Icon, Text } from '@mybela/ui';
 import { memo } from 'react';
 import { Pressable, View } from 'react-native';
 import { FoodImage } from '../../../components/food-image';

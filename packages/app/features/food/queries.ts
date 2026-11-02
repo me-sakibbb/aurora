@@ -12,7 +12,7 @@ import {
   methodIgnored,
   normalizeQuery,
   offsetIgnored,
-} from '@aurora/api';
+} from '@mybela/api';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { create } from 'zustand';
@@ -27,7 +27,7 @@ const SEARCH_DEBOUNCE_MS = 250;
 
 /**
  * Every food, persisted with the query cache. Powers instant/offline search and stands in for
- * server paging while the backend ignores `offset` / `cooking_method` (see @aurora/api food).
+ * server paging while the backend ignores `offset` / `cooking_method` (see @mybela/api food).
  */
 export function useFoodCatalogue() {
   return useQuery({

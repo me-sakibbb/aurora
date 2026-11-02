@@ -12,9 +12,9 @@ import {
   type StepId,
   submitOnboarding,
   visibleSteps,
-} from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { Button, ChefHat, ClipboardCheck, type IconComponent, PartyPopper, Text } from '@aurora/ui';
+} from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { Button, ChefHat, ClipboardCheck, type IconComponent, PartyPopper, Text } from '@mybela/ui';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable } from 'react-native';

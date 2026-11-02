@@ -1,4 +1,4 @@
-import { cn } from '@aurora/ui/lib/utils';
+import { cn } from '@mybela/ui/lib/utils';
 import * as React from 'react';
 import { Platform, TextInput, type TextInputProps } from 'react-native';
 

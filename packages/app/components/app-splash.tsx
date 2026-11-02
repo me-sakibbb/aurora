@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { Button, cn, Text } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { Button, cn, Text } from '@mybela/ui';
 import { ActivityIndicator, View } from 'react-native';
 import { BrandMark } from './brand-mark';
 import { FadeIn } from './fade-in';

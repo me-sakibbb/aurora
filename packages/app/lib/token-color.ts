@@ -1,4 +1,4 @@
-import { palette } from '@aurora/tokens';
+import { palette } from '@mybela/tokens';
 
 /**
  * A brand color as a CSS/SVG color string, for props that can't take a className (SVG strokes).

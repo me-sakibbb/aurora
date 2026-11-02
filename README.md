@@ -1,4 +1,4 @@
-# Aurora — Front-End
+# MyBela — Front-End
 
 One codebase for the **Next.js web app** and the **Android app (Expo / React Native)**.
 Screens are written once in `packages/app` and rendered by both apps.
@@ -10,7 +10,7 @@ corepack enable pnpm        # once per machine
 pnpm install
 
 pnpm web                    # Next.js on http://localhost:3000
-pnpm mobile                 # Expo dev server (needs the Aurora dev client installed on a device/emulator)
+pnpm mobile                 # Expo dev server (needs the MyBela dev client installed on a device/emulator)
 ```
 
 The Android app uses a **development build**, not Expo Go (push notifications, biometrics, MMKV and

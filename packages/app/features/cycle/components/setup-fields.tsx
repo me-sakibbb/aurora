@@ -1,8 +1,8 @@
 'use client';
 
-import { CYCLE_LENGTH, type CycleStatus, nextRange, type Profile } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { Check, cn, Icon, Text } from '@aurora/ui';
+import { CYCLE_LENGTH, type CycleStatus, nextRange, type Profile } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { Check, cn, Icon, Text } from '@mybela/ui';
 import { format } from 'date-fns';
 import { Pressable, View } from 'react-native';
 import { create } from 'zustand';

@@ -1,8 +1,8 @@
 'use client';
 
-import type { MealSuggestions } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { cn, Icon, Text } from '@aurora/ui';
+import type { MealSuggestions } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { cn, Icon, Text } from '@mybela/ui';
 import { Platform, Pressable, ScrollView, View } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';
 import { Skeleton } from '../../../components/skeleton';

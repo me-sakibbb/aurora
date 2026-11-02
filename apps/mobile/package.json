@@ -1,5 +1,5 @@
 {
-  "name": "@aurora/mobile",
+  "name": "@mybela/mobile",
   "version": "0.1.0",
   "private": true,
   "main": "expo-router/entry",
@@ -9,17 +9,21 @@
     "ios": "expo run:ios",
     "build:apk": "eas build --platform android --profile preview",
     "build:apk:dev": "eas build --platform android --profile development",
+    "build:ios": "eas build --platform ios --profile production",
+    "build:ios:adhoc": "eas build --platform ios --profile preview",
+    "submit:ios": "eas submit --platform ios --profile production --latest",
     "update:preview": "eas update --channel preview --environment preview --platform android",
     "update:production": "eas update --channel production --environment production --platform android",
+    "update:production:ios": "eas update --channel production --environment production --platform ios",
     "typecheck": "tsc --noEmit",
     "doctor": "expo-doctor"
   },
   "dependencies": {
-    "@aurora/api": "workspace:*",
-    "@aurora/app": "workspace:*",
-    "@aurora/i18n": "workspace:*",
-    "@aurora/tokens": "workspace:*",
-    "@aurora/ui": "workspace:*",
+    "@mybela/api": "workspace:*",
+    "@mybela/app": "workspace:*",
+    "@mybela/i18n": "workspace:*",
+    "@mybela/tokens": "workspace:*",
+    "@mybela/ui": "workspace:*",
     "@expo-google-fonts/noto-sans-bengali": "^0.4.4",
     "@microsoft/react-native-clarity": "^4.9.0",
     "@react-native-community/netinfo": "12.0.1",
@@ -58,6 +62,6 @@
     "tailwindcss": "^3.4.19"
   },
   "devDependencies": {
-    "@aurora/tsconfig": "workspace:*"
+    "@mybela/tsconfig": "workspace:*"
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import type { BodyType } from '@aurora/api';
+import type { BodyType } from '@mybela/api';
 import {
   BodyAthletic,
   BodyAverage,
@@ -10,7 +10,7 @@ import {
   Droplet,
   Icon,
   type IconComponent,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { Platform, View } from 'react-native';
 
 /** Rounded square holding an icon. Inverts when its card is selected. */
@@ -57,7 +57,7 @@ export function HeroIcon({ icon }: { icon: IconComponent }) {
 }
 
 /** Decorative "aurora" glows behind the page. Blurred on web; very faint on native. */
-export function AuroraGlow() {
+export function BrandGlow() {
   const blur = Platform.select({ web: 'blur-3xl' });
   return (
     <View aria-hidden pointerEvents="none" className="absolute inset-0 overflow-hidden">

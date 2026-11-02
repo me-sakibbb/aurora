@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { cn } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { cn } from '@mybela/ui';
 import { cssInterop } from 'nativewind';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import {

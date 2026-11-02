@@ -1,5 +1,6 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   type AuthErrorKind,
   type EmailPasswordInput,
@@ -12,10 +13,9 @@ import {
   signUpSchema,
   signUpWithPassword,
   toAuthErrorKind,
-} from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { Input, Text } from '@aurora/ui';
-import { zodResolver } from '@hookform/resolvers/zod';
+} from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { Input, Text } from '@mybela/ui';
 import { useRef, useState } from 'react';
 import { Controller, type Resolver, useForm } from 'react-hook-form';
 import { Platform, type TextInput, View } from 'react-native';

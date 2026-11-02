@@ -1,7 +1,7 @@
 'use client';
 
-import type { CycleStatus, Insight, MoodToday, RecentLog, WeekActivity } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
+import type { CycleStatus, Insight, MoodToday, RecentLog, WeekActivity } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
 import {
   Angry,
   ArrowRight,
@@ -20,7 +20,7 @@ import {
   Sparkles,
   Text,
   Utensils,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { format, isToday, parseISO } from 'date-fns';
 import { Platform, Pressable, View } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';
@@ -86,7 +86,7 @@ export function QuickActions({ onNavigate }: { onNavigate: (href: string) => voi
   );
 }
 
-// ─── Aurora noticed (F20) ───────────────────────────────────────────────────────────────────────
+// ─── MyBela noticed (F20) ───────────────────────────────────────────────────────────────────────
 
 export function NoticedCard({
   insight,

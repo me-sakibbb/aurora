@@ -7,7 +7,7 @@ import {
   fetchProfile,
   isApiConfigured,
   type MealSuggestions,
-} from '@aurora/api';
+} from '@mybela/api';
 import { type UseQueryResult, useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useIsOnline } from '../../lib/use-online';

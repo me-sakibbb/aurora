@@ -1,8 +1,8 @@
 'use client';
 
-import { buildPhaseRequest, periodOn } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { Button, Flower2, Icon, Text, WifiOff } from '@aurora/ui';
+import { buildPhaseRequest, periodOn } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { Button, Flower2, Icon, Text, WifiOff } from '@mybela/ui';
 import { format, isSameMonth, parseISO, startOfMonth } from 'date-fns';
 import { useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';

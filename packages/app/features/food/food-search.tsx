@@ -1,7 +1,7 @@
 'use client';
 
-import type { FoodItem } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
+import type { FoodItem } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
 import {
   Button,
   cn,
@@ -13,7 +13,7 @@ import {
   Sparkles,
   Text,
   WifiOff,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,

@@ -1,4 +1,4 @@
-import { cn } from '@aurora/ui';
+import { cn } from '@mybela/ui';
 import { cssInterop } from 'nativewind';
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, Platform, type ViewProps } from 'react-native';

@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { cn, Icon, type IconComponent, Minus, Plus, Text } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { cn, Icon, type IconComponent, Minus, Plus, Text } from '@mybela/ui';
 import { useMemo, useRef, useState } from 'react';
 import { type LayoutChangeEvent, PanResponder, Platform, Pressable, View } from 'react-native';
 

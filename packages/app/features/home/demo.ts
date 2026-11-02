@@ -1,5 +1,5 @@
-import type { Insight, MoodToday, RecentLog, WeekActivity } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
+import type { Insight, MoodToday, RecentLog, WeekActivity } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
 import { format, setHours, setMinutes, subDays } from 'date-fns';
 import { useMemo } from 'react';
 

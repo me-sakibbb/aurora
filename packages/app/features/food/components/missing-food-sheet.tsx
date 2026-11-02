@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { Button, Flag, Icon, Input, Text } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { Button, Flag, Icon, Input, Text } from '@mybela/ui';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Sheet } from '../../../components/sheet';
@@ -9,7 +9,7 @@ import { FormField } from '../../auth/components/form';
 
 /**
  * "Flag a missing food" (F5). The form is complete, but sending waits for the backend's
- * `POST /food/missing` (proposed in @aurora/api food/types.ts), so the button says so.
+ * `POST /food/missing` (proposed in @mybela/api food/types.ts), so the button says so.
  * What's typed is kept here, outside the sheet, so closing and reopening doesn't lose it.
  */
 export function MissingFoodSheet({

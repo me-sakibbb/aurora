@@ -1,4 +1,4 @@
-import type { OnboardingDraft, StepId } from '@aurora/api';
+import type { OnboardingDraft, StepId } from '@mybela/api';
 
 export type StepProps = {
   draft: OnboardingDraft;

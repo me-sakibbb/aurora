@@ -91,7 +91,7 @@ describe('safeNextPath', () => {
 describe('paramsFromUrl', () => {
   it('merges query and hash params from web and native URLs', () => {
     const params = paramsFromUrl(
-      'aurora://auth/callback?next=%2Freset-password#access_token=a&refresh_token=r&type=recovery',
+      'mybela://auth/callback?next=%2Freset-password#access_token=a&refresh_token=r&type=recovery',
     );
     expect(params.get('next')).toBe('/reset-password');
     expect(params.get('access_token')).toBe('a');

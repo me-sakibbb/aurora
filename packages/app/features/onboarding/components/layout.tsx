@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { ChevronLeft, cn, Icon, Text } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { ChevronLeft, cn, Icon, Text } from '@mybela/ui';
 import { useEffect, useRef } from 'react';
 import {
   Animated,
@@ -15,7 +15,7 @@ import {
 import { BrandMark } from '../../../components/brand-mark';
 import { LanguageToggle } from '../../../components/language-toggle';
 import { useInsets } from '../../../lib/insets';
-import { AuroraGlow } from './visuals';
+import { BrandGlow } from './visuals';
 
 /**
  * Shell for every onboarding step.
@@ -48,7 +48,7 @@ export function OnboardingLayout({
 
   return (
     <View className="bg-background flex-1" style={{ paddingTop: insets.top }}>
-      <AuroraGlow />
+      <BrandGlow />
       {/* No padding on the KeyboardAvoidingView itself: with behavior="padding" it sets its own
           paddingBottom (0 while the keyboard is closed), which would drop the safe-area inset
           and push the pinned actions under Android's navigation bar. */}

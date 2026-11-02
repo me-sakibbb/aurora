@@ -1,8 +1,8 @@
 'use client';
 
-import { type DailySummary, MEAL_SLOTS } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { Check, cn, Icon, Plus, Text, WifiOff } from '@aurora/ui';
+import { type DailySummary, MEAL_SLOTS } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { Check, cn, Icon, Plus, Text, WifiOff } from '@mybela/ui';
 import { Platform, Pressable, useWindowDimensions, View } from 'react-native';
 import { ProgressRing } from '../../../components/progress-ring';
 import { tapHaptic } from '../../../lib/haptics';

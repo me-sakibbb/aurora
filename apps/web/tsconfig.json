@@ -1,5 +1,5 @@
 {
-  "extends": "@aurora/tsconfig/base.json",
+  "extends": "@mybela/tsconfig/base.json",
   "compilerOptions": {
     // Must be set here directly: Turbopack ignores jsxImportSource inherited via "extends",
     // and without it NativeWind className props are silently dropped on web.

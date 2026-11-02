@@ -1,8 +1,8 @@
 'use client';
 
-import { newId, nextRange, type Period, validatePeriodDates } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { Button, Icon, Text, Trash2 } from '@aurora/ui';
+import { newId, nextRange, type Period, validatePeriodDates } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { Button, Icon, Text, Trash2 } from '@mybela/ui';
 import { format, parseISO } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { Pressable, useWindowDimensions, View } from 'react-native';

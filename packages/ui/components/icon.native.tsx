@@ -1,4 +1,4 @@
-import { cn } from '@aurora/ui/lib/utils';
+import { cn } from '@mybela/ui/lib/utils';
 import { cssInterop } from 'nativewind';
 import type { StyleProp, ViewStyle } from 'react-native';
 import type { IconComponent } from './icon-types';

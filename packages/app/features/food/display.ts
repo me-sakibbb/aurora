@@ -1,5 +1,5 @@
-import type { FoodItem } from '@aurora/api';
-import type { Language, useTranslation } from '@aurora/i18n';
+import type { FoodItem } from '@mybela/api';
+import type { Language, useTranslation } from '@mybela/i18n';
 import { isCookingMethod } from './method-icons';
 
 type TFunction = ReturnType<typeof useTranslation>['t'];

@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { Flame, Icon, Text, WifiOff } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { Flame, Icon, Text, WifiOff } from '@mybela/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
@@ -32,7 +32,7 @@ function greetingKey(hour: number) {
 }
 
 /**
- * F4 Home dashboard: the day at a glance, quick ways into food / mood / chat, Aurora's
+ * F4 Home dashboard: the day at a glance, quick ways into food / mood / chat, MyBela's
  * observation, the week, suggestions and today's log. Wide screens get two columns.
  *
  * Live data: profile (discreet mode), daily summary, cycle status, meal suggestions. Sections

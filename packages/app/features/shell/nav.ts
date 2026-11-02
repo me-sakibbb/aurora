@@ -5,7 +5,7 @@ import {
   type IconComponent,
   MessageCircleHeart,
   Utensils,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { useCycleAccess } from '../cycle/queries';
 
 export type NavKey = 'home' | 'food' | 'chat' | 'cycle' | 'insights';

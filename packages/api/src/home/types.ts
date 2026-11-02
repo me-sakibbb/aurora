@@ -16,7 +16,7 @@ export type WeekActivity = {
   flex_chips: number;
 };
 
-/** F20 "Aurora noticed" card and the F4 insights summary: written by the backend. */
+/** F20 "MyBela noticed" card and the F4 insights summary: written by the backend. */
 export type Insight = { id: string; title: string; body: string };
 
 export type RecentLog = {

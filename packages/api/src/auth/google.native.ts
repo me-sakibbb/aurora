@@ -4,6 +4,7 @@ import {
   isSuccessResponse,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
+import { Platform } from 'react-native';
 import { env } from '../env';
 import { getSupabase } from '../supabase';
 
@@ -16,12 +17,19 @@ function configure() {
   if (!env.googleWebClientId) {
     throw new Error('EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID is not set. See apps/mobile/.env.example.');
   }
-  GoogleSignin.configure({ webClientId: env.googleWebClientId });
+  if (Platform.OS === 'ios' && !env.googleIosClientId) {
+    throw new Error('EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID is not set. See apps/mobile/.env.example.');
+  }
+  // webClientId sets the ID token audience Supabase checks; iOS also needs its own client ID.
+  GoogleSignin.configure({
+    webClientId: env.googleWebClientId,
+    iosClientId: env.googleIosClientId,
+  });
   configured = true;
 }
 
 /**
- * Android: native account picker (no browser hop), then the Google ID token is exchanged for a
+ * Android/iOS: native account picker (no browser hop), then the Google ID token is exchanged for a
  * Supabase session. The allowlist hook runs on that exchange, so a rejection arrives as an error here.
  */
 export async function signInWithGoogle(): Promise<GoogleSignInResult> {
@@ -48,7 +56,7 @@ export async function signInWithGoogle(): Promise<GoogleSignInResult> {
     ) {
       return { cancelled: true };
     }
-    // The UI only shows a generic message; this keeps the real cause visible in `adb logcat`.
+    // The UI only shows a generic message; this keeps the real cause visible in `adb logcat` / Xcode logs.
     console.warn('[auth] Google sign-in failed', isErrorWithCode(error) ? error.code : '', error);
     throw error;
   }

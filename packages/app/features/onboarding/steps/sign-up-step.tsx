@@ -5,9 +5,9 @@ import {
   signInWithGoogle,
   signOutOfGoogle,
   toAuthErrorKind,
-} from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { Button, Check, Icon, ShieldCheck, Text } from '@aurora/ui';
+} from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { Button, Check, Icon, ShieldCheck, Text } from '@mybela/ui';
 import { useState } from 'react';
 import { Platform, View } from 'react-native';
 import { useAppRouter } from '../../../lib/navigation';

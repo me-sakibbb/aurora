@@ -1,5 +1,5 @@
-import { Text } from '@aurora/ui/components/text';
-import { cn } from '@aurora/ui/lib/utils';
+import { Text } from '@mybela/ui/components/text';
+import { cn } from '@mybela/ui/lib/utils';
 import type * as React from 'react';
 
 /**

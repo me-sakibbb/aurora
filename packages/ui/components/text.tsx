@@ -1,4 +1,4 @@
-import { cn } from '@aurora/ui/lib/utils';
+import { cn } from '@mybela/ui/lib/utils';
 import { Slot } from '@rn-primitives/slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';

@@ -1,1 +1,1 @@
-export { OnboardingScreen as default } from '@aurora/app/features/onboarding/screen';
+export { OnboardingScreen as default } from '@mybela/app/features/onboarding/screen';

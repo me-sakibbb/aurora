@@ -20,7 +20,7 @@ import {
   saveCycleSetup,
   savePeriod,
   turnOffCycle,
-} from '@aurora/api';
+} from '@mybela/api';
 import {
   type InfiniteData,
   type Mutation,

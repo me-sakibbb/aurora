@@ -1,6 +1,6 @@
 'use client';
 
-import { cn, Text } from '@aurora/ui';
+import { cn, Text } from '@mybela/ui';
 import { View } from 'react-native';
 import { useSession } from '../auth/session';
 import { useProfile } from '../home/queries';

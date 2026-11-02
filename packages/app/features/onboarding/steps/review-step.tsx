@@ -1,7 +1,7 @@
 'use client';
 
-import type { StepId } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
+import type { StepId } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
 import {
   Activity,
   Button,
@@ -19,7 +19,7 @@ import {
   Text,
   User,
   Weight,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { Pressable, View } from 'react-native';
 import { StepHeading } from '../components/layout';
 import type { StepDefinition, StepProps } from './types';

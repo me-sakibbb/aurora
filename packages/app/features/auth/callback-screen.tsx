@@ -7,8 +7,8 @@ import {
   paramsFromUrl,
   safeNextPath,
   toAuthErrorKind,
-} from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
+} from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
 import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 import { AppSplash } from '../../components/app-splash';

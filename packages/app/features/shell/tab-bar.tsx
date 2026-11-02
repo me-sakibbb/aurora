@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { cn, Icon, Plus, Text } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { cn, Icon, Plus, Text } from '@mybela/ui';
 import { Platform, Pressable, View } from 'react-native';
 import { Pop } from '../../components/pop';
 import { tapHaptic } from '../../lib/haptics';

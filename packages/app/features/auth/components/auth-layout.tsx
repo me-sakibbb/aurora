@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { cn, Text } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { cn, Text } from '@mybela/ui';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { BrandMark } from '../../../components/brand-mark';
 import { LanguageToggle } from '../../../components/language-toggle';

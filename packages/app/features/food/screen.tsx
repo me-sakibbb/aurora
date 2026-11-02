@@ -1,8 +1,8 @@
 'use client';
 
-import type { FoodItem } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { Text } from '@aurora/ui';
+import type { FoodItem } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { Text } from '@mybela/ui';
 import { useCallback, useState } from 'react';
 import { View } from 'react-native';
 import { FoodDetailSheet } from './components/food-detail-sheet';

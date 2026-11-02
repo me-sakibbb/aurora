@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { Button, ChevronLeft, Icon, SlidersHorizontal, Text } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { Button, ChevronLeft, Icon, SlidersHorizontal, Text } from '@mybela/ui';
 import { View } from 'react-native';
 import { useInsets } from '../../lib/insets';
 import { useAppRouter, usePathname } from '../../lib/navigation';

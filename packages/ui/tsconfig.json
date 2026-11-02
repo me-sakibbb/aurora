@@ -1,8 +1,8 @@
 {
-  "extends": "@aurora/tsconfig/base.json",
+  "extends": "@mybela/tsconfig/base.json",
   "compilerOptions": {
     "paths": {
-      "@aurora/ui/*": ["./*"]
+      "@mybela/ui/*": ["./*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"]

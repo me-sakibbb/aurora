@@ -26,10 +26,10 @@ module.exports = {
     'nativewind',
     'solito',
     '@rn-primitives/slot',
-    '@aurora/api',
-    '@aurora/app',
-    '@aurora/i18n',
-    '@aurora/ui',
+    '@mybela/api',
+    '@mybela/app',
+    '@mybela/i18n',
+    '@mybela/ui',
   ],
   compiler: {
     define: {

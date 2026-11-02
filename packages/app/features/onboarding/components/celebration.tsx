@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { Button, Check, cn, Icon, type IconComponent, PartyPopper, Text } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { Button, Check, cn, Icon, type IconComponent, PartyPopper, Text } from '@mybela/ui';
 import { useEffect, useRef, useState } from 'react';
 import {
   AccessibilityInfo,

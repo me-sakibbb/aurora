@@ -1,7 +1,7 @@
 'use client';
 
-import { newId } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
+import { newId } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
 import {
   Button,
   CalendarDays,
@@ -11,7 +11,7 @@ import {
   type IconComponent,
   Lock,
   Text,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';

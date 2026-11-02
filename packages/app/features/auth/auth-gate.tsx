@@ -1,7 +1,7 @@
 'use client';
 
-import { OPEN_ROUTES, resolveAuthRedirect } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
+import { OPEN_ROUTES, resolveAuthRedirect } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
 import { Suspense, useEffect } from 'react';
 import { Platform, View } from 'react-native';
 import { AppError, AppSplash } from '../../components/app-splash';

@@ -1,8 +1,8 @@
 'use client';
 
-import { fetchSampleRecipes, MAX_SAMPLE_MEALS, type SampleRecipe, servingGrams } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { Button, Check, cn, Icon, Plus, Text, UtensilsCrossed } from '@aurora/ui';
+import { fetchSampleRecipes, MAX_SAMPLE_MEALS, type SampleRecipe, servingGrams } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { Button, Check, cn, Icon, Plus, Text, UtensilsCrossed } from '@mybela/ui';
 import { useQuery } from '@tanstack/react-query';
 import { ActivityIndicator, Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';

@@ -1,4 +1,4 @@
-import { cn } from '@aurora/ui';
+import { cn } from '@mybela/ui';
 import { useState } from 'react';
 import { View } from 'react-native';
 import type { FoodImageProps } from './food-image-types';

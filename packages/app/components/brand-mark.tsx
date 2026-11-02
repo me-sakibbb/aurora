@@ -1,4 +1,4 @@
-import { cn } from '@aurora/ui';
+import { cn } from '@mybela/ui';
 import { View } from 'react-native';
 
 const SIZES = {

@@ -1,4 +1,4 @@
-const { createPreset } = require('@aurora/tokens/preset');
+const { createPreset } = require('@mybela/tokens/preset');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {

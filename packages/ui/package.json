@@ -1,5 +1,5 @@
 {
-  "name": "@aurora/ui",
+  "name": "@mybela/ui",
   "version": "0.0.0",
   "private": true,
   "sideEffects": false,
@@ -20,7 +20,7 @@
     "react-native": "*"
   },
   "devDependencies": {
-    "@aurora/tsconfig": "workspace:*"
+    "@mybela/tsconfig": "workspace:*"
   },
   "main": "index.ts"
 }

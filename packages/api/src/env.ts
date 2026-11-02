@@ -6,4 +6,5 @@ export const env = {
   apiUrl: process.env.NEXT_PUBLIC_API_URL,
   // Web uses Supabase's Google redirect flow, so no client ID is needed here.
   googleWebClientId: undefined as string | undefined,
+  googleIosClientId: undefined as string | undefined,
 };

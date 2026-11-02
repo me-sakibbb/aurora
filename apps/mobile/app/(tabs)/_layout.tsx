@@ -1,6 +1,6 @@
-import { ShellOverlays } from '@aurora/app/features/shell/app-shell';
-import { AppTabBar } from '@aurora/app/features/shell/tab-bar';
-import { AppTopBar } from '@aurora/app/features/shell/top-bar';
+import { ShellOverlays } from '@mybela/app/features/shell/app-shell';
+import { AppTabBar } from '@mybela/app/features/shell/tab-bar';
+import { AppTopBar } from '@mybela/app/features/shell/top-bar';
 import { Tabs } from 'expo-router';
 import { View } from 'react-native';
 

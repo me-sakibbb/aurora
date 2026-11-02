@@ -1,4 +1,4 @@
-import { useTranslation } from '@aurora/i18n';
+import { useTranslation } from '@mybela/i18n';
 import * as Updates from 'expo-updates';
 import { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';

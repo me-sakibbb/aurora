@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "অরোরা",
+    "appName": "মাইবেলা",
     "retry": "আবার চেষ্টা করুন",
     "offline": "আপনি অফলাইনে আছেন। অনলাইনে ফিরলেই এটি সেভ হয়ে যাবে।",
     "loading": "লোড হচ্ছে…",
@@ -42,11 +42,11 @@
     "quick": {
       "food": "Log food",
       "mood": "Mood check-in",
-      "chat": "Ask Aurora"
+      "chat": "Ask MyBela"
     },
     "noticed": {
-      "title": "Aurora noticed",
-      "ask": "Ask Aurora about this"
+      "title": "MyBela noticed",
+      "ask": "Ask MyBela about this"
     },
     "week": {
       "title": "This week",
@@ -83,9 +83,9 @@
       "portion": "{{kcal}} kcal · {{grams}} g",
       "unnamed": "A dish for you",
       "emptyTitle": "Suggestions are on their way",
-      "emptyBody": "Once Aurora knows your meals a little better, ideas for your goals will show up here.",
+      "emptyBody": "Once MyBela knows your meals a little better, ideas for your goals will show up here.",
       "noProfileTitle": "Your daily target isn't set up yet",
-      "noProfileBody": "Aurora plans suggestions around your daily target, which comes from your height, weight, age and activity. They'll show up here once those are saved."
+      "noProfileBody": "MyBela plans suggestions around your daily target, which comes from your height, weight, age and activity. They'll show up here once those are saved."
     },
     "recent": {
       "title": "Today's log",
@@ -114,7 +114,7 @@
     "nav": {
       "home": "Home",
       "food": "Food",
-      "chat": "Ask Aurora",
+      "chat": "Ask MyBela",
       "cycle": "Cycle",
       "insights": "Insights"
     },
@@ -135,7 +135,7 @@
         "body": "A 10-second check-in"
       },
       "chat": {
-        "title": "Ask Aurora",
+        "title": "Ask MyBela",
         "body": "Questions about food, cycle or wellbeing"
       }
     },
@@ -255,7 +255,7 @@
       },
       "fertility": {
         "title": "Show an estimated fertile window?",
-        "subtitle": "Aurora can show the range of dates your fertile window is estimated to fall in. You can change this any time.",
+        "subtitle": "MyBela can show the range of dates your fertile window is estimated to fall in. You can change this any time.",
         "yes": "Yes, show it",
         "no": "No, thanks"
       }
@@ -344,7 +344,7 @@
   "placeholders": {
     "backHome": "Back to Home",
     "chat": {
-      "title": "Ask Aurora",
+      "title": "Ask MyBela",
       "body": "Ask about food, your cycle or how you're feeling, in English, Bengali or a mix, and get answers with sources."
     },
     "insights": {
@@ -363,10 +363,10 @@
     "skip": "Skip",
     "welcome": {
       "headline": "Food, cycle and mood, understood together.",
-      "body": "Aurora is a calm, everyday companion for home-cooked meals, your cycle and how you feel, built for kitchens in Bangladesh.",
+      "body": "MyBela is a calm, everyday companion for home-cooked meals, your cycle and how you feel, built for kitchens in Bangladesh.",
       "start": "Get started",
       "signIn": "I already have an account",
-      "featuresTitle": "What Aurora does",
+      "featuresTitle": "What MyBela does",
       "foodTitle": "Meals from your own kitchen",
       "foodBody": "Log the dal, bhaat and torkari you actually cook, and see what's in them.",
       "cycleTitle": "Your cycle, gently tracked",
@@ -378,7 +378,7 @@
       "step2": "Try logging a sample meal to see how it works.",
       "step3": "Create your account and set your starting baseline.",
       "privacyTitle": "Private by design",
-      "privacyBody": "Your health is personal. Aurora keeps you in control of what you share.",
+      "privacyBody": "Your health is personal. MyBela keeps you in control of what you share.",
       "privacyDiscreet": "Discreet Mode keeps things low-key on a shared phone.",
       "privacyChoice": "You choose which features to use and what to track.",
       "privacyOffline": "Keeps working when your connection drops, and catches up later.",
@@ -468,7 +468,7 @@
     },
     "health": {
       "title": "A little about your health",
-      "subtitle": "This helps Aurora tailor guidance to you.",
+      "subtitle": "This helps MyBela tailor guidance to you.",
       "bloodPressure": "Blood pressure",
       "diabetes": "Do you have diabetes?",
       "yes": "Yes",
@@ -581,7 +581,7 @@
     },
     "notifications": {
       "title": "Stay on track with gentle reminders",
-      "subtitle": "Aurora can send you a nudge when it helps.",
+      "subtitle": "MyBela can send you a nudge when it helps.",
       "pointMeals": "A reminder to log your meals",
       "pointControl": "You choose which ones you get, anytime",
       "channel": "Reminders",
@@ -654,7 +654,7 @@
     },
     "beta": {
       "badge": "ক্লোজড বেটা",
-      "note": "অরোরা এখন শুধু আমন্ত্রিতদের জন্য। অরোরা টিম যে ইমেইল বা গুগল অ্যাকাউন্ট অনুমোদন করেছে, সেটি ব্যবহার করুন।"
+      "note": "মাইবেলা এখন শুধু আমন্ত্রিতদের জন্য। মাইবেলা টিম যে ইমেইল বা গুগল অ্যাকাউন্ট অনুমোদন করেছে, সেটি ব্যবহার করুন।"
     },
     "tabs": {
       "signIn": "সাইন ইন",
@@ -668,7 +668,7 @@
     },
     "signUp": {
       "title": "আপনার অ্যাকাউন্ট খুলুন",
-      "subtitle": "বেটার জন্য অরোরা টিম যে ইমেইল ঠিকানা অনুমোদন করেছে, সেটি ব্যবহার করুন।",
+      "subtitle": "বেটার জন্য মাইবেলা টিম যে ইমেইল ঠিকানা অনুমোদন করেছে, সেটি ব্যবহার করুন।",
       "submit": "অ্যাকাউন্ট খুলুন",
       "submitting": "অ্যাকাউন্ট খোলা হচ্ছে…"
     },
@@ -700,23 +700,23 @@
       "weakPassword": "এই পাসওয়ার্ড খুব সহজে অনুমান করা যায়। আরেকটু লম্বা পাসওয়ার্ড দিন।",
       "samePassword": "নতুন পাসওয়ার্ড আগেরটার চেয়ে আলাদা হতে হবে।",
       "rateLimited": "অনেকবার চেষ্টা করা হয়েছে। এক মিনিট অপেক্ষা করে আবার চেষ্টা করুন।",
-      "network": "অরোরার সাথে যোগাযোগ করা যাচ্ছে না। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।",
+      "network": "মাইবেলার সাথে যোগাযোগ করা যাচ্ছে না। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।",
       "linkExpired": "লিংকটির মেয়াদ শেষ হয়ে গেছে বা আগেই ব্যবহার করা হয়েছে। নতুন লিংক চেয়ে নিন।",
       "unknown": "আমাদের দিক থেকে কিছু একটা সমস্যা হয়েছে। আবার চেষ্টা করুন।",
-      "notApproved": "এই অ্যাকাউন্টটি এখনও অরোরা বেটা তালিকায় নেই।"
+      "notApproved": "এই অ্যাকাউন্টটি এখনও মাইবেলা বেটা তালিকায় নেই।"
     },
     "resetPasswordAction": "পাসওয়ার্ড রিসেট করুন",
     "notApproved": {
       "title": "আপনি এখনও বেটা তালিকায় নেই",
-      "bodyEmail": "অরোরা এখন ছোট্ট, শুধু আমন্ত্রিতদের বেটাতে আছে, আর {{email}} অনুমোদিত তালিকায় নেই।",
-      "body": "অরোরা এখন ছোট্ট, শুধু আমন্ত্রিতদের বেটাতে আছে, আর এই অ্যাকাউন্টটি অনুমোদিত তালিকায় নেই।",
-      "help": "আপনাকে আমন্ত্রণ জানানো হয়ে থাকলে, অরোরা টিমকে যে ইমেইল বা গুগল অ্যাকাউন্ট দিয়েছিলেন, সেটি দিয়ে চেষ্টা করুন।",
+      "bodyEmail": "মাইবেলা এখন ছোট্ট, শুধু আমন্ত্রিতদের বেটাতে আছে, আর {{email}} অনুমোদিত তালিকায় নেই।",
+      "body": "মাইবেলা এখন ছোট্ট, শুধু আমন্ত্রিতদের বেটাতে আছে, আর এই অ্যাকাউন্টটি অনুমোদিত তালিকায় নেই।",
+      "help": "আপনাকে আমন্ত্রণ জানানো হয়ে থাকলে, মাইবেলা টিমকে যে ইমেইল বা গুগল অ্যাকাউন্ট দিয়েছিলেন, সেটি দিয়ে চেষ্টা করুন।",
       "tryAgain": "অন্য অ্যাকাউন্ট দিয়ে চেষ্টা করুন"
     },
     "checkEmail": {
       "title": "আপনার ইনবক্স দেখুন",
       "confirmBody": "{{email}} ঠিকানায় একটি নিশ্চিতকরণ লিংক পাঠানো হয়েছে। অ্যাকাউন্ট খোলা শেষ করতে এই ডিভাইসেই লিংকটি খুলুন।",
-      "resetBody": "{{email}} দিয়ে অরোরা অ্যাকাউন্ট থাকলে, নতুন পাসওয়ার্ড বেছে নেওয়ার লিংক পাঠানো হয়েছে।",
+      "resetBody": "{{email}} দিয়ে মাইবেলা অ্যাকাউন্ট থাকলে, নতুন পাসওয়ার্ড বেছে নেওয়ার লিংক পাঠানো হয়েছে।",
       "spamHint": "খুঁজে পাচ্ছেন না? স্প্যাম বা প্রোমোশনস ফোল্ডার দেখুন।",
       "resend": "আবার ইমেইল পাঠান",
       "resendIn": "{{seconds}} সেকেন্ড পরে আবার পাঠান",

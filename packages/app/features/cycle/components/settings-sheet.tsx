@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { Button, Text } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { Button, Text } from '@mybela/ui';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, useWindowDimensions, View } from 'react-native';
 import { Sheet, SheetScrollView } from '../../../components/sheet';

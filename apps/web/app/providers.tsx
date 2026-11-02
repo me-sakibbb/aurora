@@ -1,3 +1,3 @@
 'use client';
 
-export { Provider as Providers } from '@aurora/app/provider';
+export { Provider as Providers } from '@mybela/app/provider';

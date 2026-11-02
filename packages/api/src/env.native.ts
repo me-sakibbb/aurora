@@ -6,4 +6,6 @@ export const env = {
   apiUrl: process.env.EXPO_PUBLIC_API_URL,
   // Google Cloud "Web application" client ID; Android's native picker uses it as the ID token audience.
   googleWebClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+  // Google Cloud "iOS" client ID (bundle ID com.mybela.app). iOS only; Android ignores it.
+  googleIosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
 };

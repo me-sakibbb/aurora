@@ -11,8 +11,8 @@ import {
   type HeardFrom,
   OIL_LEVELS,
   toggleGoal,
-} from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
+} from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
 import {
   Beef,
   CalendarDays,
@@ -34,7 +34,7 @@ import {
   Users,
   Utensils,
   Zap,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { View } from 'react-native';
 import { Choices, SingleChoice } from '../components/choices';
 import { StepHeading } from '../components/layout';

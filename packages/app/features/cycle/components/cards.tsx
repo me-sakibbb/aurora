@@ -1,7 +1,7 @@
 'use client';
 
-import type { CurrentPhase, FertileWindow, Period } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
+import type { CurrentPhase, FertileWindow, Period } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
 import {
   Button,
   CalendarHeart,
@@ -16,7 +16,7 @@ import {
   Sun,
   Sunrise,
   Text,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { format, parseISO } from 'date-fns';
 import { Pressable, View } from 'react-native';
 import { Panel } from '../../home/components/primitives';

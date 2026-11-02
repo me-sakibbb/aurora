@@ -1,8 +1,8 @@
 'use client';
 
-import { toAuthErrorKind } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { Button, Text } from '@aurora/ui';
+import { toAuthErrorKind } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { Button, Text } from '@mybela/ui';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';

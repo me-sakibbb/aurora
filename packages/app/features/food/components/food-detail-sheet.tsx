@@ -1,8 +1,8 @@
 'use client';
 
-import { type FoodItem, servingGrams } from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
-import { Icon, Info, Text, X } from '@aurora/ui';
+import { type FoodItem, servingGrams } from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
+import { Icon, Info, Text, X } from '@mybela/ui';
 import { Pressable, useWindowDimensions, View } from 'react-native';
 import { FoodImage } from '../../../components/food-image';
 import { Sheet, SheetScrollView } from '../../../components/sheet';

@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
+import { useTranslation } from '@mybela/i18n';
 import {
   ChevronRight,
   cn,
@@ -12,7 +12,7 @@ import {
   SlidersHorizontal,
   Target,
   Text,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { ActivityIndicator, Pressable, View } from 'react-native';
 import { Sheet } from '../../components/sheet';
 import { useLanguage } from '../../lib/language';

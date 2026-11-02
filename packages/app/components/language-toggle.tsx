@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
-import { Button, Text } from '@aurora/ui';
+import { useTranslation } from '@mybela/i18n';
+import { Button, Text } from '@mybela/ui';
 import { useLanguage } from '../lib/language';
 
 /** Shows the *other* language in its own script, so people can find it without reading the current one. */

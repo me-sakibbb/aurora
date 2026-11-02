@@ -10,7 +10,7 @@ import {
   Soup,
   UtensilsCrossed,
   Wheat,
-} from '@aurora/ui';
+} from '@mybela/ui';
 
 /** The backend's recipe `cooking_method` values (recipes table check constraint). */
 export const COOKING_METHODS = [

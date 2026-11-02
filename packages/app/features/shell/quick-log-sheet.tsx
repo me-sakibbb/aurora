@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
+import { useTranslation } from '@mybela/i18n';
 import {
   ChevronRight,
   cn,
@@ -10,7 +10,7 @@ import {
   Smile,
   Text,
   Utensils,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { Pressable, View } from 'react-native';
 import { FadeIn } from '../../components/fade-in';
 import { Sheet } from '../../components/sheet';
@@ -44,7 +44,7 @@ const ACTIONS: Action[] = [
   },
 ];
 
-/** "What would you like to log?": the central + button's sheet (food, mood, ask Aurora). */
+/** "What would you like to log?": the central + button's sheet (food, mood, ask MyBela). */
 export function QuickLogSheet() {
   const { t } = useTranslation();
   const router = useAppRouter();

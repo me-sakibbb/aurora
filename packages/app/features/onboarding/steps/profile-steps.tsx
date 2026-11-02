@@ -14,8 +14,8 @@ import {
   type Sex,
   WEIGHT_KG,
   type WeightUnit,
-} from '@aurora/api';
-import { useTranslation } from '@aurora/i18n';
+} from '@mybela/api';
+import { useTranslation } from '@mybela/i18n';
 import {
   Armchair,
   ArrowDown,
@@ -30,7 +30,7 @@ import {
   NonBinary,
   Text,
   Venus,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { useEffect } from 'react';
 import { View } from 'react-native';
 import { ValueSlider } from '../../../components/value-slider';

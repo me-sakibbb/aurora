@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
+import { useTranslation } from '@mybela/i18n';
 import {
   Button,
   CalendarHeart,
@@ -17,13 +17,13 @@ import {
   Utensils,
   Wheat,
   WifiOff,
-} from '@aurora/ui';
+} from '@mybela/ui';
 import { View } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';
 import { useAppRouter } from '../../../lib/navigation';
 import type { StepDefinition } from './types';
 
-/** Landing page: what Aurora is, before any question. One call to action. */
+/** Landing page: what MyBela is, before any question. One call to action. */
 export const welcomeStep: StepDefinition = {
   wide: true,
   Body: function WelcomeBody({ next }) {

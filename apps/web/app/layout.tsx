@@ -13,8 +13,8 @@ const sans = Noto_Sans_Bengali({
 });
 
 export const metadata: Metadata = {
-  title: 'Aurora',
-  description: 'Aurora',
+  title: 'MyBela',
+  description: 'MyBela',
   robots: { index: false, follow: false }, // Closed beta.
 };
 

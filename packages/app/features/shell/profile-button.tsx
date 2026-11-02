@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslation } from '@aurora/i18n';
+import { useTranslation } from '@mybela/i18n';
 import { Pressable } from 'react-native';
 import { Avatar } from './account';
 import { useSheets } from './sheets';
