@@ -31,9 +31,10 @@ MyBela one, and it only receives updates once rebuilt.
 - [ ] Supabase → Authentication → URL Configuration: add `mybela://auth/callback` to Redirect URLs
       (keep `aurora://…` until no old APKs are in use). Without it, password-reset and confirmation
       emails can't open the app.
-- [ ] First build for the new ID: run `pnpm build:apk` **interactively** (EAS has no keystore for
-      `com.mybela.app` yet and won't generate one in `--non-interactive` mode). Then get the new SHA-1
-      with `eas credentials -p android`.
+- [x] First build for the new ID (2026-11-02): EAS generated a new cloud keystore for `com.mybela.app`.
+      SHA-1 `C9:8B:14:B7:28:82:AA:96:EC:4E:1A:EB:88:ED:2E:86:80:6D:A0:3E`
+      (SHA-256 `29:13:96:05:6B:B8:4C:9A:BE:98:02:72:83:DB:16:13:F8:AF:A0:2D:08:1E:DD:30:0B:95:9D:E1:BA:94:34:9D`).
+      `eas credentials -p android` shows it again.
 - [ ] Google Cloud: create a new **Android** OAuth client for `com.mybela.app` with that SHA-1 (step 2
       below). The old one is tied to `com.aurora.app`; until this exists, Google sign-in fails with
       `DEVELOPER_ERROR` (code 10).
