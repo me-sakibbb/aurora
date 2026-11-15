@@ -41,7 +41,8 @@ export function gaugeShape(value: MoodLevel | null) {
       level,
       d: `M ${from.x} ${from.y} A ${GAUGE.r} ${GAUGE.r} 0 0 1 ${to.x} ${to.y}`,
       color: ink,
-      opacity: picked ? 1 : 0.12 + 0.13 * level,
+      // Unpicked segments stay light (still darkening left→right) so the pick clearly stands out.
+      opacity: picked ? 1 : 0.1 + 0.07 * level,
       width: picked ? GAUGE.stroke + 8 : GAUGE.stroke,
     };
   });

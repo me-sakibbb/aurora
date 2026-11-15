@@ -4,7 +4,7 @@ import { fetchSampleRecipes, MAX_SAMPLE_MEALS, type SampleRecipe, servingGrams }
 import { useTranslation } from '@mybela/i18n';
 import { Button, Check, cn, Icon, Plus, Text, UtensilsCrossed } from '@mybela/ui';
 import { useQuery } from '@tanstack/react-query';
-import { ActivityIndicator, Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';
 import { useLanguage } from '../../../lib/language';
 import { useIsOnline } from '../../../lib/use-online';
@@ -35,8 +35,6 @@ export const sandboxStep: StepDefinition = {
     const { language } = useLanguage();
     const online = useIsOnline();
     const recipes = useSampleRecipes();
-    // Wide screens: a grid (a sideways carousel is awkward with a mouse). Phones: swipeable row.
-    const grid = useWindowDimensions().width >= 1024;
 
     const selected = draft.sampleMeals.map((meal) => meal.recipeId);
     const full = selected.length >= MAX_SAMPLE_MEALS;
@@ -79,7 +77,7 @@ export const sandboxStep: StepDefinition = {
       const added = recipes.data.filter((r) => selected.includes(r.id));
       content = (
         <View className="gap-6">
-          <Carousel grid={grid}>
+          <Carousel>
             {recipes.data.map((recipe) => {
               const isSelected = selected.includes(recipe.id);
               const disabled = full && !isSelected;
@@ -93,7 +91,7 @@ export const sandboxStep: StepDefinition = {
                   onPress={() => toggle(recipe)}
                   className={cn(
                     'bg-card gap-3 rounded-2xl border-2 p-3 shadow-sm shadow-black/5 active:scale-[0.98]',
-                    grid ? 'w-[48.5%]' : 'w-40',
+                    'w-40',
                     isSelected ? 'border-primary' : 'border-border',
                     disabled && 'opacity-45',
                   )}
@@ -197,8 +195,8 @@ export const sandboxStep: StepDefinition = {
   Footer: SandboxFooter,
 };
 
-function Carousel({ grid, children }: { grid: boolean; children: React.ReactNode }) {
-  if (grid) return <View className="flex-row flex-wrap justify-between gap-y-3">{children}</View>;
+/** A swipeable row (the same on every screen size: the app is phone-width everywhere). */
+function Carousel({ children }: { children: React.ReactNode }) {
   return (
     <ScrollView
       horizontal

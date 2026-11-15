@@ -11,14 +11,11 @@ import {
   Heart,
   HeartHandshake,
   type IconComponent,
-  Moon,
   Plane,
   Thermometer,
   Trees,
   Users,
   Utensils,
-  Wind,
-  Zap,
 } from '@mybela/ui';
 import { useState } from 'react';
 import { type LayoutChangeEvent, View } from 'react-native';
@@ -38,12 +35,6 @@ export const TAG_ICONS: Record<MoodTag, IconComponent> = {
   travel: Plane,
   unwell: Thermometer,
   period: Droplet,
-};
-
-export const SCALE_ICONS: Record<MoodScale, IconComponent> = {
-  energy: Zap,
-  sleep: Moon,
-  stress: Wind,
 };
 
 /** Background tone per mood level (tokens in packages/tokens: `mood`). */
@@ -106,19 +97,24 @@ export function Battery({
   );
 }
 
-/** The small glyph for an energy / sleep / stress answer, used in summaries and history. */
+/**
+ * The glyph for an energy / sleep / stress answer, sized to sit in a square `slot` (px) so the
+ * three look the same size side by side: a battery, a moon phase, a small gauge.
+ */
 export function ScaleGlyph({
   scale,
   level,
-  size = 20,
+  slot = 24,
 }: {
   scale: MoodScale;
   level: MoodLevel;
-  size?: number;
+  slot?: number;
 }) {
-  if (scale === 'energy') return <Battery level={level} height={size} />;
-  if (scale === 'sleep') return <MoonPhase level={level} size={size + 2} />;
-  return <StressGauge value={level} width={Math.round(size * 1.6)} />;
+  // Battery height excludes its cap (+8%), so it lands just inside the slot.
+  if (scale === 'energy') return <Battery level={level} height={Math.round(slot * 0.82)} />;
+  if (scale === 'sleep') return <MoonPhase level={level} size={Math.round(slot * 0.95)} />;
+  // The gauge is a half circle: twice as wide as tall, so it gets more width for the same height.
+  return <StressGauge value={level} width={Math.round(slot * 1.5)} />;
 }
 
 /**

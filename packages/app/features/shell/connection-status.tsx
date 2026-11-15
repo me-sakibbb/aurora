@@ -79,7 +79,7 @@ export function ConnectionStatus() {
     <FadeIn
       key={status}
       className={cn(
-        'border-border border-b px-5 py-2 lg:px-10',
+        'border-border border-b px-5 py-2',
         status === 'offline' ? 'bg-muted' : status === 'synced' ? 'bg-accent/15' : 'bg-card',
       )}
     >

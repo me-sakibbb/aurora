@@ -3,8 +3,9 @@
 import { type DailySummary, MEAL_SLOTS } from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
 import { Check, cn, Icon, Plus, Text, WifiOff } from '@mybela/ui';
-import { Platform, Pressable, useWindowDimensions, View } from 'react-native';
+import { Platform, Pressable, View } from 'react-native';
 import { ProgressRing } from '../../../components/progress-ring';
+import { useAppDimensions } from '../../../lib/dimensions';
 import { tapHaptic } from '../../../lib/haptics';
 import { tokenColor } from '../../../lib/token-color';
 import { useCountUp } from '../../../lib/use-count-up';
@@ -36,7 +37,7 @@ export function TodayCard({
   const progress = target ? Math.min(consumed / target, 1) : 0;
   const meals = summary?.meals ?? MEAL_SLOTS.map((slot) => ({ slot, logged: false }));
   // Small phones (≤ 360dp) get a smaller ring so the meal list beside it doesn't truncate.
-  const compact = useWindowDimensions().width < 380;
+  const compact = useAppDimensions().width < 380;
 
   return (
     <View className="bg-olive overflow-hidden rounded-[28px] p-5 shadow-lg shadow-black/20">

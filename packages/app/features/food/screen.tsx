@@ -56,9 +56,7 @@ export function FoodScreen() {
         onSelect={onSelect}
         header={
           // Phones skip the subtitle so more of the grid fits under the pinned search box.
-          <Text className="text-muted-foreground hidden pb-1 leading-6 sm:flex">
-            {t('food.subtitle')}
-          </Text>
+          <Text className="text-muted-foreground hidden pb-1 leading-6">{t('food.subtitle')}</Text>
         }
       />
       <FoodDetailSheet item={selected} open={open} onClose={() => setOpen(false)} />

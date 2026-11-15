@@ -282,7 +282,7 @@ function LoginContent() {
         onPress={() => void submit()}
       />
 
-      <Text className="text-muted-foreground text-center text-sm leading-5 lg:hidden">
+      <Text className="text-muted-foreground text-center text-sm leading-5">
         {t('auth.beta.note')}
       </Text>
     </FadeIn>

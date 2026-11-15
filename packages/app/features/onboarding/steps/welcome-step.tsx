@@ -29,32 +29,32 @@ export const welcomeStep: StepDefinition = {
   Body: function WelcomeBody({ next }) {
     const { t } = useTranslation();
     return (
-      <View className="gap-14 pb-4 lg:gap-24 lg:pb-16">
+      <View className="gap-14 pb-4">
         {/* Hero */}
-        <View className="gap-10 lg:flex-row lg:items-center lg:gap-16 lg:pt-10">
-          <View className="gap-6 lg:flex-1">
+        <View className="gap-10">
+          <View className="gap-6">
             <Text
               role="heading"
               aria-level={1}
-              className="text-[34px] font-semibold leading-[42px] tracking-tight lg:text-6xl lg:leading-[68px]"
+              className="text-[34px] font-semibold leading-[42px] tracking-tight"
             >
               {t('onboarding.welcome.headline')}
             </Text>
-            <Text className="text-muted-foreground text-lg leading-7 lg:max-w-xl lg:text-xl lg:leading-8">
+            <Text className="text-muted-foreground text-lg leading-7">
               {t('onboarding.welcome.body')}
             </Text>
-            <View className="hidden gap-3 pt-2 lg:flex lg:flex-row lg:items-center">
+            <View className="hidden gap-3 pt-2">
               <WelcomeActions onStart={next} inline />
             </View>
           </View>
-          <View className="lg:flex-1">
+          <View>
             <AppPreview />
           </View>
         </View>
 
         {/* What it does */}
         <Section title={t('onboarding.welcome.featuresTitle')}>
-          <View className="gap-4 lg:flex-row">
+          <View className="gap-4">
             <FeatureCard
               icon={Utensils}
               title={t('onboarding.welcome.foodTitle')}
@@ -75,7 +75,7 @@ export const welcomeStep: StepDefinition = {
 
         {/* How it works */}
         <Section title={t('onboarding.welcome.stepsTitle')}>
-          <View className="gap-3 lg:flex-row lg:gap-4">
+          <View className="gap-3">
             {[
               t('onboarding.welcome.step1'),
               t('onboarding.welcome.step2'),
@@ -83,7 +83,7 @@ export const welcomeStep: StepDefinition = {
             ].map((step, i) => (
               <View
                 key={step}
-                className="bg-card/70 border-border flex-row items-center gap-4 rounded-2xl border p-4 lg:flex-1"
+                className="bg-card/70 border-border flex-row items-center gap-4 rounded-2xl border p-4"
               >
                 <View className="bg-secondary/50 h-9 w-9 items-center justify-center rounded-full">
                   <Text className="text-sm font-bold">{i + 1}</Text>
@@ -95,26 +95,26 @@ export const welcomeStep: StepDefinition = {
         </Section>
 
         {/* Privacy */}
-        <View className="bg-primary gap-6 overflow-hidden rounded-3xl p-6 lg:flex-row lg:items-center lg:gap-12 lg:p-12">
-          <View className="gap-3 lg:flex-1">
+        <View className="bg-primary gap-6 overflow-hidden rounded-3xl p-6">
+          <View className="gap-3">
             <View className="bg-ivory/10 h-12 w-12 items-center justify-center rounded-2xl">
               <Icon as={ShieldCheck} size={24} className="text-ivory" />
             </View>
-            <Text className="text-ivory text-2xl font-semibold tracking-tight lg:text-3xl">
+            <Text className="text-ivory text-2xl font-semibold tracking-tight">
               {t('onboarding.welcome.privacyTitle')}
             </Text>
             <Text className="text-ivory/80 text-base leading-6">
               {t('onboarding.welcome.privacyBody')}
             </Text>
           </View>
-          <View className="gap-4 lg:flex-1">
+          <View className="gap-4">
             <PrivacyPoint icon={EyeOff} text={t('onboarding.welcome.privacyDiscreet')} />
             <PrivacyPoint icon={Lock} text={t('onboarding.welcome.privacyChoice')} />
             <PrivacyPoint icon={WifiOff} text={t('onboarding.welcome.privacyOffline')} />
           </View>
         </View>
 
-        <View className="hidden items-center gap-4 lg:flex">
+        <View className="hidden items-center gap-4">
           <Text className="text-center text-3xl font-semibold tracking-tight">
             {t('onboarding.welcome.closingTitle')}
           </Text>
@@ -161,7 +161,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function FeatureCard({ icon, title, body }: { icon: IconComponent; title: string; body: string }) {
   return (
-    <View className="bg-card border-border gap-3 rounded-3xl border p-6 shadow-sm shadow-black/5 lg:flex-1">
+    <View className="bg-card border-border gap-3 rounded-3xl border p-6 shadow-sm shadow-black/5">
       <View className="bg-sage/15 h-12 w-12 items-center justify-center rounded-2xl">
         <Icon as={icon} size={24} className="text-primary" />
       </View>

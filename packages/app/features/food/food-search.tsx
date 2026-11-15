@@ -21,7 +21,6 @@ import {
   Pressable,
   ScrollView,
   type TextInput,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import { FadeIn } from '../../components/fade-in';
@@ -41,13 +40,8 @@ import { useFoodBrowse, useFoodSearch, useRecentFoods } from './queries';
 /** Cards past this one appear without a stagger, so long lists don't feel slow. */
 const STAGGER_CARDS = 8;
 
-/** Cards per row by window width: 2 on phones, 3 on tablets and small laptops, 4 on wide screens. */
-function useColumns() {
-  const { width } = useWindowDimensions();
-  if (width < 640) return 2;
-  if (width < 1200) return 3;
-  return 4;
-}
+/** Cards per row (the app is phone-width on every screen). */
+const COLUMNS = 2;
 
 /**
  * F5 Food Search, the one search experience reused across the app. Type in Bengali, English or
@@ -79,7 +73,7 @@ export function FoodSearch({
   const idle = search.normalized.length === 0;
   const list = idle ? browse : search;
   const items = idle ? browse.items : search.results;
-  const columns = useColumns();
+  const columns = COLUMNS;
 
   const select = useCallback(
     (item: FoodItem) => {
@@ -130,7 +124,7 @@ export function FoodSearch({
 
   return (
     <View className="flex-1">
-      <View className="mx-auto w-full max-w-5xl gap-3 px-5 pb-3 lg:px-10">
+      <View className="mx-auto w-full max-w-5xl gap-3 px-5 pb-3">
         {header}
         <SearchField
           inputRef={inputRef}
@@ -162,7 +156,7 @@ export function FoodSearch({
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         className="flex-1"
-        contentContainerClassName="mx-auto w-full max-w-5xl px-3.5 pb-10 lg:px-8"
+        contentContainerClassName="mx-auto w-full max-w-5xl px-3.5 pb-10"
         onEndReached={list.hasMore ? list.loadMore : undefined}
         onEndReachedThreshold={0.6}
         ListHeaderComponent={

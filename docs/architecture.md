@@ -37,6 +37,20 @@ Both files must export the same API. Examples: `packages/api/src/storage/*`, `pa
 Important: this works only through **relative imports or a package's `main` entry**. Don't add
 `exports` maps to workspace packages; Metro doesn't apply platform extensions to `exports` targets.
 
+## Phone-first on every screen
+
+The app looks like the phone app everywhere (user decision, 2026-11-15):
+
+- **Web on a computer**: the root layout wraps everything in `.app-frame` (`apps/web/app/globals.css`),
+  a centred column `APP_MAX_WIDTH` (480px) wide on a muted backdrop. On a phone it's the full screen.
+- **No breakpoints**: the shared Tailwind preset sets `screens: {}`, so `sm:`/`md:`/`lg:` classes do
+  nothing. Viewport media queries would fire wrongly inside the column. Don't add them.
+- **Sizes in code**: use `useAppDimensions()` (`packages/app/lib/dimensions*.ts`, the window capped
+  at the column width on web), never `useWindowDimensions`. For a row that must fit (e.g. five mood
+  faces), measure the row itself with `onLayout` (`useRowWidth` / `fitFive`).
+- **Sheets** are always bottom sheets, at most the column's width.
+- Design and check every screen at 360px wide first.
+
 ## Styling & design tokens
 
 - Tokens live in `packages/tokens/index.js` (colors as HSL triplets, radius, fonts). **They are
@@ -122,15 +136,15 @@ the workspace root. Review each added component: some need extra `@rn-primitives
 
 - **Top bar** (`shell/top-bar.tsx`): one fixed `AppTopBar` drawn by the shell (web `AppShell`,
   native `(tabs)/_layout.tsx`): section title from the route, route actions (Cycle's settings
-  button once opted in) and `ProfileButton` (avatar → profile sheet, hidden at `lg` where the
-  sidebar shows it). Content scrolls under it, so screens don't add the top safe-area inset or their
-  own title row. Pushed screens in `STANDALONE_PATHS` (`/mood` and below) render `<AppTopBar back />`
-  themselves; `FOCUS_PATHS` (`/mood/check-in`) also hide the tab bar on web.
+  button once opted in) and `ProfileButton` (avatar → profile sheet). Content scrolls under it, so
+  screens don't add the top safe-area inset or their own title row. Pushed screens in
+  `STANDALONE_PATHS` (`/mood` and below) render `<AppTopBar back />` themselves and, as on Android
+  where they open over the tabs, have no tab bar on web.
 - **Shell** (`packages/app/features/shell`): Home, Food, Ask MyBela, and either Cycle (see the
   Cycle section for who sees it, F13) or Insights, around a central Log button that opens the
   quick-log sheet. Native: `apps/mobile/app/(tabs)/_layout.tsx` (Expo Router `Tabs` with the shared
-  `AppTabBar`). Web: the `(app)` route group's layout renders `AppShell` (sidebar at `lg+`, tab bar
-  below). Sheets (quick log, F24 profile) live in a zustand store and are drawn once by the shell.
+  `AppTabBar`). Web: the `(app)` route group's layout renders `AppShell` (top bar, content, tab
+  bar: the same phone layout as Android). Sheets (quick log, F24 profile) live in a zustand store and are drawn once by the shell.
 - **Home** (`features/home`): live data comes from `GET /profile` (target, goals, discreet mode),
   `GET /ovulation` (cycle preview) and `GET /food/suggestions/{user_id}`. Sections with no endpoint
   yet (daily summary, week/streak/chips, insights, MyBela noticed, recent logs, mood) use

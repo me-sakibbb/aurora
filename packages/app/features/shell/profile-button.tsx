@@ -6,8 +6,7 @@ import { Avatar } from './account';
 import { useSheets } from './sheets';
 
 /**
- * The avatar at the end of every screen's top bar; opens the profile sheet (F24). Hidden on wide
- * screens, where the sidebar shows it instead.
+ * The avatar at the end of every screen's top bar; opens the profile sheet (F24).
  */
 export function ProfileButton() {
   const { t } = useTranslation();
@@ -16,7 +15,7 @@ export function ProfileButton() {
     <Pressable
       onPress={() => showSheet('profile')}
       aria-label={t('shell.openProfile')}
-      className="rounded-full active:opacity-80 lg:hidden"
+      className="rounded-full active:opacity-80"
     >
       <Avatar />
     </Pressable>

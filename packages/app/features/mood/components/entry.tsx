@@ -10,7 +10,7 @@ import { Pop } from '../../../components/pop';
 import { tapHaptic } from '../../../lib/haptics';
 import { Panel } from '../../home/components/primitives';
 import { useDateLocale } from '../../home/use-date-locale';
-import { fitFive, MOOD_HALO, SCALE_ICONS, ScaleGlyph, TAG_ICONS, useRowWidth } from './visuals';
+import { fitFive, MOOD_HALO, ScaleGlyph, TAG_ICONS, useRowWidth } from './visuals';
 
 const pressable = Platform.select({ web: 'transition-colors hover:bg-muted', default: '' });
 
@@ -56,23 +56,22 @@ export function EntryDetails({ entry, waiting }: { entry: MoodLog; waiting?: boo
           {scales.map((scale) => {
             const level = entry[scale] as MoodLevel;
             return (
+              // Centred column: glyph in a fixed-height slot, then the answer (wraps, never cut),
+              // then the scale's name, so the three tiles line up exactly.
               <View
                 key={scale}
-                className="bg-muted/60 flex-1 gap-2 rounded-2xl px-3 py-3"
+                className="bg-muted/60 min-w-0 flex-1 items-center gap-1.5 rounded-2xl px-2 pb-3 pt-3.5"
                 aria-label={`${t(`mood.scales.${scale}`)}: ${t(`mood.levels.${scale}.${level}`)}`}
               >
-                <View className="flex-row items-center gap-1.5">
-                  <Icon as={SCALE_ICONS[scale]} size={14} className="text-muted-foreground" />
-                  <Text className="text-muted-foreground text-xs font-medium">
-                    {t(`mood.scales.${scale}`)}
-                  </Text>
+                <View className="h-8 items-center justify-center">
+                  <ScaleGlyph scale={scale} level={level} slot={32} />
                 </View>
-                <View className="flex-row items-end justify-between gap-2">
-                  <Text numberOfLines={1} className="flex-1 text-sm font-semibold">
-                    {t(`mood.levels.${scale}.${level}`)}
-                  </Text>
-                  <ScaleGlyph scale={scale} level={level} size={18} />
-                </View>
+                <Text numberOfLines={2} className="text-center text-sm font-semibold leading-5">
+                  {t(`mood.levels.${scale}.${level}`)}
+                </Text>
+                <Text className="text-muted-foreground text-center text-[11px] font-semibold uppercase tracking-wider">
+                  {t(`mood.scales.${scale}`)}
+                </Text>
               </View>
             );
           })}

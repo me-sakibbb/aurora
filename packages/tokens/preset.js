@@ -34,6 +34,10 @@ function createPreset({ platform }) {
   return {
     darkMode: 'class',
     theme: {
+      // No breakpoints: the app is phone-first on every screen. On a computer the web build sits in
+      // a phone-width column, where viewport media queries would fire wrongly, so layouts never
+      // switch on width (use useAppDimensions for the rare size-based decision).
+      screens: {},
       extend: {
         colors: themeColors,
         borderRadius: {

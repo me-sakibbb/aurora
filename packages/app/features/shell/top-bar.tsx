@@ -11,15 +11,14 @@ import { isActivePath } from './nav';
 import { ProfileButton } from './profile-button';
 import { useSheets } from './sheets';
 
-/** Pushed screens (and everything under them) that draw their own bar instead of the shell's. */
+/**
+ * Pushed screens (and everything under them): they draw their own bar (with back) and, like on
+ * Android where they open over the tabs, show no tab bar.
+ */
 export const STANDALONE_PATHS = ['/mood'];
-/** Full-screen flows with their own header and no tab bar. */
-export const FOCUS_PATHS = ['/mood/check-in'];
 
 export const isStandalone = (pathname: string) =>
   STANDALONE_PATHS.some((href) => isActivePath(pathname, href));
-export const isFocus = (pathname: string) =>
-  FOCUS_PATHS.some((href) => isActivePath(pathname, href));
 
 const TITLES = [
   { href: '/food', key: 'shell.nav.food' },
@@ -48,7 +47,7 @@ export function AppTopBar({ back = false }: { back?: boolean }) {
 
   return (
     <View style={{ paddingTop: insets.top }} className="bg-background border-border border-b">
-      <View className="mx-auto h-14 w-full max-w-6xl flex-row items-center gap-2 px-5 lg:px-10">
+      <View className="mx-auto h-14 w-full max-w-6xl flex-row items-center gap-2 px-5">
         {back ? (
           <Button
             variant="ghost"

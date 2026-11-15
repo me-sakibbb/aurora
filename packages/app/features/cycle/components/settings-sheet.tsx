@@ -3,8 +3,9 @@
 import { useTranslation } from '@mybela/i18n';
 import { Button, Text } from '@mybela/ui';
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, useWindowDimensions, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Sheet, SheetScrollView } from '../../../components/sheet';
+import { useAppDimensions } from '../../../lib/dimensions';
 import { useSession } from '../../auth/session';
 import { useProfile } from '../../home/queries';
 import { useSheets } from '../../shell/sheets';
@@ -30,7 +31,7 @@ export function CycleSettingsSheet() {
   const profile = useProfile();
   const save = useSaveCycleSetup();
   const turnOff = useTurnOffCycle();
-  const { height } = useWindowDimensions();
+  const { height } = useAppDimensions();
 
   const [draft, setDraft] = useState<SetupDraft>(() => draftFrom(status.data, profile.data));
   const [confirmOff, setConfirmOff] = useState(false);

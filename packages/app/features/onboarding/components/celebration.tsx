@@ -9,11 +9,11 @@ import {
   Animated,
   Easing,
   Platform,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';
 import { Pop } from '../../../components/pop';
+import { useAppDimensions } from '../../../lib/dimensions';
 import { successHaptic } from '../../../lib/haptics';
 import { useInsets } from '../../../lib/insets';
 import { useReducedMotion } from '../../../lib/use-reduced-motion';
@@ -471,7 +471,7 @@ export function CelebrationBadge({
 /** The olive floods in as a circle growing from just above the middle of the screen. */
 function OliveReveal() {
   const reduced = useReducedMotion();
-  const { width, height } = useWindowDimensions();
+  const { width, height } = useAppDimensions();
   const grow = useRef(new Animated.Value(reduced ? 1 : 0)).current;
   // Big enough to cover the corners from its off-centre starting point.
   const size = Math.hypot(width, height) * 1.25;

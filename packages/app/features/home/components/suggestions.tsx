@@ -41,8 +41,8 @@ export function SuggestionsSection({
         horizontal
         showsHorizontalScrollIndicator={false}
         // Bleed to the screen edge on phones so the next card peeks in (a swipe hint).
-        className="-mx-5 lg:mx-0"
-        contentContainerClassName="gap-3 px-5 lg:px-0"
+        className="-mx-5"
+        contentContainerClassName="gap-3 px-5"
         snapToInterval={Platform.OS === 'web' ? undefined : 236}
         decelerationRate="fast"
       >

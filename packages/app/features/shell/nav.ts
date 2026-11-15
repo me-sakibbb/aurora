@@ -32,10 +32,6 @@ export function useNavItems() {
       left: [ITEMS.home, ITEMS.food],
       right: [ITEMS.chat, cycle ? ITEMS.cycle : ITEMS.insights],
     },
-    /** Wide-screen sidebar: everything. */
-    all: cycle
-      ? [ITEMS.home, ITEMS.food, ITEMS.chat, ITEMS.cycle, ITEMS.insights]
-      : [ITEMS.home, ITEMS.food, ITEMS.chat, ITEMS.insights],
   };
 }
 

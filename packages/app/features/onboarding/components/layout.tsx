@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslation } from '@mybela/i18n';
-import { ChevronLeft, cn, Icon, Text } from '@mybela/ui';
+import { ChevronLeft, Icon, Text } from '@mybela/ui';
 import { useEffect, useRef } from 'react';
 import {
   Animated,
@@ -19,10 +19,9 @@ import { BrandGlow } from './visuals';
 
 /**
  * Shell for every onboarding step.
- * - Phones: back + progress on top, the step scrolling in the middle, its actions pinned at the
- *   bottom (thumb reach).
- * - Wide web (lg+): the step sits in a centred card with its actions inline underneath, so they
- *   aren't stranded at the bottom of a tall window. `wide` drops the card (landing page).
+ * Back + progress on top, the step scrolling in the middle, its actions pinned at the bottom
+ * (thumb reach). The same on every screen size (the app is phone-width everywhere). `wide` is the
+ * landing page: the brand shows in place of the back button.
  */
 export function OnboardingLayout({
   progress,
@@ -56,12 +55,7 @@ export function OnboardingLayout({
         className="flex-1"
         behavior={Platform.OS === 'web' ? undefined : 'padding'}
       >
-        <View
-          className={cn(
-            'w-full flex-row items-center gap-3 self-center px-4 pt-3 sm:px-6 sm:pt-5',
-            wide ? 'max-w-6xl' : 'max-w-[560px]',
-          )}
-        >
+        <View className="w-full flex-row items-center gap-3 px-4 pt-3">
           <View className="min-w-10">
             {onBack ? (
               <Pressable
@@ -94,43 +88,24 @@ export function OnboardingLayout({
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
         >
-          <View
-            className={cn(
-              'w-full grow self-center px-5 pb-8 pt-6 sm:px-8',
-              wide ? 'max-w-6xl' : 'max-w-[560px] lg:grow-0 lg:py-12',
-            )}
-          >
-            <View
-              className={cn(
-                'grow gap-7',
-                !wide &&
-                  'lg:bg-card lg:border-border lg:grow-0 lg:rounded-3xl lg:border lg:p-10 lg:shadow-xl lg:shadow-black/5',
-              )}
-            >
+          <View className="w-full grow px-5 pb-8 pt-6">
+            <View className="grow gap-7">
               {eyebrow ? (
                 <Text className="text-muted-foreground -mb-4 text-xs font-semibold uppercase tracking-widest">
                   {eyebrow}
                 </Text>
               ) : null}
               {children}
-              {footer && !wide ? <View className="hidden gap-2 pt-1 lg:flex">{footer}</View> : null}
             </View>
           </View>
         </ScrollView>
 
         {footer ? (
           <View
-            className="bg-background/95 border-border/70 w-full border-t lg:hidden"
+            className="bg-background/95 border-border/70 w-full border-t"
             style={{ paddingBottom: insets.bottom }}
           >
-            <View
-              className={cn(
-                'w-full gap-2 self-center px-5 pb-4 pt-3 sm:px-8',
-                wide ? 'max-w-6xl' : 'max-w-[560px]',
-              )}
-            >
-              {footer}
-            </View>
+            <View className="w-full gap-2 px-5 pb-4 pt-3">{footer}</View>
           </View>
         ) : null}
       </KeyboardAvoidingView>

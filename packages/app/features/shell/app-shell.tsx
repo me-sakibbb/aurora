@@ -5,9 +5,8 @@ import { usePathname } from '../../lib/navigation';
 import { CycleSettingsSheet } from '../cycle/components/settings-sheet';
 import { ProfileSheet } from './profile-sheet';
 import { QuickLogSheet } from './quick-log-sheet';
-import { SideNav } from './side-nav';
 import { AppTabBar } from './tab-bar';
-import { AppTopBar, isFocus, isStandalone } from './top-bar';
+import { AppTopBar, isStandalone } from './top-bar';
 
 /** The app-wide sheets. Rendered once, by the shell (web) or the tabs layout (native). */
 export function ShellOverlays() {
@@ -21,19 +20,18 @@ export function ShellOverlays() {
 }
 
 /**
- * Web layout for signed-in sections: sidebar on wide screens, bottom tab bar below `lg`.
+ * Web layout for signed-in sections: top bar, content, bottom tab bar. The same phone layout at
+ * every screen size; on a computer the root layout centres it in a phone-width frame.
  * (Native gets the same tab bar through Expo Router's Tabs; see apps/mobile/app/(tabs)/_layout.tsx.)
  */
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const pushed = isStandalone(pathname);
   return (
-    <View className="bg-background h-dvh flex-row">
-      <SideNav className="hidden lg:flex" />
-      <View className="min-w-0 flex-1">
-        {isStandalone(pathname) ? null : <AppTopBar />}
-        <View className="flex-1">{children}</View>
-        {isFocus(pathname) ? null : <AppTabBar className="lg:hidden" />}
-      </View>
+    <View className="bg-background h-dvh">
+      {pushed ? null : <AppTopBar />}
+      <View className="flex-1">{children}</View>
+      {pushed ? null : <AppTabBar />}
       <ShellOverlays />
     </View>
   );

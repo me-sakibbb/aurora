@@ -30,9 +30,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={sans.variable}>
       <body>
-        <StylesProvider>
-          <Providers>{children}</Providers>
-        </StylesProvider>
+        {/* Phone-first everywhere: on a computer the whole app sits in a centred phone-width
+            column (see globals.css). On a phone the frame is simply the full screen. */}
+        <div className="app-frame">
+          <StylesProvider>
+            <Providers>{children}</Providers>
+          </StylesProvider>
+        </div>
         {clarityProjectId && process.env.NODE_ENV === 'production' ? (
           // Usage analytics (F14). The backend team owns the Clarity project; we only load it.
           <Script id="clarity" strategy="afterInteractive">

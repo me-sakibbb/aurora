@@ -4,9 +4,10 @@ import { type FoodItem, servingGrams } from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
 import { Button, Icon, Text, X } from '@mybela/ui';
 import { useEffect, useState } from 'react';
-import { Pressable, useWindowDimensions, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { FoodImage } from '../../../components/food-image';
 import { Sheet, SheetScrollView } from '../../../components/sheet';
+import { useAppDimensions } from '../../../lib/dimensions';
 import { useInsets } from '../../../lib/insets';
 import { useLanguage } from '../../../lib/language';
 import { foodNames, kcalLabel, methodLabel } from '../display';
@@ -14,9 +15,6 @@ import { methodIcon } from '../method-icons';
 import { LogPanel } from './log-panel';
 
 const MACROS = ['protein_g', 'carbs_g', 'fat_g', 'fiber_g'] as const;
-
-/** The dialog's width on wide screens (`lg:max-w-lg`). */
-const DIALOG_WIDTH = 512;
 
 /**
  * A closer look at one food: a big photo up top (a large cooking-method illustration until photos
@@ -37,7 +35,7 @@ export function FoodDetailSheet({
   const { t } = useTranslation();
   const { language } = useLanguage();
   const insets = useInsets();
-  const { width, height } = useWindowDimensions();
+  const { width, height } = useAppDimensions();
   const [mode, setMode] = useState<'detail' | 'log'>('detail');
   // Every newly opened food starts on its details.
   const itemId = item?.id;
@@ -51,10 +49,10 @@ export function FoodDetailSheet({
   const nutrients = item.nutrients_per_100g;
   const macros = MACROS.filter((key) => nutrients?.[key] != null);
   // A landscape hero, capped so the name and figures still show without scrolling.
-  const heroHeight = Math.min(Math.round(Math.min(width, DIALOG_WIDTH) * 0.75), height * 0.42);
+  const heroHeight = Math.min(Math.round(width * 0.75), height * 0.42);
 
   return (
-    <Sheet open={open} onClose={onClose} label={primary} flush className="lg:max-w-lg">
+    <Sheet open={open} onClose={onClose} label={primary} flush>
       {mode === 'log' ? (
         // Keyed by food so a new one never inherits the last one's portion or answers.
         <LogPanel key={item.id} item={item} onBack={() => setMode('detail')} onDone={onClose} />

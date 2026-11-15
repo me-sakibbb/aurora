@@ -144,9 +144,9 @@ function CycleHome() {
         </FadeIn>
       ) : null}
 
-      <View className="gap-5 lg:flex-row lg:items-start">
+      <View className="gap-5">
         {/* Main column: today and the calendar */}
-        <View className="gap-5 lg:min-w-0 lg:flex-[3]">
+        <View className="gap-5">
           {firstLoad ? (
             <Skeleton className="h-36 rounded-3xl" />
           ) : periods.isError && items.length === 0 ? (
@@ -186,7 +186,7 @@ function CycleHome() {
         </View>
 
         {/* Side column: phase and fertile window */}
-        <View className="gap-5 lg:min-w-0 lg:flex-[2]">
+        <View className="gap-5">
           <FadeIn delay={120}>
             {phaseRequest === null ? (
               firstLoad ? (
@@ -240,7 +240,7 @@ function CycleHome() {
     <>
       <FlatList
         className="bg-background flex-1"
-        contentContainerClassName="mx-auto w-full max-w-6xl px-5 pb-10 lg:px-10 lg:pt-6"
+        contentContainerClassName="mx-auto w-full max-w-6xl px-5 pb-10"
         contentContainerStyle={{ paddingTop: 16 }}
         data={items}
         keyExtractor={(item) => item.id}
@@ -269,7 +269,7 @@ function Centered({ children }: { children: React.ReactNode }) {
 
 function CycleSkeleton() {
   return (
-    <View aria-busy className="bg-background flex-1 px-5 lg:px-10" style={{ paddingTop: 16 }}>
+    <View aria-busy className="bg-background flex-1 px-5" style={{ paddingTop: 16 }}>
       <View className="mx-auto w-full max-w-6xl gap-5">
         <Skeleton className="h-9 w-40" />
         <Skeleton className="h-44 rounded-[28px]" />

@@ -34,7 +34,7 @@ function greetingKey(hour: number) {
 
 /**
  * F4 Home dashboard: the day at a glance, quick ways into food / mood / chat, MyBela's
- * observation, the week, suggestions and today's log. Wide screens get two columns.
+ * observation, the week, suggestions and today's log.
  *
  * Live data: profile (discreet mode), daily summary, cycle status, meal suggestions. Sections
  * without a backend endpoint yet show sample data marked "Preview" (see ./demo.ts).
@@ -80,7 +80,7 @@ export function HomeScreen() {
       contentContainerClassName="pb-10"
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
     >
-      <View className="mx-auto w-full max-w-6xl gap-5 px-5 lg:px-10 lg:pt-6">
+      <View className="mx-auto w-full max-w-6xl gap-5 px-5">
         {/* Header */}
         <View className="flex-row items-center gap-3">
           <View className="flex-1">
@@ -91,7 +91,7 @@ export function HomeScreen() {
               role="heading"
               aria-level={1}
               numberOfLines={2}
-              className="mt-1 text-[28px] font-bold leading-9 tracking-tight lg:text-4xl lg:leading-[44px]"
+              className="mt-1 text-[28px] font-bold leading-9 tracking-tight"
             >
               {firstName
                 ? t('home.greeting.named', {
@@ -113,9 +113,9 @@ export function HomeScreen() {
         {firstLoad ? (
           <HomeSkeleton />
         ) : (
-          <View className="gap-5 lg:flex-row lg:items-start lg:gap-6">
+          <View className="gap-5">
             {/* Main column */}
-            <View className="gap-5 lg:min-w-0 lg:flex-[3]">
+            <View className="gap-5">
               <FadeIn>
                 <TodayCard
                   summary={summary.data}
@@ -150,7 +150,7 @@ export function HomeScreen() {
             </View>
 
             {/* Side column */}
-            <View className="gap-5 lg:min-w-0 lg:flex-[2]">
+            <View className="gap-5">
               <FadeIn delay={120}>
                 <Veil hidden={discreet} label={t('home.mood.section')}>
                   <MoodCard

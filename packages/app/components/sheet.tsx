@@ -13,7 +13,6 @@ import {
   Pressable,
   ScrollView,
   type ScrollViewProps,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import { useInsets } from '../lib/insets';
@@ -24,8 +23,9 @@ cssInterop(Animated.View, { className: 'style' });
 
 const useNativeDriver = Platform.OS !== 'web';
 
-/** Tailwind's `lg` breakpoint: from here the sheet is a centered dialog and can't be swiped. */
-const LG = 1024;
+/** Matches APP_MAX_WIDTH (lib/dimensions) as a class, so Tailwind can see it. */
+const APP_WIDTH_CLASS = 'max-w-[480px]';
+
 /** How far (px) or how fast (px/ms) a downward swipe must go to close the sheet. */
 const CLOSE_DISTANCE = 120;
 const CLOSE_VELOCITY = 0.8;
@@ -49,9 +49,9 @@ export function SheetScrollView({ onScroll, ...props }: ScrollViewProps) {
 }
 
 /**
- * A bottom sheet on phones, a centered dialog on wide screens (`lg`). The backdrop fades while the
- * panel springs up; closing plays it back before unmounting. Back button / Esc / backdrop close it,
- * and on phones so does swiping it down.
+ * A bottom sheet, on every screen size (on a computer it rises inside the phone-width app column).
+ * The backdrop fades while the panel springs up; closing plays it back before unmounting. Back
+ * button / Esc / backdrop / swiping it down close it.
  */
 export function Sheet({
   open,
@@ -80,12 +80,9 @@ export function Sheet({
   const progress = useRef(new Animated.Value(0)).current;
   const drag = useRef(new Animated.Value(0)).current;
   const scrollTop = useRef(0);
-  const { width } = useWindowDimensions();
   useScrollLock(mounted);
 
   // Read through refs so the responder, created once, always sees the latest values.
-  const swipeable = useRef(false);
-  swipeable.current = width < LG;
   const close = useRef(onClose);
   close.current = onClose;
 
@@ -94,10 +91,7 @@ export function Sheet({
       // Capture only a clearly downward drag while the content is at its top; anything else
       // (taps, horizontal moves, scrolling back up) stays with the content.
       onMoveShouldSetPanResponderCapture: (_, g) =>
-        swipeable.current &&
-        scrollTop.current <= 0 &&
-        g.dy > 8 &&
-        Math.abs(g.dy) > Math.abs(g.dx) * 1.5,
+        scrollTop.current <= 0 && g.dy > 8 && Math.abs(g.dy) > Math.abs(g.dx) * 1.5,
       onPanResponderMove: (_, g) => drag.setValue(Math.max(0, g.dy)),
       onPanResponderRelease: (_, g) => {
         if (g.dy > CLOSE_DISTANCE || g.vy > CLOSE_VELOCITY) {
@@ -147,7 +141,8 @@ export function Sheet({
       navigationBarTranslucent
       onRequestClose={onClose}
     >
-      <View className="flex-1 justify-end lg:items-center lg:justify-center lg:p-6">
+      {/* Phone-width everywhere: on a computer the sheet rises inside the centred app column. */}
+      <View className="flex-1 items-center justify-end">
         <Animated.View style={{ opacity: progress }} className="bg-olive/50 absolute inset-0">
           <Pressable
             className="flex-1"
@@ -166,20 +161,21 @@ export function Sheet({
             paddingBottom: flush ? 0 : Math.max(insets.bottom, 16) + 8,
           }}
           className={cn(
-            'bg-card w-full rounded-t-[28px] px-5 pt-3 shadow-2xl shadow-black/30 lg:max-w-md lg:rounded-[28px] lg:pt-6',
-            flush && 'overflow-hidden px-0 pt-0 lg:pt-0',
+            'bg-card w-full rounded-t-[28px] px-5 pt-3 shadow-2xl shadow-black/30',
+            APP_WIDTH_CLASS,
+            flush && 'overflow-hidden px-0 pt-0',
             className,
           )}
         >
           {flush ? (
             <View
               pointerEvents="none"
-              className="absolute left-0 right-0 top-2.5 z-10 items-center lg:hidden"
+              className="absolute left-0 right-0 top-2.5 z-10 items-center"
             >
               <View className="bg-card/80 h-1.5 w-10 rounded-full" />
             </View>
           ) : (
-            <View className="bg-border mx-auto mb-5 h-1.5 w-10 rounded-full lg:hidden" />
+            <View className="bg-border mx-auto mb-5 h-1.5 w-10 rounded-full" />
           )}
           <ScrollTopContext.Provider value={scrollTop}>{children}</ScrollTopContext.Provider>
         </Animated.View>

@@ -22,6 +22,31 @@
     font-family: var(--font-sans), system-ui, sans-serif;
   }
 
+  /* The app column. Keep max-width in sync with APP_MAX_WIDTH (packages/app/lib/dimensions.ts). */
+  .app-frame {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    width: 100%;
+    max-width: 480px;
+    min-height: 100%;
+    margin: 0 auto;
+    background-color: hsl(var(--background));
+  }
+
+  /* On a computer: a quiet backdrop, and the column lifted off it like a phone. */
+  @media (min-width: 481px) {
+    body {
+      background-color: hsl(var(--muted));
+    }
+    .app-frame {
+      box-shadow:
+        0 0 0 1px hsl(var(--border)),
+        0 24px 64px -16px rgb(44 47 34 / 0.18);
+    }
+  }
+
   /* react-native-web gives Text/TextInput `font: 14px System`; inherit the page font instead. */
   html [class*="css-text-"],
   html [class*="css-textinput-"] {

@@ -5,9 +5,10 @@ import { useTranslation } from '@mybela/i18n';
 import { Button, Icon, Text, Trash2 } from '@mybela/ui';
 import { format, parseISO } from 'date-fns';
 import { useEffect, useState } from 'react';
-import { Pressable, useWindowDimensions, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { DatePicker } from '../../../components/date-picker';
 import { Sheet, SheetScrollView } from '../../../components/sheet';
+import { useAppDimensions } from '../../../lib/dimensions';
 import { useSession } from '../../auth/session';
 import { useDateLocale } from '../../home/use-date-locale';
 import { useDeletePeriod, useSavePeriod } from '../queries';
@@ -31,7 +32,7 @@ export function PeriodSheet({
 }) {
   const { t } = useTranslation();
   const locale = useDateLocale();
-  const { height } = useWindowDimensions();
+  const { height } = useAppDimensions();
   const userId = useSession()?.user.id;
   const save = useSavePeriod();
   const remove = useDeletePeriod();

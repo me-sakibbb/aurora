@@ -21,7 +21,6 @@ import {
   Pressable,
   ScrollView,
   TextInput,
-  useWindowDimensions,
   View,
 } from 'react-native';
 import { FadeIn } from '../../components/fade-in';
@@ -30,6 +29,7 @@ import { MoonPhase } from '../../components/moon-phase';
 import { Pop } from '../../components/pop';
 import { StressGauge } from '../../components/stress-gauge';
 import { GAUGE, gaugePoint, segmentMid } from '../../components/stress-gauge-types';
+import { useAppDimensions } from '../../lib/dimensions';
 import { successHaptic, tapHaptic } from '../../lib/haptics';
 import { useInsets } from '../../lib/insets';
 import { useAppRouter, useSearchParam } from '../../lib/navigation';
@@ -601,7 +601,7 @@ function TagsStep({
   onNote: (note: string) => void;
 }) {
   const { t } = useTranslation();
-  const { width } = useWindowDimensions();
+  const { width } = useAppDimensions();
   const [noteOpen, setNoteOpen] = useState(note.length > 0);
   const columns = width < 360 ? 3 : 4;
 
