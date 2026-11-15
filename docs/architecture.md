@@ -123,9 +123,10 @@ the workspace root. Review each added component: some need extra `@rn-primitives
   pending). Only the opt-ins are recorded.
 - **Google**: web uses Supabase's redirect flow; Android uses the native account picker
   (`@react-native-google-signin/google-signin`) + `signInWithIdToken`. Split in `auth/google(.native).ts`.
-- **Not approved** (backend contract): the Supabase *before user created* hook rejects non-allowlisted
-  emails with the message `not_allowlisted`. `toAuthErrorKind` maps it to the friendly "not on the beta
-  list" panel, separate from `invalid_credentials` (wrong password). See `auth/errors.ts`.
+- **Not approved** (backend contract): the Supabase *before user created* and *custom access token*
+  hooks reject non-allowlisted emails (live message: `This account is not on the beta allowlist.`).
+  Any auth error mentioning "allowlist" maps to `notApproved`, which shows the "access pending"
+  panel, separate from `invalid_credentials` (wrong password). See `auth/errors.ts`.
 - **Session** lives in SecureStore/localStorage and survives offline launches; sign-out clears the query
   cache (shared phones).
 - **Supabase dashboard setup** (backend): Redirect URLs `mybela://auth/callback`,

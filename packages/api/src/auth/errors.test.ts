@@ -12,6 +12,12 @@ describe('toAuthErrorKind', () => {
     ).toBe('notApproved');
   });
 
+  it('recognises the live hook message', () => {
+    expect(toAuthErrorKind(apiError('This account is not on the beta allowlist.', 403))).toBe(
+      'notApproved',
+    );
+  });
+
   it('keeps a wrong password distinct from not approved', () => {
     expect(toAuthErrorKind(apiError('Invalid login credentials', 400, 'invalid_credentials'))).toBe(
       'invalidCredentials',
@@ -50,6 +56,10 @@ describe('authErrorKindFromParams', () => {
       'error=server_error&error_code=unexpected_failure&error_description=not_allowlisted',
     );
     expect(authErrorKindFromParams(params)).toBe('notApproved');
+    const live = new URLSearchParams(
+      'error=access_denied&error_code=403&error_description=This+account+is+not+on+the+beta+allowlist.',
+    );
+    expect(authErrorKindFromParams(live)).toBe('notApproved');
   });
 
   it('detects an expired email link', () => {

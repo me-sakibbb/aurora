@@ -1,12 +1,18 @@
 import { isAuthApiError, isAuthError, isAuthRetryableFetchError } from '@supabase/supabase-js';
 
 /**
- * Contract with the backend: the "before user created" auth hook rejects emails that aren't on the
- * allowlist with this exact message, e.g. `{ error: { http_code: 403, message: 'not_allowlisted' } }`.
- * It reaches the app as an API error (email sign-up, Google ID token) or in the OAuth redirect URL
- * (`error_description=not_allowlisted`, Google on web).
+ * Contract with the backend: the "before user created" and "custom access token" auth hooks reject
+ * emails that aren't on the allowlist with a message containing "allowlist". The live hooks send
+ * `This account is not on the beta allowlist.`; the documented token is `not_allowlisted`. Both
+ * match. It reaches the app as an API error (email sign-up/sign-in, Google ID token) or in the OAuth
+ * redirect URL (`error_description=...`, Google on web).
  */
 export const NOT_ALLOWLISTED = 'not_allowlisted';
+const ALLOWLIST_MARKER = 'allowlist';
+
+function isNotAllowlisted(message: string): boolean {
+  return message.toLowerCase().includes(ALLOWLIST_MARKER);
+}
 
 /** What the UI needs to know about a failed auth call. Each kind has its own copy (auth.errors.*). */
 export type AuthErrorKind =
@@ -41,7 +47,7 @@ export function toAuthErrorKind(error: unknown): AuthErrorKind {
 
   const message =
     error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
-  if (message.includes(NOT_ALLOWLISTED)) return 'notApproved';
+  if (isNotAllowlisted(message)) return 'notApproved';
 
   if (isAuthRetryableFetchError(error)) return 'network';
   if (NETWORK_MESSAGES.some((m) => message.includes(m))) return 'network';
@@ -83,7 +89,7 @@ export function authErrorKindFromParams(params: URLSearchParams): AuthErrorKind 
   const description = params.get('error_description') ?? '';
   if (!error && !code) return null;
 
-  if (description.toLowerCase().includes(NOT_ALLOWLISTED)) return 'notApproved';
+  if (isNotAllowlisted(description)) return 'notApproved';
   if (code === 'otp_expired' || code === 'flow_state_expired') return 'linkExpired';
   if (error === 'access_denied' && !code) return 'linkExpired';
   return 'unknown';

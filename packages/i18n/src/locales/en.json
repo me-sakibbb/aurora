@@ -745,10 +745,10 @@
     },
     "resetPasswordAction": "Reset password",
     "notApproved": {
-      "title": "You're not on the beta list yet",
-      "bodyEmail": "MyBela is in a small, invite-only beta, and {{email}} isn't on the approved list.",
-      "body": "MyBela is in a small, invite-only beta, and this account isn't on the approved list.",
-      "help": "If you were invited, try the email or Google account you gave the MyBela team.",
+      "title": "Your access is pending",
+      "bodyEmail": "Thanks for your interest in MyBela! We're opening up gradually through a small, invite-only beta, and {{email}} hasn't been approved yet.",
+      "body": "Thanks for your interest in MyBela! We're opening up gradually through a small, invite-only beta, and this account hasn't been approved yet.",
+      "help": "Once the MyBela team approves you, just sign in again with the same account. Already invited? Use the email or Google account you shared with the team.",
       "tryAgain": "Try a different account"
     },
     "checkEmail": {
