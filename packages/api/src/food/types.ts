@@ -8,15 +8,12 @@ import type { KcalRange } from '../home/types';
  * (ডাল) and Banglish (vat, bhorta) find nothing. Proposed: match `name`, `name_bn`, aliases and
  * phonetic keys, whichever language or mix was typed, ranked by the backend.
  *
- * Proposed extra fields per item: a photo for the result cards, and a calorie range (F5) instead
- * of a single per-100 g figure.
+ * Proposed extra fields per item: a calorie range (F5) instead of a single per-100 g figure.
+ *
+ * `thumbnail_url` shipped, but recipes without a photo get a shared placehold.co image. Proposed:
+ * send `null` for those (the app filters the placeholder host until then, see `photoUrl`).
  */
 export type FoodSearchItemProposal = {
-  /**
-   * An absolute https URL to a photo of the dish (landscape, ~4:3, at least 600 px wide; the app
-   * crops to fill). Served from a CDN or Supabase Storage public bucket.
-   */
-  image_url: string | null;
   /** Lower and upper kcal for a typical serving, worked out by the backend. */
   kcal_min: KcalRange['min'];
   kcal_max: KcalRange['max'];
@@ -47,4 +44,24 @@ export type MissingFoodReport = {
   note?: string;
   /** The search text that found nothing, when different from `name`. */
   query?: string;
+};
+
+/**
+ * Proposed Bengali text for recipe questions. Today `prompt` and choice `label` are one language
+ * only, so Bengali mode shows them as written.
+ */
+export type RecipeQuestionProposal = {
+  prompt_bn: string | null;
+  choices: { value: string; label: string; label_bn: string | null }[];
+};
+
+/**
+ * Proposed additions to `POST /api/v1/food/recipes/log`:
+ * - `client_id`: a device-made UUID, upserted, so a log replayed after a lost response (offline
+ *   queue, F15) never saves twice.
+ * - `oil_tier` (`low` | `typical` | `high`) is stored but doesn't change the nutrition yet, and
+ *   any string is accepted. Proposed: validate it and apply it to the estimate (F6).
+ */
+export type FoodLogProposal = {
+  client_id: string;
 };

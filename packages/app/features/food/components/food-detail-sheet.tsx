@@ -2,7 +2,8 @@
 
 import { type FoodItem, servingGrams } from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
-import { Icon, Info, Text, X } from '@mybela/ui';
+import { Button, Icon, Text, X } from '@mybela/ui';
+import { useEffect, useState } from 'react';
 import { Pressable, useWindowDimensions, View } from 'react-native';
 import { FoodImage } from '../../../components/food-image';
 import { Sheet, SheetScrollView } from '../../../components/sheet';
@@ -10,6 +11,7 @@ import { useInsets } from '../../../lib/insets';
 import { useLanguage } from '../../../lib/language';
 import { foodNames, kcalLabel, methodLabel } from '../display';
 import { methodIcon } from '../method-icons';
+import { LogPanel } from './log-panel';
 
 const MACROS = ['protein_g', 'carbs_g', 'fat_g', 'fiber_g'] as const;
 
@@ -19,7 +21,8 @@ const DIALOG_WIDTH = 512;
 /**
  * A closer look at one food: a big photo up top (a large cooking-method illustration until photos
  * exist), both names, the typical serving and the backend's nutrition per 100 g, as returned.
- * Scrolls when it's taller than the screen. Logging it (F6) plugs in here later.
+ * Scrolls when it's taller than the screen. "Log this meal" turns the same sheet into the F6
+ * log form (`LogPanel`).
  */
 export function FoodDetailSheet({
   item,
@@ -35,6 +38,12 @@ export function FoodDetailSheet({
   const { language } = useLanguage();
   const insets = useInsets();
   const { width, height } = useWindowDimensions();
+  const [mode, setMode] = useState<'detail' | 'log'>('detail');
+  // Every newly opened food starts on its details.
+  const itemId = item?.id;
+  useEffect(() => {
+    if (open && itemId) setMode('detail');
+  }, [open, itemId]);
   if (!item) return null;
 
   const { primary, secondary } = foodNames(item, language);
@@ -46,88 +55,92 @@ export function FoodDetailSheet({
 
   return (
     <Sheet open={open} onClose={onClose} label={primary} flush className="lg:max-w-lg">
-      <SheetScrollView
-        style={{ maxHeight: height * 0.92 }}
-        contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 16) + 12 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <View
-          style={{ height: heroHeight }}
-          className="bg-sage/20 w-full items-center justify-center overflow-hidden"
+      {mode === 'log' ? (
+        // Keyed by food so a new one never inherits the last one's portion or answers.
+        <LogPanel key={item.id} item={item} onBack={() => setMode('detail')} onDone={onClose} />
+      ) : (
+        <SheetScrollView
+          style={{ maxHeight: height * 0.92 }}
+          contentContainerStyle={{ paddingBottom: Math.max(insets.bottom, 16) + 12 }}
+          showsVerticalScrollIndicator={false}
         >
-          <FoodImage
-            uri={item.image_url}
-            className="absolute inset-0"
-            fallback={
-              <View
-                aria-hidden
-                className="bg-card/60 h-36 w-36 items-center justify-center rounded-full"
-              >
-                <Icon
-                  as={methodIcon(item.cooking_method)}
-                  size={72}
-                  strokeWidth={1.25}
-                  className="text-primary/80"
-                />
-              </View>
-            }
-          />
-          <View className="bg-card/95 absolute bottom-3 left-4 rounded-full px-3 py-1 shadow-sm shadow-black/10">
-            <Text className="text-xs font-semibold">{methodLabel(t, item.cooking_method)}</Text>
-          </View>
-        </View>
-
-        <View className="gap-6 px-5 pt-5">
-          <View className="gap-1">
-            <Text
-              role="heading"
-              aria-level={2}
-              className="text-2xl font-bold leading-8 tracking-tight"
-            >
-              {primary}
-            </Text>
-            {secondary ? (
-              <Text className="text-muted-foreground text-base leading-6">{secondary}</Text>
-            ) : null}
-          </View>
-
-          <View className="flex-row gap-3">
-            <Stat label={t('food.detail.calories')} value={kcal ?? t('food.detail.unknown')} />
-            <Stat
-              label={t('food.detail.serving')}
-              value={t('food.detail.grams', { grams: servingGrams(item).toLocaleString() })}
+          <View
+            style={{ height: heroHeight }}
+            className="bg-sage/20 w-full items-center justify-center overflow-hidden"
+          >
+            <FoodImage
+              uri={item.image_url}
+              className="absolute inset-0"
+              fallback={
+                <View
+                  aria-hidden
+                  className="bg-card/60 h-36 w-36 items-center justify-center rounded-full"
+                >
+                  <Icon
+                    as={methodIcon(item.cooking_method)}
+                    size={72}
+                    strokeWidth={1.25}
+                    className="text-primary/80"
+                  />
+                </View>
+              }
             />
-          </View>
-
-          {macros.length > 0 ? (
-            <View className="gap-2.5">
-              <Text className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
-                {t('food.detail.per100g')}
-              </Text>
-              <View className="flex-row gap-2">
-                {macros.map((key) => (
-                  <View
-                    key={key}
-                    className="bg-background flex-1 items-center gap-0.5 rounded-2xl py-3"
-                  >
-                    <Text className="text-base font-bold">
-                      {t('food.detail.grams', { grams: nutrients?.[key]?.toLocaleString() })}
-                    </Text>
-                    <Text className="text-muted-foreground text-xs">{t(`food.detail.${key}`)}</Text>
-                  </View>
-                ))}
-              </View>
+            <View className="bg-card/95 absolute bottom-3 left-4 rounded-full px-3 py-1 shadow-sm shadow-black/10">
+              <Text className="text-xs font-semibold">{methodLabel(t, item.cooking_method)}</Text>
             </View>
-          ) : null}
-
-          <View className="bg-sage/10 flex-row items-start gap-2.5 rounded-2xl p-3.5">
-            <Icon as={Info} size={16} className="text-muted-foreground mt-0.5" />
-            <Text className="text-muted-foreground flex-1 text-sm leading-5">
-              {t('food.detail.loggingSoon')}
-            </Text>
           </View>
-        </View>
-      </SheetScrollView>
+
+          <View className="gap-6 px-5 pt-5">
+            <View className="gap-1">
+              <Text
+                role="heading"
+                aria-level={2}
+                className="text-2xl font-bold leading-8 tracking-tight"
+              >
+                {primary}
+              </Text>
+              {secondary ? (
+                <Text className="text-muted-foreground text-base leading-6">{secondary}</Text>
+              ) : null}
+            </View>
+
+            <View className="flex-row gap-3">
+              <Stat label={t('food.detail.calories')} value={kcal ?? t('food.detail.unknown')} />
+              <Stat
+                label={t('food.detail.serving')}
+                value={t('food.detail.grams', { grams: servingGrams(item).toLocaleString() })}
+              />
+            </View>
+
+            {macros.length > 0 ? (
+              <View className="gap-2.5">
+                <Text className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
+                  {t('food.detail.per100g')}
+                </Text>
+                <View className="flex-row gap-2">
+                  {macros.map((key) => (
+                    <View
+                      key={key}
+                      className="bg-background flex-1 items-center gap-0.5 rounded-2xl py-3"
+                    >
+                      <Text className="text-base font-bold">
+                        {t('food.detail.grams', { grams: nutrients?.[key]?.toLocaleString() })}
+                      </Text>
+                      <Text className="text-muted-foreground text-xs">
+                        {t(`food.detail.${key}`)}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            ) : null}
+
+            <Button size="lg" className="rounded-full" onPress={() => setMode('log')}>
+              <Text>{t('food.detail.log')}</Text>
+            </Button>
+          </View>
+        </SheetScrollView>
+      )}
       {/* Outside the scroll view so it stays put while the content scrolls. */}
       <Pressable
         onPress={onClose}

@@ -1,5 +1,6 @@
 import { apiFetch } from '../backend';
 import {
+  createFoodLog,
   type FoodItem,
   fetchFoodCatalogue,
   fetchFoodPage,
@@ -8,6 +9,8 @@ import {
   methodIgnored,
   normalizeQuery,
   offsetIgnored,
+  photoUrl,
+  previewRecipeNutrition,
 } from './api';
 
 const searchFoods = (search: string) => fetchFoodPage({ offset: 0, search });
@@ -30,6 +33,7 @@ const food = (id: string, name: string, name_bn: string | null = null): FoodItem
   nutrients_per_100g: null,
   image_url: null,
   kcal_range: null,
+  questions: [],
 });
 
 const MASOOR = food('1', 'Masoor Dal', 'মসুর ডাল');
@@ -70,12 +74,57 @@ describe('fetchFoodPage', () => {
     });
   });
 
-  it('reads a photo when the backend sends one', async () => {
+  it('reads the thumbnail as the photo', async () => {
     mockFetch.mockResolvedValueOnce({
-      recipes: [{ id: 'r1', name: 'Biryani', image_url: 'https://cdn.example/biryani.jpg' }],
+      recipes: [{ id: 'r1', name: 'Biryani', thumbnail_url: 'https://cdn.example/biryani.jpg' }],
     });
     const [item] = await searchFoods('biryani');
     expect(item?.image_url).toBe('https://cdn.example/biryani.jpg');
+  });
+
+  it("treats the backend's placeholder thumbnail as no photo", async () => {
+    mockFetch.mockResolvedValueOnce({
+      recipes: [
+        { id: 'r1', name: 'Biryani', thumbnail_url: 'https://placehold.co/640x480?text=Recipe' },
+      ],
+    });
+    const [item] = await searchFoods('biryani');
+    expect(item?.image_url).toBeNull();
+  });
+
+  it('reads recipe questions, required by default', async () => {
+    mockFetch.mockResolvedValueOnce({
+      recipes: [
+        {
+          id: 'r1',
+          name: 'Biryani',
+          questions: [
+            {
+              id: 'meat_ratio',
+              prompt: 'How much meat relative to rice?',
+              choices: [
+                { value: 'less', label: 'Less meat' },
+                { value: 'more', label: 'More meat' },
+              ],
+            },
+          ],
+        },
+        { id: 'r2', name: 'Bhat' },
+      ],
+    });
+    const [biryani, bhat] = await searchFoods('b');
+    expect(biryani?.questions).toEqual([
+      {
+        id: 'meat_ratio',
+        prompt: 'How much meat relative to rice?',
+        required: true,
+        choices: [
+          { value: 'less', label: 'Less meat' },
+          { value: 'more', label: 'More meat' },
+        ],
+      },
+    ]);
+    expect(bhat?.questions).toEqual([]);
   });
 
   it('reads a calorie range when the backend sends one', async () => {
@@ -109,6 +158,52 @@ describe('fetchFoodCatalogue', () => {
     mockFetch.mockResolvedValueOnce({ recipes: [] });
     await expect(fetchFoodCatalogue()).resolves.toEqual([]);
     expect(mockFetch).toHaveBeenCalledWith('/food/recipes?limit=200');
+  });
+});
+
+describe('photoUrl', () => {
+  it('keeps real photos and drops placeholders and junk', () => {
+    expect(photoUrl('https://cdn.example/a.jpg')).toBe('https://cdn.example/a.jpg');
+    expect(photoUrl('https://PLACEHOLD.co/640x480')).toBeNull();
+    expect(photoUrl('not a url')).toBeNull();
+    expect(photoUrl(null)).toBeNull();
+  });
+});
+
+describe('logging', () => {
+  it('previews nutrition with the answers', async () => {
+    mockFetch.mockResolvedValueOnce({ recipe_id: 'r1', grams: 250, nutrients: { kcal: 410.5 } });
+    const nutrients = await previewRecipeNutrition('r1', {
+      grams: 250,
+      answers: { meat_ratio: 'more' },
+    });
+    expect(mockFetch).toHaveBeenCalledWith('/food/recipes/r1/nutrition', {
+      method: 'POST',
+      body: { grams: 250, answers: { meat_ratio: 'more' } },
+      signal: undefined,
+    });
+    expect(nutrients.kcal).toBe(410.5);
+  });
+
+  it('saves a log and reads the nutrition the backend worked out', async () => {
+    const input = {
+      recipe_id: 'r1',
+      grams: 250,
+      oil_tier: 'typical' as const,
+      logged_at: '2026-11-15T07:00:00.000Z',
+      answers: {},
+    };
+    mockFetch.mockResolvedValueOnce({
+      received: true,
+      log_id: 'l1',
+      recipe_id: 'r1',
+      grams: 250,
+      logged_at: '2026-11-15T07:00:00+00:00',
+      nutrients: { kcal: 345 },
+    });
+    const log = await createFoodLog(input);
+    expect(mockFetch).toHaveBeenCalledWith('/food/recipes/log', { method: 'POST', body: input });
+    expect(log).toMatchObject({ log_id: 'l1', nutrients: { kcal: 345 } });
   });
 });
 

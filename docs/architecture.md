@@ -137,6 +137,23 @@ the workspace root. Review each added component: some need extra `@rn-primitives
   show a "Preview" badge. Suggestions fall back to the sample while the endpoint fails.
 - Chat, Insights and Mood are "coming soon" placeholders (`features/placeholders`).
 
+## Food search & logging (F5, F6)
+
+- **Search** (`packages/app/features/food`, API in `packages/api/src/food`): the Food tab opens a detail
+  sheet. Photos come from the recipe's `thumbnail_url`. The backend's shared placehold.co
+  placeholder is treated as "no photo" (`photoUrl`), so the cooking-method illustration shows instead.
+- **Logging** (`components/log-panel.tsx`, `log-queries.ts`): "Log this meal" turns the detail sheet
+  into the log form. It covers meal, portion (`ValueSlider`), cooking oil (`oil_tier`) and the recipe's own
+  `questions` (single choice, shown as returned; effects stay on the backend).
+  - The recipe is refetched (`GET /food/recipes/{id}`) so a log never uses outdated questions.
+  - The estimate is `POST /food/recipes/{id}/nutrition {grams, answers}`, with portion changes debounced.
+  - The meal is sent only as `logged_at`; the backend buckets slots by time (see `loggedAtFor`).
+- **The write** is the keyed `['food-log','create']` mutation (`registerFoodMutations`):
+  - Offline, it's paused, persisted and shown as "Saved on this device".
+  - When it fails, the Food tab shows a Try again / Discard banner (`useFoodLogWrites`).
+  - On success, it invalidates the Home daily summary.
+  - The backend has no idempotency key yet, so a replay after a lost response can duplicate (see `food/types.ts`).
+
 ## Cycle tracking (F10, F11, F13)
 
 - **Data**: settings, opt-in and the fertile window come from FastAPI `GET/POST /ovulation`

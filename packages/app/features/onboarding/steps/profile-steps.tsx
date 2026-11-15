@@ -33,8 +33,8 @@ import {
 } from '@mybela/ui';
 import { useEffect } from 'react';
 import { View } from 'react-native';
+import { ModeSwitch } from '../../../components/mode-switch';
 import { ValueSlider } from '../../../components/value-slider';
-import { ModeSwitch } from '../../auth/components/mode-switch';
 import { SingleChoice } from '../components/choices';
 import { StepHeading } from '../components/layout';
 import { BodyFigure } from '../components/visuals';

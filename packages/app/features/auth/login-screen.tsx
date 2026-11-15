@@ -20,6 +20,7 @@ import { useRef, useState } from 'react';
 import { Controller, type Resolver, useForm } from 'react-hook-form';
 import { Platform, type TextInput, View } from 'react-native';
 import { FadeIn } from '../../components/fade-in';
+import { ModeSwitch } from '../../components/mode-switch';
 import { useAppRouter, useSearchParam } from '../../lib/navigation';
 import { useIsOnline } from '../../lib/use-online';
 import { AuthHeading, AuthLayout } from './components/auth-layout';
@@ -33,7 +34,6 @@ import {
   SubmitButton,
   TextLink,
 } from './components/form';
-import { ModeSwitch } from './components/mode-switch';
 import { CheckEmailPanel, NotApprovedPanel } from './components/panels';
 
 type Mode = 'signIn' | 'signUp';

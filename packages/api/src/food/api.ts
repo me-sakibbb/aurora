@@ -13,6 +13,40 @@ const nutrientsSchema = z.object({
   fiber_g: z.number().nullish(),
 });
 
+/**
+ * The backend fills `thumbnail_url` with a shared placeholder image when a recipe has no photo.
+ * It's treated as "no photo" so cards keep the cooking-method illustration (backend asked to send
+ * `null` instead, see ./types.ts).
+ */
+const PLACEHOLDER_HOSTS = ['placehold.co'];
+
+/** The photo URL, or `null` for a missing, malformed or placeholder one. */
+export function photoUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  const host = /^https?:\/\/([^/?#]+)/i.exec(url)?.[1]?.toLowerCase();
+  if (!host || PLACEHOLDER_HOSTS.some((p) => host === p || host.endsWith(`.${p}`))) return null;
+  return url;
+}
+
+/**
+ * A recipe-specific question asked when logging it (e.g. "How much meat relative to rice?").
+ * Prompt and choice labels are shown exactly as returned; how each choice changes the nutrition
+ * stays on the backend, the app only sends the chosen `value`.
+ */
+const recipeQuestionSchema = z.object({
+  id: z.string(),
+  prompt: z.string(),
+  required: z
+    .boolean()
+    .nullish()
+    .transform((required) => required ?? true),
+  choices: z.array(z.object({ value: z.string(), label: z.string() })),
+});
+
+export type RecipeQuestion = z.infer<typeof recipeQuestionSchema>;
+/** Question id → chosen choice value. */
+export type RecipeAnswers = Record<string, string>;
+
 const foodItemSchema = z
   .object({
     id: z.string(),
@@ -23,17 +57,19 @@ const foodItemSchema = z
     weight_g: z.number().nullish(),
     kcal_per_100g: z.number().nullish(),
     nutrients_per_100g: nutrientsSchema.nullish(),
-    // Proposed (see ./types.ts): a photo of the dish. Cards show a cooking-method icon until then.
-    image_url: z.string().nullish(),
+    // A photo of the dish. Cards show a cooking-method illustration when there's none.
+    thumbnail_url: z.string().nullish(),
+    questions: z.array(recipeQuestionSchema).nullish(),
     // Proposed (see ./types.ts): a calorie range per typical serving. Shown instead of the
     // per-100 g figure once the backend sends it.
     kcal_min: z.number().nullish(),
     kcal_max: z.number().nullish(),
   })
-  .transform(({ kcal_min, kcal_max, ...item }) => ({
+  .transform(({ kcal_min, kcal_max, thumbnail_url, ...item }) => ({
     ...item,
     name_bn: item.name_bn || null,
-    image_url: item.image_url || null,
+    image_url: photoUrl(thumbnail_url),
+    questions: item.questions ?? [],
     kcal_range:
       kcal_min != null && kcal_max != null ? ({ min: kcal_min, max: kcal_max } as KcalRange) : null,
   }));
@@ -118,4 +154,69 @@ export function mergeResults(local: FoodItem[], server: FoodItem[] | undefined):
   if (!server?.length) return local;
   const seen = new Set(local.map((item) => item.id));
   return [...local, ...server.filter((item) => !seen.has(item.id))];
+}
+
+// ─── F6 logging ──────────────────────────────────────────────────────────────────────────────────
+
+/** `GET /api/v1/food/recipes/{id}`: one recipe with its current questions. */
+export async function fetchRecipe(id: string, signal?: AbortSignal): Promise<FoodItem> {
+  return foodItemSchema.parse(await apiFetch(`/food/recipes/${id}`, { signal }));
+}
+
+const portionNutrientsSchema = z.object({
+  kcal: z.number().nullish(),
+  protein_g: z.number().nullish(),
+  fat_g: z.number().nullish(),
+  carbs_g: z.number().nullish(),
+  fiber_g: z.number().nullish(),
+  iron_mg: z.number().nullish(),
+  sodium_mg: z.number().nullish(),
+});
+
+export type PortionNutrients = z.infer<typeof portionNutrientsSchema>;
+
+/**
+ * `POST /api/v1/food/recipes/{id}/nutrition`: the backend's nutrition for a cooked portion after
+ * applying the answers. Missing required or invalid answers are a 422.
+ */
+export async function previewRecipeNutrition(
+  id: string,
+  { grams, answers }: { grams: number; answers: RecipeAnswers },
+  signal?: AbortSignal,
+): Promise<PortionNutrients> {
+  const json = await apiFetch(`/food/recipes/${id}/nutrition`, {
+    method: 'POST',
+    body: { grams, answers },
+    signal,
+  });
+  return z.object({ nutrients: portionNutrientsSchema }).parse(json).nutrients;
+}
+
+/** How much cooking oil went in. Sent with the log as `oil_tier`. */
+export const OIL_TIERS = ['low', 'typical', 'high'] as const;
+export type OilTier = (typeof OIL_TIERS)[number];
+
+export type FoodLogInput = {
+  recipe_id: string;
+  /** The cooked portion in grams. */
+  grams: number;
+  oil_tier: OilTier;
+  /** ISO timestamp. The backend puts the log in a meal slot by this time. */
+  logged_at: string;
+  answers: RecipeAnswers;
+};
+
+const foodLogSchema = z.object({
+  log_id: z.string(),
+  recipe_id: z.string(),
+  grams: z.number(),
+  logged_at: z.string(),
+  nutrients: portionNutrientsSchema,
+});
+
+export type FoodLog = z.infer<typeof foodLogSchema>;
+
+/** `POST /api/v1/food/recipes/log`: saves a meal. Returns the saved log with its nutrition. */
+export async function createFoodLog(input: FoodLogInput): Promise<FoodLog> {
+  return foodLogSchema.parse(await apiFetch('/food/recipes/log', { method: 'POST', body: input }));
 }

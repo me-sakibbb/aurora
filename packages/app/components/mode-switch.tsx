@@ -4,7 +4,7 @@ import { cn, Text } from '@mybela/ui';
 import { useEffect, useRef } from 'react';
 import { Animated, Easing, Pressable, View } from 'react-native';
 
-/** Two-option segmented control (Sign in / Create account) with a sliding selection pill. */
+/** Segmented control (Sign in / Create account, meal, oil…) with a sliding selection pill. */
 export function ModeSwitch<T extends string>({
   value,
   options,
