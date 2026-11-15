@@ -1,7 +1,7 @@
 import type { MealSlot } from './api';
 
 // Shapes the Home dashboard expects for sections the backend has no endpoint for yet (week
-// activity, insights, recent logs, mood). They double as the proposed API contract: every number
+// activity, insights, recent logs). They double as the proposed API contract: every number
 // and sentence here is meant to come from the backend, displayed as returned.
 
 /** A calorie estimate is always a range, never a single number (F5/F6). */
@@ -28,6 +28,3 @@ export type RecentLog = {
   logged_at: string;
   kcal: KcalRange;
 };
-
-/** F12: today's check-in, if there is one. */
-export type MoodToday = { mood: 1 | 2 | 3 | 4 | 5 | null };

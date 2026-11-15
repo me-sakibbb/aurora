@@ -1,4 +1,4 @@
-import type { Insight, MoodToday, RecentLog, WeekActivity } from '@mybela/api';
+import type { Insight, RecentLog, WeekActivity } from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
 import { format, setHours, setMinutes, subDays } from 'date-fns';
 import { useMemo } from 'react';
@@ -21,7 +21,6 @@ export type HomeDemo = {
   noticed: Insight;
   insights: Insight[];
   recent: RecentLog[];
-  mood: MoodToday;
 };
 
 export function useDemoHome(): HomeDemo {
@@ -65,7 +64,6 @@ export function useDemoHome(): HomeDemo {
           kcal: { min: 460, max: 520 },
         },
       ],
-      mood: { mood: null },
     };
   }, [t, language]);
 }

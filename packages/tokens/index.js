@@ -15,6 +15,18 @@ const palette = {
 };
 
 /**
+ * Mood check-in tones (F12), lowest to highest. Soft and non-judgmental on purpose: a low mood is a
+ * calm dusty blue, never an alarming red. Surfaces only; icons and text on them use olive (>=7:1).
+ */
+const mood = {
+  1: '218 22% 78%',
+  2: '262 14% 82%',
+  3: '37 26% 82%',
+  4: '84 22% 72%',
+  5: '40 70% 74%',
+};
+
+/**
  * Semantic color roles, named to match react-native-reusables / shadcn so its components work as-is.
  * Contrast (WCAG) was checked for each text/background pair; ratios in comments. Notes:
  * - Primary is dark olive, not sage: ivory text on sage is only 3.97:1 (fails AA for normal text).
@@ -86,4 +98,4 @@ const fonts = {
   },
 };
 
-module.exports = { palette, colors, radius, fonts };
+module.exports = { palette, mood, colors, radius, fonts };

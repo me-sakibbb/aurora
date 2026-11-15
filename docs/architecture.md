@@ -124,7 +124,8 @@ the workspace root. Review each added component: some need extra `@rn-primitives
   native `(tabs)/_layout.tsx`): section title from the route, route actions (Cycle's settings
   button once opted in) and `ProfileButton` (avatar → profile sheet, hidden at `lg` where the
   sidebar shows it). Content scrolls under it, so screens don't add the top safe-area inset or their
-  own title row. Pushed screens in `STANDALONE_PATHS` (mood) render `<AppTopBar back />` themselves.
+  own title row. Pushed screens in `STANDALONE_PATHS` (`/mood` and below) render `<AppTopBar back />`
+  themselves; `FOCUS_PATHS` (`/mood/check-in`) also hide the tab bar on web.
 - **Shell** (`packages/app/features/shell`): Home, Food, Ask MyBela, and either Cycle (see the
   Cycle section for who sees it, F13) or Insights, around a central Log button that opens the
   quick-log sheet. Native: `apps/mobile/app/(tabs)/_layout.tsx` (Expo Router `Tabs` with the shared
@@ -135,7 +136,7 @@ the workspace root. Review each added component: some need extra `@rn-primitives
   yet (daily summary, week/streak/chips, insights, MyBela noticed, recent logs, mood) use
   `features/home/demo.ts`, shaped like `packages/api/src/home/types.ts` (the proposed contract), and
   show a "Preview" badge. Suggestions fall back to the sample while the endpoint fails.
-- Chat, Insights and Mood are "coming soon" placeholders (`features/placeholders`).
+- Chat and Insights are "coming soon" placeholders (`features/placeholders`).
 
 ## Food search & logging (F5, F6)
 
@@ -187,6 +188,42 @@ the workspace root. Review each added component: some need extra `@rn-primitives
   `registerCycleMutations` (`features/cycle/queries.ts`, called from `provider/mutations.ts`), with
   optimistic cache updates. Periods use device-made ids and upsert, so a replay never duplicates.
   Writes that fail for good show a banner with Try again / Discard (`useFailedCycleWrites`).
+
+## Mood check-in (F12)
+
+- **API** (`packages/api/src/mood`): FastAPI `POST /mood` (upsert by `user_id, day`) and
+  `GET /mood?from&to&limit`. History pages by asking for days before the oldest one shown
+  (`fetchMoodPage`), since the backend has no cursor. Tags are the fixed slug list `MOOD_TAGS`
+  (labels translated in the app; unknown slugs are dropped); share that list with the backend.
+- **Screens** (`packages/app/features/mood`): `/mood` (today card or a face prompt, month calendar of
+  faces, infinite history) and `/mood/check-in?day&mood` (stepped: mood → energy → sleep → stress →
+  tags + note; each tap auto-advances, "Save now" finishes after mood). Any day up to today can be
+  checked in or edited. Home's mood card starts the check-in with the tapped face.
+- **Faces** are drawn SVG (`components/mood-face(.native).tsx`, shapes in `mood-face-types.ts`) on the
+  `mood` tone tokens (`bg-mood-1..5`).
+- **The write** is the keyed `['mood-log','save']` mutation (`registerMoodMutations`), optimistic in
+  the month and history caches. One entry per day, so an offline replay can't duplicate.
+
+## System states (F15)
+
+- **Connection strip** (`shell/connection-status.tsx`), under every top bar: offline (+ how many
+  changes are waiting), "syncing" when queued writes are sent, then "All changes synced". Screens
+  don't add their own generic offline banners (contextual ones like food search's stay).
+- **`InlineState`** (`home/components/primitives.tsx`) takes the query `error` and picks the wording
+  with `errorKind` (offline / rate limited / server / generic). Screens with nothing cached show the
+  offline state instead of an endless skeleton.
+- **Retries** (`packages/api/src/query.ts`): only transient failures (network, 408, 429, 5xx) are
+  retried, with exponential backoff; other 4xx fail at once.
+- **Crashes**: `ScreenErrorBoundary` (`features/system/screens.tsx`) wraps every route from the
+  shared `Provider`; it resets when the route changes. **404**: `NotFoundScreen` (web
+  `app/not-found.tsx`, native `app/+not-found.tsx`).
+
+## Analytics (F14)
+
+- Microsoft Clarity loads only in production builds with a project ID (`NEXT_PUBLIC_CLARITY_PROJECT_ID`
+  / `EXPO_PUBLIC_CLARITY_PROJECT_ID`; the backend team owns the project). Web gets screens from URLs;
+  native names each route with `Clarity.setCurrentScreenName` (`apps/mobile/app/_layout.tsx`).
+  Everything is recorded with the dashboard's default masking (decided 2026-11-15).
 
 ## i18n (`packages/i18n`)
 

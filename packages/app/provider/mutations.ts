@@ -1,6 +1,7 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { registerCycleMutations } from '../features/cycle/queries';
 import { registerFoodMutations } from '../features/food/log-queries';
+import { registerMoodMutations } from '../features/mood/queries';
 
 /**
  * Registers every "must not lose it" write by key, before paused mutations are restored and
@@ -10,4 +11,5 @@ import { registerFoodMutations } from '../features/food/log-queries';
 export function registerMutationDefaults(queryClient: QueryClient) {
   registerCycleMutations(queryClient);
   registerFoodMutations(queryClient);
+  registerMoodMutations(queryClient);
 }

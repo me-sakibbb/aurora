@@ -1,4 +1,4 @@
-import { palette } from '@mybela/tokens';
+import { mood, palette } from '@mybela/tokens';
 
 /**
  * A brand color as a CSS/SVG color string, for props that can't take a className (SVG strokes).
@@ -6,4 +6,9 @@ import { palette } from '@mybela/tokens';
  */
 export function tokenColor(name: keyof typeof palette): string {
   return `hsl(${palette[name].split(' ').join(', ')})`;
+}
+
+/** A mood tone (F12) as a CSS/SVG color string, for the drawn mood faces. */
+export function moodColor(level: keyof typeof mood): string {
+  return `hsl(${mood[level].split(' ').join(', ')})`;
 }

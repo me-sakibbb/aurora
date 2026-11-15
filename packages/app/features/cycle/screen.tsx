@@ -2,7 +2,7 @@
 
 import { buildPhaseRequest, periodOn } from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
-import { Button, Flower2, Icon, Text, WifiOff } from '@mybela/ui';
+import { Button, Flower2, Icon, Text } from '@mybela/ui';
 import { format, isSameMonth, parseISO, startOfMonth } from 'date-fns';
 import { useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';
@@ -44,16 +44,19 @@ export function CycleScreen() {
   const status = useCycleStatus();
   const profile = useProfile();
   const failed = useFailedCycleWrites();
+  const online = useIsOnline();
 
   // Visibility depends on both answers; until they're in, show loading or why they're missing.
   const unknown =
     status.data === undefined || (status.data.enabled === false && profile.data === undefined);
   if (unknown) {
-    const failedToLoad = status.isError || profile.isError;
+    // Offline with nothing saved on the device yet: say so instead of loading forever.
+    const failedToLoad = status.isError || profile.isError || !online;
     return failedToLoad ? (
       <Centered>
         <InlineState
-          kind="error"
+          kind={online ? 'error' : 'offline'}
+          error={status.error ?? profile.error}
           onRetry={() => Promise.all([status.refetch(), profile.refetch()])}
         />
       </Centered>
@@ -125,15 +128,6 @@ function CycleHome() {
 
   const header = (
     <View className="gap-5 pb-3">
-      {!online ? (
-        <FadeIn className="bg-muted flex-row items-center gap-3 rounded-2xl px-4 py-3">
-          <Icon as={WifiOff} size={18} className="text-muted-foreground" />
-          <Text className="text-muted-foreground flex-1 text-sm" role="status">
-            {t('cycle.offline')}
-          </Text>
-        </FadeIn>
-      ) : null}
-
       {failed.count > 0 ? (
         <FadeIn className="bg-destructive/10 gap-3 rounded-2xl px-4 py-3">
           <Text className="text-destructive" role="alert">
@@ -156,7 +150,7 @@ function CycleHome() {
           {firstLoad ? (
             <Skeleton className="h-36 rounded-3xl" />
           ) : periods.isError && items.length === 0 ? (
-            <InlineState kind={online ? 'error' : 'offline'} onRetry={() => periods.refetch()} />
+            <InlineState error={periods.error} onRetry={() => periods.refetch()} />
           ) : (
             <FadeIn>
               <TodayCard
@@ -203,7 +197,7 @@ function CycleHome() {
             ) : phase.data ? (
               <PhaseCard phase={phase.data} />
             ) : phase.isError || !online ? (
-              <InlineState kind={online ? 'error' : 'offline'} onRetry={() => phase.refetch()} />
+              <InlineState error={phase.error} onRetry={() => phase.refetch()} />
             ) : (
               <Skeleton className="h-44 rounded-3xl" />
             )}

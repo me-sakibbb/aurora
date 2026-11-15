@@ -1,11 +1,19 @@
 export type { Session, User } from '@supabase/supabase-js';
 export * from './auth';
-export { ApiError, apiFetch, isApiConfigured } from './backend';
+export {
+  ApiError,
+  apiFetch,
+  type ErrorKind,
+  errorKind,
+  isApiConfigured,
+  isRetryable,
+} from './backend';
 export * from './cycle';
 export type { Database } from './database.types';
 export * from './food';
 export * from './home';
 export { setupAppLifecycle } from './lifecycle';
+export * from './mood';
 export * from './onboarding';
 export { createQueryClient, persistOptions, queryPersister } from './query';
 export * from './schemas/auth';

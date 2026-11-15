@@ -64,3 +64,32 @@ export async function apiFetch(
   }
   return response.status === 204 ? null : response.json();
 }
+
+/**
+ * What kind of failure an error is, so screens can say something useful instead of a generic
+ * "something went wrong" (F15). `offline` covers requests that never got an answer.
+ */
+export type ErrorKind = 'offline' | 'rateLimited' | 'server' | 'notFound' | 'unknown';
+
+export function errorKind(error: unknown, online = true): ErrorKind {
+  if (!online) return 'offline';
+  if (error instanceof ApiError) {
+    if (error.status === 0) return 'offline';
+    if (error.status === 429) return 'rateLimited';
+    if (error.status === 404) return 'notFound';
+    if (error.status >= 500) return 'server';
+    return 'unknown';
+  }
+  // fetch rejects with a TypeError when the network drops mid-request.
+  if (error instanceof TypeError) return 'offline';
+  return 'unknown';
+}
+
+/**
+ * Whether a failed request is worth repeating automatically: network drops, timeouts, rate limits
+ * and server errors are; other 4xx answers (bad input, not found, not allowed) won't change.
+ */
+export function isRetryable(error: unknown): boolean {
+  if (!(error instanceof ApiError)) return true;
+  return error.status === 0 || error.status === 408 || error.status === 429 || error.status >= 500;
+}

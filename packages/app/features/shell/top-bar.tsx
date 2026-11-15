@@ -6,19 +6,27 @@ import { View } from 'react-native';
 import { useInsets } from '../../lib/insets';
 import { useAppRouter, usePathname } from '../../lib/navigation';
 import { useCycleAccess } from '../cycle/queries';
+import { ConnectionStatus } from './connection-status';
 import { isActivePath } from './nav';
 import { ProfileButton } from './profile-button';
 import { useSheets } from './sheets';
 
-/** Pushed screens with a back button; they draw their own bar instead of the shell's. */
+/** Pushed screens (and everything under them) that draw their own bar instead of the shell's. */
 export const STANDALONE_PATHS = ['/mood'];
+/** Full-screen flows with their own header and no tab bar. */
+export const FOCUS_PATHS = ['/mood/check-in'];
+
+export const isStandalone = (pathname: string) =>
+  STANDALONE_PATHS.some((href) => isActivePath(pathname, href));
+export const isFocus = (pathname: string) =>
+  FOCUS_PATHS.some((href) => isActivePath(pathname, href));
 
 const TITLES = [
   { href: '/food', key: 'shell.nav.food' },
   { href: '/chat', key: 'shell.nav.chat' },
   { href: '/cycle', key: 'shell.nav.cycle' },
   { href: '/insights', key: 'shell.nav.insights' },
-  { href: '/mood', key: 'placeholders.mood.title' },
+  { href: '/mood', key: 'mood.title' },
 ] as const;
 
 /**
@@ -73,6 +81,7 @@ export function AppTopBar({ back = false }: { back?: boolean }) {
         ) : null}
         <ProfileButton />
       </View>
+      <ConnectionStatus />
     </View>
   );
 }

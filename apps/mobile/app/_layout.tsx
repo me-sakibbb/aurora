@@ -8,7 +8,7 @@ import {
 } from '@expo-google-fonts/noto-sans-bengali';
 import * as Clarity from '@microsoft/react-native-clarity';
 import { Provider } from '@mybela/app/provider';
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -17,8 +17,22 @@ void SplashScreen.preventAutoHideAsync();
 
 // Usage analytics (F14). The backend team owns the Clarity project; we only initialize it.
 const clarityProjectId = process.env.EXPO_PUBLIC_CLARITY_PROJECT_ID;
-if (clarityProjectId && !__DEV__) {
+const clarityOn = Boolean(clarityProjectId) && !__DEV__;
+if (clarityOn && clarityProjectId) {
   Clarity.initialize(clarityProjectId);
+}
+
+/**
+ * An RN app is one Android activity, so without this every session in Clarity is a single
+ * "screen". Naming each route (`/food`, `/mood/check-in`…) gives the backend team per-screen time,
+ * heatmaps and drop-off funnels, like the web build gets from its URLs.
+ */
+function ClarityScreenNames() {
+  const pathname = usePathname();
+  useEffect(() => {
+    if (clarityOn) void Clarity.setCurrentScreenName(pathname || '/').catch(() => {});
+  }, [pathname]);
+  return null;
 }
 
 export default function RootLayout() {
@@ -38,7 +52,11 @@ export default function RootLayout() {
   return (
     <Provider>
       <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }} />
+      <ClarityScreenNames />
+      <Stack screenOptions={{ headerShown: false }}>
+        {/* The check-in is a focused flow: it rises over whatever opened it. */}
+        <Stack.Screen name="mood/check-in" options={{ animation: 'slide_from_bottom' }} />
+      </Stack>
     </Provider>
   );
 }

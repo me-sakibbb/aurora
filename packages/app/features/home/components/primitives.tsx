@@ -1,6 +1,6 @@
 'use client';
 
-import type { MealSlot } from '@mybela/api';
+import { type ErrorKind, errorKind, type MealSlot } from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
 import {
   Button,
@@ -12,14 +12,17 @@ import {
   Icon,
   type IconComponent,
   Moon,
+  RefreshCw,
   Sun,
   Sunrise,
   Text,
+  TriangleAlert,
   WifiOff,
 } from '@mybela/ui';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Skeleton } from '../../../components/skeleton';
+import { useIsOnline } from '../../../lib/use-online';
 
 export const MEAL_ICONS: Record<MealSlot, IconComponent> = {
   breakfast: Sunrise,
@@ -128,31 +131,49 @@ export function Veil({
   );
 }
 
-/** An in-card error or offline message with a retry, used instead of hiding the section. */
+/**
+ * An in-card loading failure with a retry, used instead of hiding the section (F15). Pass the
+ * query's `error` and the message says what kind of problem it is (offline, too many requests,
+ * server trouble); `kind="offline"` forces the offline wording.
+ */
 export function InlineState({
   kind,
+  error,
   onRetry,
 }: {
-  kind: 'error' | 'offline';
+  kind?: 'error' | 'offline';
+  error?: unknown;
   onRetry?: () => void;
 }) {
   const { t } = useTranslation();
+  const online = useIsOnline();
+  const resolved: ErrorKind = kind === 'offline' ? 'offline' : errorKind(error, online);
+  const offline = resolved === 'offline';
   return (
     <Panel className="items-center gap-3 py-8">
-      {kind === 'offline' ? (
-        <Icon as={WifiOff} size={24} className="text-muted-foreground" />
-      ) : null}
-      <Text className="text-muted-foreground text-center" role="alert">
-        {kind === 'offline' ? t('home.state.offline') : t('home.state.error')}
+      <View className="bg-muted h-12 w-12 items-center justify-center rounded-2xl">
+        <Icon as={offline ? WifiOff : TriangleAlert} size={22} className="text-muted-foreground" />
+      </View>
+      <Text className="text-muted-foreground max-w-xs text-center leading-6" role="alert">
+        {t(STATE_MESSAGE[resolved])}
       </Text>
-      {kind === 'error' && onRetry ? (
+      {!offline && onRetry ? (
         <Button variant="outline" size="sm" className="rounded-full" onPress={onRetry}>
+          <Icon as={RefreshCw} size={14} />
           <Text>{t('common.retry')}</Text>
         </Button>
       ) : null}
     </Panel>
   );
 }
+
+const STATE_MESSAGE = {
+  offline: 'states.offline',
+  rateLimited: 'states.rateLimited',
+  server: 'states.server',
+  notFound: 'states.error',
+  unknown: 'states.error',
+} as const satisfies Record<ErrorKind, string>;
 
 /** First-load placeholder for the whole dashboard, shaped like the real thing. */
 export function HomeSkeleton() {

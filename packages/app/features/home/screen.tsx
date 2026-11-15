@@ -1,14 +1,15 @@
 'use client';
 
 import { useTranslation } from '@mybela/i18n';
-import { Flame, Icon, Text, WifiOff } from '@mybela/ui';
+import { Flame, Icon, Text } from '@mybela/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import { FadeIn } from '../../components/fade-in';
 import { useAppRouter } from '../../lib/navigation';
-import { useIsOnline } from '../../lib/use-online';
 import { useCycleStatus } from '../cycle/queries';
+import { checkInHref } from '../mood/links';
+import { todayIso, useMoodDay, useWaitingMoodDays } from '../mood/queries';
 import { useAccount } from '../shell/account';
 import { HomeSkeleton, Veil } from './components/primitives';
 import {
@@ -41,7 +42,6 @@ function greetingKey(hour: number) {
 export function HomeScreen() {
   const { t } = useTranslation();
   const router = useAppRouter();
-  const online = useIsOnline();
   const locale = useDateLocale();
   const { firstName } = useAccount();
 
@@ -50,6 +50,9 @@ export function HomeScreen() {
   const summary = useDailySummary();
   const suggestions = useMealSuggestions();
   const demo = useHomeDemo();
+  const today = todayIso();
+  const mood = useMoodDay(today);
+  const moodWaiting = useWaitingMoodDays();
   const [refreshing, setRefreshing] = useState(false);
 
   const now = new Date();
@@ -62,6 +65,7 @@ export function HomeScreen() {
       summary.refetch(),
       cycle.refetch(),
       suggestions.refetch(),
+      mood.refetch(),
     ]);
     setRefreshing(false);
   };
@@ -106,15 +110,6 @@ export function HomeScreen() {
           </View>
         </View>
 
-        {!online ? (
-          <FadeIn className="bg-muted flex-row items-center gap-3 rounded-2xl px-4 py-3">
-            <Icon as={WifiOff} size={18} className="text-muted-foreground" />
-            <Text className="text-muted-foreground flex-1 text-sm" role="status">
-              {t('home.offlineBanner')}
-            </Text>
-          </FadeIn>
-        ) : null}
-
         {firstLoad ? (
           <HomeSkeleton />
         ) : (
@@ -158,7 +153,12 @@ export function HomeScreen() {
             <View className="gap-5 lg:min-w-0 lg:flex-[2]">
               <FadeIn delay={120}>
                 <Veil hidden={discreet} label={t('home.mood.section')}>
-                  <MoodCard mood={demo.mood} demo onPick={(value) => go(`/mood?mood=${value}`)} />
+                  <MoodCard
+                    entry={mood.entry}
+                    waiting={moodWaiting.has(today)}
+                    onPick={(value) => go(checkInHref({ mood: value }))}
+                    onOpen={() => go('/mood')}
+                  />
                 </Veil>
               </FadeIn>
               {cycle.data?.enabled ? (

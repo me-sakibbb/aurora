@@ -1,20 +1,23 @@
 'use client';
 
-import type { CycleStatus, Insight, MoodToday, RecentLog, WeekActivity } from '@mybela/api';
+import type {
+  CycleStatus,
+  Insight,
+  MoodLevel,
+  MoodLog,
+  RecentLog,
+  WeekActivity,
+} from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
 import {
-  Angry,
   ArrowRight,
   CalendarHeart,
   cn,
   Flame,
-  Frown,
   Gift,
   Icon,
   type IconComponent,
-  Laugh,
   Lightbulb,
-  Meh,
   MessageCircleHeart,
   Smile,
   Sparkles,
@@ -24,7 +27,9 @@ import {
 import { format, isToday, parseISO } from 'date-fns';
 import { Platform, Pressable, View } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';
+import { MoodFace } from '../../../components/mood-face';
 import { tapHaptic } from '../../../lib/haptics';
+import { FaceRow, WaitingNote } from '../../mood/components/entry';
 import { useDateLocale } from '../use-date-locale';
 import { MEAL_ICONS, Panel, PreviewBadge, SectionHeader } from './primitives';
 
@@ -222,59 +227,62 @@ export function WeekCard({
 
 // ─── Mood check-in (F12 entry point) ────────────────────────────────────────────────────────────
 
-const MOODS: { value: 1 | 2 | 3 | 4 | 5; icon: IconComponent }[] = [
-  { value: 1, icon: Angry },
-  { value: 2, icon: Frown },
-  { value: 3, icon: Meh },
-  { value: 4, icon: Smile },
-  { value: 5, icon: Laugh },
-];
-
+/**
+ * Today's mood: five faces that start the check-in with that mood picked, or, once checked in,
+ * today's face with a way into the Mood screen.
+ */
 export function MoodCard({
-  mood,
-  demo,
+  entry,
+  waiting,
   onPick,
+  onOpen,
 }: {
-  mood: MoodToday;
-  demo: boolean;
-  onPick: (value: number) => void;
+  entry: MoodLog | null | undefined;
+  waiting: boolean;
+  onPick: (value: MoodLevel) => void;
+  onOpen: () => void;
 }) {
   const { t } = useTranslation();
+
+  if (entry) {
+    return (
+      <Pressable
+        onPress={onOpen}
+        role="button"
+        aria-label={`${t('home.mood.done')}: ${t(`mood.levels.mood.${entry.mood}`)}`}
+        className={cn(
+          'bg-card border-border flex-row items-center gap-4 rounded-3xl border p-5 shadow-sm shadow-black/5 active:opacity-80',
+          pressable,
+        )}
+      >
+        <MoodFace level={entry.mood} size={52} />
+        <View className="flex-1 gap-0.5">
+          <Text className="text-muted-foreground text-xs font-semibold uppercase tracking-[1.5px]">
+            {t('home.mood.done')}
+          </Text>
+          <Text className="text-lg font-bold tracking-tight">
+            {t(`mood.levels.mood.${entry.mood}`)}
+          </Text>
+          {waiting ? <WaitingNote /> : null}
+        </View>
+        <Icon as={ArrowRight} size={18} className="text-muted-foreground" />
+      </Pressable>
+    );
+  }
+
   return (
     <Panel>
       <View className="mb-4 flex-row items-center gap-2">
-        <Text className="text-lg font-bold tracking-tight">
-          {mood.mood ? t('home.mood.done') : t('home.mood.title')}
-        </Text>
-        {demo ? <PreviewBadge /> : null}
+        <Text className="flex-1 text-lg font-bold tracking-tight">{t('home.mood.title')}</Text>
+        <Pressable onPress={onOpen} className="-my-1 rounded-full px-2 py-1 active:opacity-60">
+          <Text className="text-muted-foreground text-sm font-semibold">
+            {t('home.mood.history')}
+          </Text>
+        </Pressable>
       </View>
-      <View className="flex-row justify-between gap-2">
-        {MOODS.map(({ value, icon }) => {
-          const picked = mood.mood === value;
-          return (
-            <Pressable
-              key={value}
-              onPress={() => {
-                tapHaptic();
-                onPick(value);
-              }}
-              aria-label={t(`home.mood.options.${value}`)}
-              className={cn(
-                'aspect-square max-w-16 flex-1 items-center justify-center rounded-2xl active:scale-95',
-                picked ? 'bg-primary' : 'bg-muted',
-                Platform.select({ web: 'transition-transform hover:scale-105' }),
-              )}
-            >
-              <Icon
-                as={icon}
-                size={26}
-                strokeWidth={1.75}
-                className={picked ? 'text-primary-foreground' : 'text-foreground'}
-              />
-            </Pressable>
-          );
-        })}
-      </View>
+      {/* Usable even before today's entry is known: the backend keeps one per day, and the
+          check-in brings any existing answers along. */}
+      <FaceRow onPick={onPick} max={48} />
       <View className="mt-2 flex-row justify-between px-1">
         <Text className="text-muted-foreground text-xs">{t('home.mood.low')}</Text>
         <Text className="text-muted-foreground text-xs">{t('home.mood.high')}</Text>

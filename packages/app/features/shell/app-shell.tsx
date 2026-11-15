@@ -7,7 +7,7 @@ import { ProfileSheet } from './profile-sheet';
 import { QuickLogSheet } from './quick-log-sheet';
 import { SideNav } from './side-nav';
 import { AppTabBar } from './tab-bar';
-import { AppTopBar, STANDALONE_PATHS } from './top-bar';
+import { AppTopBar, isFocus, isStandalone } from './top-bar';
 
 /** The app-wide sheets. Rendered once, by the shell (web) or the tabs layout (native). */
 export function ShellOverlays() {
@@ -30,9 +30,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <View className="bg-background h-dvh flex-row">
       <SideNav className="hidden lg:flex" />
       <View className="min-w-0 flex-1">
-        {STANDALONE_PATHS.includes(pathname) ? null : <AppTopBar />}
+        {isStandalone(pathname) ? null : <AppTopBar />}
         <View className="flex-1">{children}</View>
-        <AppTabBar className="lg:hidden" />
+        {isFocus(pathname) ? null : <AppTabBar className="lg:hidden" />}
       </View>
       <ShellOverlays />
     </View>

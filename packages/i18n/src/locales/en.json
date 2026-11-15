@@ -26,7 +26,6 @@
     "kcalRange": "{{min}}–{{max}} kcal",
     "preview": "Preview",
     "seeAll": "See all",
-    "offlineBanner": "You're offline. Showing what was saved on this device.",
     "today": {
       "title": "Today",
       "kcalSoFar": "kcal so far",
@@ -70,7 +69,8 @@
         "3": "Okay",
         "4": "Good",
         "5": "Great"
-      }
+      },
+      "history": "History"
     },
     "cycle": {
       "title": "Your cycle",
@@ -392,10 +392,6 @@
     "insights": {
       "title": "Insights",
       "body": "A fuller look at your patterns over the week and month, building on the summary on Home."
-    },
-    "mood": {
-      "title": "Mood check-in",
-      "body": "Mood, energy, stress and sleep in a few taps, plus an optional note."
     }
   },
   "onboarding": {
@@ -788,5 +784,127 @@
       "offline": "You're offline, and we need a connection once to finish signing you in."
     },
     "signOut": "Sign out"
+  },
+  "states": {
+    "offline": "You're offline. This will load when you're back online.",
+    "error": "This couldn't load right now.",
+    "rateLimited": "Lots of requests at once. Give it a moment, then try again.",
+    "server": "Our servers are having a moment. Please try again shortly."
+  },
+  "connection": {
+    "offline": "You're offline.",
+    "offlineCached": "Showing what's saved on this device.",
+    "offlineQueued_one": "{{count}} change is saved on this device and will sync when you're back.",
+    "offlineQueued_other": "{{count}} changes are saved on this device and will sync when you're back.",
+    "syncing": "Back online. Syncing your changes…",
+    "synced": "All changes synced."
+  },
+  "system": {
+    "home": "Go to Home",
+    "notFound": {
+      "title": "This page doesn't exist",
+      "body": "The link may be old or mistyped. Everything you've saved is still where you left it."
+    },
+    "crash": {
+      "title": "Something went wrong",
+      "body": "This screen ran into a problem. Your saved data is safe. Try again, or head back home."
+    }
+  },
+  "mood": {
+    "title": "Mood",
+    "levels": {
+      "mood": {
+        "1": "Very low",
+        "2": "Low",
+        "3": "Okay",
+        "4": "Good",
+        "5": "Great"
+      },
+      "energy": {
+        "1": "Drained",
+        "2": "Low",
+        "3": "Steady",
+        "4": "Good",
+        "5": "Energised"
+      },
+      "sleep": {
+        "1": "Very poorly",
+        "2": "Poorly",
+        "3": "Okay",
+        "4": "Well",
+        "5": "Very well"
+      },
+      "stress": {
+        "1": "Calm",
+        "2": "Mostly calm",
+        "3": "A little",
+        "4": "Stressed",
+        "5": "Very stressed"
+      }
+    },
+    "scales": {
+      "energy": "Energy",
+      "sleep": "Sleep",
+      "stress": "Stress"
+    },
+    "tags": {
+      "work": "Work",
+      "study": "Study",
+      "family": "Family",
+      "friends": "Friends",
+      "partner": "Partner",
+      "exercise": "Exercise",
+      "outdoors": "Outdoors",
+      "rest": "Rest",
+      "food": "Food",
+      "travel": "Travel",
+      "unwell": "Unwell",
+      "period": "Period"
+    },
+    "checkIn": {
+      "today": "Today",
+      "progress": "Question {{step}} of {{total}}",
+      "saveNow": "Save now",
+      "save": "Save check-in",
+      "update": "Update check-in",
+      "optional": "Optional. Tap one, or skip.",
+      "mood": "How are you feeling?",
+      "moodPast": "How were you feeling?",
+      "moodHint": "Tap the face that fits best. There's no wrong answer.",
+      "energy": "How's your energy?",
+      "energyPast": "How was your energy?",
+      "sleep": "How did you sleep?",
+      "sleepPast": "How did you sleep that night?",
+      "stress": "How stressed do you feel?",
+      "stressPast": "How stressed did you feel?",
+      "tags": "What's been part of your day?",
+      "tagsPast": "What was part of that day?",
+      "tagsHint": "Pick any that fit, or none.",
+      "addNote": "Add a note (optional)",
+      "noteLabel": "Note",
+      "notePlaceholder": "Anything else about today?",
+      "noteCount": "{{count}} / {{max}}",
+      "savedTitle": "Checked in",
+      "savedToday": "Thanks for taking a moment for yourself today.",
+      "savedPast": "Saved for {{date}}.",
+      "savedQueued": "You're offline, so it's saved on this device and will sync when you're back online.",
+      "done": "Done",
+      "stressHint": "Tap the dial where you are right now."
+    },
+    "screen": {
+      "today": "Today",
+      "prompt": "How are you today?",
+      "promptBody": "Tap a face to start. It takes a few seconds.",
+      "edit": "Edit",
+      "waiting": "Saved on this device",
+      "saveFailed": "A check-in couldn't be saved. Nothing is lost; you can try again.",
+      "discard": "Discard",
+      "nothingLogged": "No check-in on this day.",
+      "checkInDay": "Check in for this day",
+      "historyTitle": "Past check-ins",
+      "historyEnd": "That's every check-in",
+      "emptyTitle": "No check-ins yet",
+      "emptyBody": "Your daily check-ins will gather here. Checking in again on the same day just updates it."
+    }
   }
 }
