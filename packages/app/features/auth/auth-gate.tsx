@@ -7,7 +7,8 @@ import { Platform, View } from 'react-native';
 import { AppError, AppSplash } from '../../components/app-splash';
 import { useAppRouter, usePathname, useSearchParam } from '../../lib/navigation';
 import { useIsOnline } from '../../lib/use-online';
-import { useAuthStore, useOnboardingState, useSignOut } from './session';
+import { PendingApprovalScreen } from './pending-approval-screen';
+import { useAccessStatus, useAuthStore, useOnboardingState, useSignOut } from './session';
 
 /**
  * Keeps every screen behind sign-in and sends people to the right place:
@@ -31,7 +32,11 @@ function Gate({ children }: { children: React.ReactNode }) {
   const online = useIsOnline();
   const status = useAuthStore((s) => s.status);
   const userId = useAuthStore((s) => s.session?.user.id);
+  const email = useAuthStore((s) => s.session?.user.email);
   const onboarding = useOnboardingState(status === 'signedIn' ? userId : undefined);
+  // Beta guard (temporary): pending people finish onboarding, then wait for approval.
+  const onboarded = status === 'signedIn' && onboarding.state === 'complete';
+  const access = useAccessStatus(onboarded ? userId : undefined, email);
   const signOut = useSignOut();
 
   const target = resolveAuthRedirect({ status, pathname, onboarding: onboarding.state, next });
@@ -43,8 +48,13 @@ function Gate({ children }: { children: React.ReactNode }) {
   const waitingForOnboarding =
     status === 'signedIn' && onboarding.state === 'unknown' && !OPEN_ROUTES.includes(pathname);
 
+  const isOpenRoute = OPEN_ROUTES.includes(pathname);
+  const waitingForAccess = onboarded && access.status === 'unknown' && !isOpenRoute;
+
   let overlay: React.ReactNode = null;
-  if (waitingForOnboarding && onboarding.isError) {
+  if (onboarded && access.status === 'pending' && !isOpenRoute) {
+    overlay = <PendingApprovalScreen />;
+  } else if (waitingForOnboarding && onboarding.isError) {
     overlay = (
       <AppError
         message={online ? t('auth.gate.error') : t('auth.gate.offline')}
@@ -52,7 +62,7 @@ function Gate({ children }: { children: React.ReactNode }) {
         secondary={{ label: t('auth.signOut'), onPress: () => signOut.mutate() }}
       />
     );
-  } else if (status === 'loading' || target !== null || waitingForOnboarding) {
+  } else if (status === 'loading' || target !== null || waitingForOnboarding || waitingForAccess) {
     overlay = <AppSplash />;
   }
 

@@ -2,7 +2,9 @@
 
 import type { Session } from '@mybela/api';
 import {
+  type AccessStatus,
   type AuthStatus,
+  fetchAccessStatus,
   fetchHasOnboarded,
   getSupabase,
   isSupabaseConfigured,
@@ -64,6 +66,23 @@ export function useOnboardingState(userId: string | undefined) {
   const state: OnboardingState =
     query.data === undefined ? 'unknown' : query.data ? 'complete' : 'pending';
   return { state, isError: query.isError && query.data === undefined, retry: query.refetch };
+}
+
+/**
+ * TEMPORARY beta guard: whether the signed-in user is approved or still pending (see
+ * `@mybela/api` auth/access.ts). Cached for offline launches. If it can't be loaded and nothing
+ * is cached, the user is let through: this is a UX gate, and approved people must never be locked out.
+ */
+export function useAccessStatus(userId: string | undefined, email: string | undefined) {
+  const query = useQuery({
+    queryKey: ['auth', 'access', userId],
+    queryFn: () => fetchAccessStatus(email as string),
+    enabled: Boolean(userId && email),
+    staleTime: 5 * 60_000,
+  });
+  const status: AccessStatus | 'unknown' =
+    query.data ?? (query.isError || !email ? 'approved' : 'unknown');
+  return { status, isFetching: query.isFetching, refetch: query.refetch };
 }
 
 export function useSignOut() {

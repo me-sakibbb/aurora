@@ -2,26 +2,12 @@
 
 import { toAuthErrorKind } from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
-import { Button, Text } from '@mybela/ui';
+import { Button, CalendarHeart, RefreshCw, Salad, Smile, Text, UserRoundCheck } from '@mybela/ui';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';
 import { FormMessage } from './form';
-
-/** Soft illustration: a sun that hasn't risen yet (the brand mark's sun, below the horizon). */
-function WaitingIllustration() {
-  return (
-    <View
-      aria-hidden
-      className="bg-secondary/40 h-20 w-20 items-center justify-center self-center rounded-full"
-    >
-      <View className="h-8 w-12 items-center justify-end overflow-hidden">
-        <View className="bg-sage h-1.5 w-12 rounded-full" />
-        <View className="bg-taupe absolute -bottom-3 h-6 w-6 rounded-full" />
-      </View>
-    </View>
-  );
-}
+import { EmailPill, FeatureTeaser, WaitlistTip } from './waitlist';
 
 function EnvelopeIllustration() {
   return (
@@ -49,9 +35,8 @@ export function NotApprovedPanel({
 }) {
   const { t } = useTranslation();
   return (
-    <FadeIn className="gap-6">
-      <WaitingIllustration />
-      <View className="gap-3">
+    <View className="gap-6">
+      <FadeIn delay={80} className="gap-3">
         <Text
           role="heading"
           aria-level={1}
@@ -60,16 +45,39 @@ export function NotApprovedPanel({
           {t('auth.notApproved.title')}
         </Text>
         <Text className="text-muted-foreground text-center text-base leading-6">
-          {email ? t('auth.notApproved.bodyEmail', { email }) : t('auth.notApproved.body')}
+          {t('auth.notApproved.lead')}
         </Text>
-        <Text className="text-muted-foreground text-center text-base leading-6">
-          {t('auth.notApproved.help')}
-        </Text>
-      </View>
-      <Button size="lg" onPress={onTryAgain}>
-        <Text>{t('auth.notApproved.tryAgain')}</Text>
-      </Button>
-    </FadeIn>
+        {email ? <EmailPill email={email} /> : null}
+      </FadeIn>
+      <FadeIn delay={160} className="bg-card border-border gap-4 rounded-2xl border p-4">
+        <WaitlistTip
+          icon={RefreshCw}
+          title={t('auth.notApproved.tipLaterTitle')}
+          hint={t('auth.notApproved.tipLaterHint')}
+        />
+        <View className="bg-border h-px" />
+        <WaitlistTip
+          icon={UserRoundCheck}
+          title={t('auth.notApproved.tipInvitedTitle')}
+          hint={t('auth.notApproved.tipInvitedHint')}
+        />
+      </FadeIn>
+      <FadeIn delay={240}>
+        <FeatureTeaser
+          title={t('auth.notApproved.teaser')}
+          items={[
+            { icon: Salad, label: t('auth.brand.featureFood'), tone: 'bg-mood-4' },
+            { icon: CalendarHeart, label: t('auth.brand.featureCycle'), tone: 'bg-mood-2' },
+            { icon: Smile, label: t('auth.brand.featureMood'), tone: 'bg-mood-5' },
+          ]}
+        />
+      </FadeIn>
+      <FadeIn delay={320}>
+        <Button size="lg" onPress={onTryAgain}>
+          <Text>{t('auth.notApproved.tryAgain')}</Text>
+        </Button>
+      </FadeIn>
+    </View>
   );
 }
 

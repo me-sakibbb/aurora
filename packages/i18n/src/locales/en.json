@@ -746,10 +746,27 @@
     "resetPasswordAction": "Reset password",
     "notApproved": {
       "title": "Your access is pending",
-      "bodyEmail": "Thanks for your interest in MyBela! We're opening up gradually through a small, invite-only beta, and {{email}} hasn't been approved yet.",
-      "body": "Thanks for your interest in MyBela! We're opening up gradually through a small, invite-only beta, and this account hasn't been approved yet.",
-      "help": "Once the MyBela team approves you, just sign in again with the same account. Already invited? Use the email or Google account you shared with the team.",
+      "lead": "Thanks for your interest in MyBela! We're opening up gradually through a small, invite-only beta, and this account isn't on the list yet.",
+      "tipLaterTitle": "Approved later?",
+      "tipLaterHint": "Just sign in again with the same account. Nothing else to do.",
+      "tipInvitedTitle": "Already invited?",
+      "tipInvitedHint": "Use the email or Google account you shared with the MyBela team.",
+      "teaser": "What's waiting for you",
       "tryAgain": "Try a different account"
+    },
+    "pending": {
+      "title": "You're on the list",
+      "lead": "Thanks for joining MyBela! We're letting people in gradually during the beta.",
+      "stepAccount": "Account created",
+      "stepAccountHint": "You're signed in and your profile is ready.",
+      "stepAnswers": "Answers saved",
+      "stepAnswersHint": "You won't need to fill anything in again.",
+      "stepReview": "Waiting for approval",
+      "stepReviewHint": "The MyBela team is reviewing beta requests.",
+      "stepWelcome": "Welcome to MyBela",
+      "stepWelcomeHint": "Once you're approved, tap “Check again” to come in.",
+      "checkAgain": "Check again",
+      "stillPending": "Not approved yet. Please check back a little later."
     },
     "checkEmail": {
       "title": "Check your inbox",
@@ -783,7 +800,10 @@
       "error": "We couldn't load your account.",
       "offline": "You're offline, and we need a connection once to finish signing you in."
     },
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "waitlist": {
+      "inProgress": "In progress"
+    }
   },
   "states": {
     "offline": "You're offline. This will load when you're back online.",

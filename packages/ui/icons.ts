@@ -62,6 +62,7 @@ export {
   Lightbulb,
   Lock,
   LogOut,
+  Mail,
   Mars,
   Meh,
   MessageCircleHeart,

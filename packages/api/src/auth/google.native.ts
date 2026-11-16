@@ -7,6 +7,7 @@ import {
 import { Platform } from 'react-native';
 import { env } from '../env';
 import { getSupabase } from '../supabase';
+import { requestBetaAccess } from './access';
 
 export type GoogleSignInResult = { cancelled: boolean };
 
@@ -41,6 +42,8 @@ export async function signInWithGoogle(): Promise<GoogleSignInResult> {
 
     const token = response.data.idToken;
     if (!token) throw new Error('Google did not return an ID token.');
+    // Beta: register the account as `pending` so the allowlist hook lets it sign up.
+    if (response.data.user.email) await requestBetaAccess(response.data.user.email);
 
     const { error } = await getSupabase().auth.signInWithIdToken({ provider: 'google', token });
     if (error) {

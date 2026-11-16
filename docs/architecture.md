@@ -127,6 +127,13 @@ the workspace root. Review each added component: some need extra `@rn-primitives
   hooks reject non-allowlisted emails (live message: `This account is not on the beta allowlist.`).
   Any auth error mentioning "allowlist" maps to `notApproved`, which shows the "access pending"
   panel, separate from `invalid_credentials` (wrong password). See `auth/errors.ts`.
+- **Pending approval (temporary beta guard, ~1 month from 2026-11-16)**: the hooks admit any
+  `allowlist` row regardless of `status`. Before email sign-up and native Google sign-in the app
+  calls `POST /allowlist/check {add_if_missing: true}` so new people get a `pending` row and can sign
+  up and finish onboarding. `AuthGate` then reads the user's own row (RLS `allowlist_read_own`) and
+  shows `PendingApprovalScreen` until an admin sets `status = 'approved'`. Front-end only (not a
+  security boundary). Web Google can't pre-register (email unknown before the redirect), so those
+  people still get the "access pending" rejection panel. Removal: `auth/access.ts` header.
 - **Session** lives in SecureStore/localStorage and survives offline launches; sign-out clears the query
   cache (shared phones).
 - **Supabase dashboard setup** (backend): Redirect URLs `mybela://auth/callback`,

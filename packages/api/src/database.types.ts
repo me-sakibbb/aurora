@@ -15,16 +15,19 @@ export type Database = {
           added_at: string;
           added_by: string | null;
           email: string;
+          status: string;
         };
         Insert: {
           added_at?: string;
           added_by?: string | null;
           email: string;
+          status?: string;
         };
         Update: {
           added_at?: string;
           added_by?: string | null;
           email?: string;
+          status?: string;
         };
         Relationships: [];
       };

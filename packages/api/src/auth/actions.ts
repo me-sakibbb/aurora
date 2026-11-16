@@ -1,5 +1,6 @@
 import type { EmailPasswordInput } from '../schemas/auth';
 import { getSupabase } from '../supabase';
+import { requestBetaAccess } from './access';
 import { AuthFlowError } from './errors';
 import { signOutOfGoogle } from './google';
 import { authRedirectUrl } from './redirect';
@@ -21,11 +22,15 @@ export async function signInWithPassword({ email, password }: EmailPasswordInput
 
 export type SignUpResult = 'signedIn' | 'confirmEmail';
 
-/** Allowlist enforcement happens server-side (auth hook); a rejection surfaces as `notApproved`. */
+/**
+ * Allowlist enforcement happens server-side (auth hook); a rejection surfaces as `notApproved`.
+ * Beta: the email is registered as `pending` first so the hook lets the account be created.
+ */
 export async function signUpWithPassword({
   email,
   password,
 }: EmailPasswordInput): Promise<SignUpResult> {
+  await requestBetaAccess(email);
   const { data, error } = await getSupabase().auth.signUp({
     email,
     password,
