@@ -31,6 +31,14 @@ export const MEAL_ICONS: Record<MealSlot, IconComponent> = {
   dinner: Moon,
 };
 
+/** A soft background per meal, behind a meal's icon or photo. */
+export const SLOT_TONE: Record<MealSlot, string> = {
+  breakfast: 'bg-taupe/35',
+  lunch: 'bg-sage/20',
+  snack: 'bg-muted',
+  dinner: 'bg-primary/10',
+};
+
 /** The standard Home card surface. */
 export function Panel({ className, ...props }: React.ComponentProps<typeof View>) {
   return (
@@ -49,11 +57,14 @@ export function SectionHeader({
   action,
   onAction,
   badge,
+  trailing,
 }: {
   title: string;
   action?: string;
   onAction?: () => void;
   badge?: React.ReactNode;
+  /** A custom control on the right instead of the "See all" style action. */
+  trailing?: React.ReactNode;
 }) {
   return (
     <View className="mb-3 flex-row items-center gap-2 px-1">
@@ -62,6 +73,7 @@ export function SectionHeader({
       </Text>
       {badge}
       <View className="flex-1" />
+      {trailing}
       {action && onAction ? (
         <Pressable
           onPress={onAction}

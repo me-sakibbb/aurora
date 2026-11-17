@@ -1,10 +1,11 @@
 'use client';
 
 import { useTranslation } from '@mybela/i18n';
-import { Button, ChevronLeft, Icon, SlidersHorizontal, Text } from '@mybela/ui';
+import { Button, ChevronLeft, Icon, SlidersHorizontal, SquarePen, Text } from '@mybela/ui';
 import { View } from 'react-native';
 import { useInsets } from '../../lib/insets';
 import { useAppRouter, usePathname } from '../../lib/navigation';
+import { startNewChat } from '../chat/queries';
 import { useCycleAccess } from '../cycle/queries';
 import { ConnectionStatus } from './connection-status';
 import { isActivePath } from './nav';
@@ -44,6 +45,7 @@ export function AppTopBar({ back = false }: { back?: boolean }) {
   const match = TITLES.find((item) => isActivePath(pathname, item.href));
   const title = match ? t(match.key) : t('common.appName');
   const onCycle = isActivePath(pathname, '/cycle');
+  const onChat = isActivePath(pathname, '/chat');
 
   return (
     <View style={{ paddingTop: insets.top }} className="bg-background border-border border-b">
@@ -76,6 +78,17 @@ export function AppTopBar({ back = false }: { back?: boolean }) {
             onPress={() => showSheet('cycleSettings')}
           >
             <Icon as={SlidersHorizontal} size={20} />
+          </Button>
+        ) : null}
+        {onChat ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full"
+            aria-label={t('chat.newChat')}
+            onPress={startNewChat}
+          >
+            <Icon as={SquarePen} size={20} />
           </Button>
         ) : null}
         <ProfileButton />

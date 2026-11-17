@@ -85,7 +85,18 @@
       "emptyTitle": "Suggestions are on their way",
       "emptyBody": "Once MyBela knows your meals a little better, ideas for your goals will show up here.",
       "noProfileTitle": "Your daily target isn't set up yet",
-      "noProfileBody": "MyBela plans suggestions around your daily target, which comes from your height, weight, age and activity. They'll show up here once those are saved."
+      "noProfileBody": "MyBela plans suggestions around your daily target, which comes from your height, weight, age and activity. They'll show up here once those are saved.",
+      "open": "{{name}} খুলুন",
+      "tried": "চেখে দেখেছ",
+      "regenerate": "নতুন আইডিয়া",
+      "regenerateFailed": "এখন নতুন আইডিয়া আনা গেল না। আগেরগুলো এখানেই আছে।",
+      "notReadyTitle": "সাজেশন তৈরি হচ্ছে",
+      "notReadyBody": "তোমার লক্ষ্য আর খাদ্যাভ্যাসের সাথে মিলিয়ে খাবার সাজাতে MyBela-র আরেকটু তথ্য দরকার। তৈরি হলেই এখানে দেখা যাবে।",
+      "calories": "ক্যালরি",
+      "amount": "পরিমাণ",
+      "kcal": "{{kcal}} kcal",
+      "why": "কেন এটা",
+      "note": "পুষ্টির এই হিসাব খাবারটার, তোমার নয়। তোমার শরীর আর প্রয়োজন কোনো সংখ্যার চেয়ে অনেক বেশি।"
     },
     "recent": {
       "title": "Today's log",
@@ -385,10 +396,6 @@
   },
   "placeholders": {
     "backHome": "Back to Home",
-    "chat": {
-      "title": "Ask MyBela",
-      "body": "Ask about food, your cycle or how you're feeling, in English, Bengali or a mix, and get answers with sources."
-    },
     "insights": {
       "title": "Insights",
       "body": "A fuller look at your patterns over the week and month, building on the summary on Home."
@@ -925,6 +932,50 @@
       "historyEnd": "এখানেই সব চেক-ইন শেষ",
       "emptyTitle": "এখনো কোনো চেক-ইন নেই",
       "emptyBody": "আপনার প্রতিদিনের চেক-ইন এখানে জমা হবে। একই দিনে আবার চেক-ইন করলে আগেরটি আপডেট হয়।"
+    },
+    "insight": {
+      "title": "MyBela একটা প্যাটার্ন খেয়াল করেছে",
+      "notYetTitle": "প্যাটার্ন শিগগিরই",
+      "demoObservation": "যেদিন তুমি বাইরে গিয়েছ, অল্প হাঁটার জন্য হলেও, সেদিন তুমি সাধারণত বেশি শান্ত বোধ করেছ।",
+      "demoNotEnough": "আর কয়েকটা চেক-ইন হলেই MyBela সময়ের সাথে তোমার মন নিয়ে কোমল কিছু পর্যবেক্ষণ জানাতে পারবে।"
+    }
+  },
+  "chat": {
+    "newChat": "নতুন চ্যাট",
+    "jumpToLatest": "সর্বশেষ বার্তায় যান",
+    "today": "আজ",
+    "yesterday": "গতকাল",
+    "askAbout": "এটা নিয়ে আরও বলো: {{topic}}",
+    "welcome": {
+      "title": "আজ কী জানতে চাও?",
+      "titleNamed": "হাই {{name}}, আজ কী জানতে চাও?",
+      "body": "খাবার, পিরিয়ড বা মন কেমন আছে, যেকোনো বিষয়ে জিজ্ঞেস করো। MyBela সাধারণ তথ্য দেয়, রোগনির্ণয় নয়।",
+      "languages": "English, বাংলা বা Banglish, যেভাবে খুশি লেখো। MyBela সেভাবেই উত্তর দেবে।"
+    },
+    "starters": {
+      "breakfast": "আমার লক্ষ্যের জন্য পেট ভরা বাংলাদেশি নাস্তা কী হতে পারে?",
+      "calories": "এক প্লেট ভুনা খিচুড়িতে মোটামুটি কত ক্যালরি?",
+      "energy": "ইদানীং শক্তি কম লাগছে। খাবারের কি কোনো ভূমিকা আছে?",
+      "period": "পিরিয়ডের সময় কী খাওয়া ভালো?",
+      "routine": "কীভাবে খাওয়ার একটা নিয়মিত রুটিন গড়ে তুলব?"
+    },
+    "composer": {
+      "label": "MyBela-কে বার্তা লেখো",
+      "placeholder": "MyBela-কে যেকোনো কিছু জিজ্ঞেস করো…",
+      "send": "পাঠাও",
+      "offline": "তুমি অফলাইনে আছ। ফিরে এলে বার্তাটা এখানেই থাকবে।",
+      "count": "{{count}} / {{max}}"
+    },
+    "waiting": {
+      "typing": "MyBela লিখছে",
+      "slow": "এখনো ভাবছে। তোমার লগ দেখে উত্তর সাজাচ্ছে…",
+      "verySlow": "এবার একটু বেশি সময় লাগছে। একটু অপেক্ষা করো, প্রায় হয়ে এসেছে।"
+    },
+    "failed": {
+      "generic": "পাঠানো যায়নি",
+      "offline": "পাঠানো যায়নি, তুমি অফলাইনে",
+      "timeout": "অনেক বেশি সময় লেগে গেছে",
+      "discard": "বার্তাটি বাদ দাও"
     }
   }
 }

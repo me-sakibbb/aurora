@@ -14,7 +14,9 @@ import { InlineState, Panel } from '../home/components/primitives';
 import { useDateLocale } from '../home/use-date-locale';
 import { AppTopBar } from '../shell/top-bar';
 import { EntryDetails, EntryRow, TodayPanel } from './components/entry';
+import { MoodInsightCard } from './components/insight-card';
 import { MoodCalendar } from './components/mood-calendar';
+import { useDemoMoodInsight } from './demo';
 import { checkInHref } from './links';
 import {
   todayIso,
@@ -42,6 +44,8 @@ export function MoodScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const items = history.data?.pages.flat() ?? [];
+  // F17 sample until `GET /mood/insights` exists (see ./demo.ts).
+  const insight = useDemoMoodInsight(items.length > 0);
   // Offline with nothing saved on the device yet: say so instead of loading forever.
   const offlineEmpty = history.data === undefined && !online;
   const firstLoad = history.data === undefined && !history.isError && !offlineEmpty;
@@ -98,6 +102,9 @@ export function MoodScreen() {
               />
             </FadeIn>
           )}
+          <FadeIn delay={40}>
+            <MoodInsightCard insight={insight} demo />
+          </FadeIn>
         </View>
 
         <View className="gap-5">

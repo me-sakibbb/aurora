@@ -7,14 +7,22 @@ import {
   fetchProfile,
   isApiConfigured,
   type MealSuggestions,
+  regenerateMealSuggestions,
+  suggestionsNotReady,
 } from '@mybela/api';
-import { type UseQueryResult, useQuery } from '@tanstack/react-query';
+import { type UseQueryResult, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { useIsOnline } from '../../lib/use-online';
 import { useSession } from '../auth/session';
 import { useDemoHome } from './demo';
 
 export const profileQueryKey = (userId: string | undefined) => ['profile', userId];
+/** Today's suggestions; `['meal-suggestions', userId]` is the prefix of every day's set. */
+export const mealSuggestionsQueryKey = (userId: string | undefined, date: string) => [
+  'meal-suggestions',
+  userId,
+  date,
+];
 /** Prefix of every day's summary; invalidate it after a meal is logged. */
 export const dailySummaryQueryKey = (userId: string | undefined) => ['daily-summary', userId];
 
@@ -72,15 +80,30 @@ export function useMealSuggestions() {
   const online = useIsOnline();
   const { date } = useLocalDay();
   const profile = useProfile();
+  const queryClient = useQueryClient();
+  const queryKey = mealSuggestionsQueryKey(userId, date);
   const query = useQuery<MealSuggestions>({
-    queryKey: ['meal-suggestions', userId, date],
+    queryKey,
     queryFn: () => fetchMealSuggestions(userId as string),
     enabled: Boolean(userId) && isApiConfigured() && Boolean(profile.data),
     staleTime: 10 * 60_000,
   });
+  // "Show me other ideas": the backend plans a fresh set for today.
+  const regenerate = useMutation({
+    mutationFn: () => regenerateMealSuggestions(userId as string),
+    onSuccess: (data) => queryClient.setQueryData(queryKey, data),
+  });
   const noProfile = profile.data === null;
+  // No target yet, or too few recipes fit the person's diet: an honest "not ready" (422), not an error.
+  const notReady = query.data === undefined && suggestionsNotReady(query.error);
   const state = sectionState(profile.isError ? profile : query, online);
-  return { ...query, noProfile, state: noProfile ? ('ready' as const) : state };
+  return {
+    ...query,
+    noProfile,
+    notReady,
+    regenerate,
+    state: noProfile || notReady ? ('ready' as const) : state,
+  };
 }
 
 /**

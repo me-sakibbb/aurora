@@ -8,8 +8,10 @@ import { RefreshControl, ScrollView, View } from 'react-native';
 import { FadeIn } from '../../components/fade-in';
 import { useAppRouter } from '../../lib/navigation';
 import { useCycleStatus } from '../cycle/queries';
+import { MoodInsightCard } from '../mood/components/insight-card';
+import { useDemoMoodInsight } from '../mood/demo';
 import { checkInHref } from '../mood/links';
-import { todayIso, useMoodDay, useWaitingMoodDays } from '../mood/queries';
+import { todayIso, useMoodDay, useMoodHistory, useWaitingMoodDays } from '../mood/queries';
 import { useAccount } from '../shell/account';
 import { HomeSkeleton, Veil } from './components/primitives';
 import {
@@ -53,6 +55,9 @@ export function HomeScreen() {
   const today = todayIso();
   const mood = useMoodDay(today);
   const moodWaiting = useWaitingMoodDays();
+  const moodHistory = useMoodHistory();
+  // F17 sample until `GET /mood/insights` exists (see ../mood/demo.ts).
+  const moodInsight = useDemoMoodInsight((moodHistory.data?.pages[0]?.length ?? 0) > 0);
   const [refreshing, setRefreshing] = useState(false);
 
   const now = new Date();
@@ -128,15 +133,26 @@ export function HomeScreen() {
                 <QuickActions onNavigate={go} />
               </FadeIn>
               <FadeIn delay={120}>
-                <NoticedCard insight={demo.noticed} demo onAsk={() => go('/chat')} />
+                <NoticedCard
+                  insight={demo.noticed}
+                  demo
+                  onAsk={() =>
+                    go(
+                      `/chat?q=${encodeURIComponent(t('chat.askAbout', { topic: demo.noticed.body }))}`,
+                    )
+                  }
+                />
               </FadeIn>
               <FadeIn delay={180}>
                 <SuggestionsSection
                   data={suggestions.data}
                   noProfile={suggestions.noProfile}
+                  notReady={suggestions.notReady}
                   state={suggestions.state}
                   onRetry={() => suggestions.refetch()}
-                  onOpen={() => go('/food')}
+                  onRegenerate={() => suggestions.regenerate.mutate()}
+                  regenerating={suggestions.regenerate.isPending}
+                  regenerateFailed={suggestions.regenerate.isError}
                 />
               </FadeIn>
               <FadeIn delay={240}>
@@ -153,12 +169,15 @@ export function HomeScreen() {
             <View className="gap-5">
               <FadeIn delay={120}>
                 <Veil hidden={discreet} label={t('home.mood.section')}>
-                  <MoodCard
-                    entry={mood.entry}
-                    waiting={moodWaiting.has(today)}
-                    onPick={(value) => go(checkInHref({ mood: value }))}
-                    onOpen={() => go('/mood')}
-                  />
+                  <View className="gap-3">
+                    <MoodCard
+                      entry={mood.entry}
+                      waiting={moodWaiting.has(today)}
+                      onPick={(value) => go(checkInHref({ mood: value }))}
+                      onOpen={() => go('/mood')}
+                    />
+                    <MoodInsightCard insight={moodInsight} demo />
+                  </View>
                 </Veil>
               </FadeIn>
               {cycle.data?.enabled ? (

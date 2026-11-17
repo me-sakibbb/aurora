@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ApiError, apiFetch } from '../backend';
+import { photoUrl } from '../food/api';
 import { GOALS } from '../onboarding/options';
 
 // Live FastAPI endpoints behind the Home dashboard (F4). Every figure is displayed as returned.
@@ -37,25 +38,83 @@ export async function fetchProfile(): Promise<Profile | null> {
 export const MEAL_SLOTS = ['breakfast', 'lunch', 'snack', 'dinner'] as const;
 export type MealSlot = (typeof MEAL_SLOTS)[number];
 
-const suggestionSchema = z.object({
-  meal_slot: z.enum(MEAL_SLOTS),
-  grams: z.coerce.number(),
-  kcal: z.coerce.number(),
-  reason: z.string().nullish(),
-  recipes: z.object({ id: z.string(), name: z.string(), name_bn: z.string().nullish() }).nullish(),
-});
+const suggestionSchema = z
+  .object({
+    id: z.string().nullish(),
+    meal_slot: z.enum(MEAL_SLOTS),
+    recipe_id: z.string().nullish(),
+    grams: z.coerce.number(),
+    kcal: z.coerce.number(),
+    /** The backend's explanation for this pick. Shown in full, as written. */
+    reason: z.string().nullish(),
+    /** Proposed: the person has logged this food before (F18 "already tried"). */
+    tried: z.boolean().nullish(),
+    /** Proposed: the backend's "this figure describes the food, not you" wording. */
+    note: z.string().nullish(),
+    recipes: z
+      .object({
+        id: z.string(),
+        name: z.string(),
+        name_bn: z.string().nullish(),
+        cooking_method: z.string().nullish(),
+        thumbnail_url: z.string().nullish(),
+      })
+      .nullish(),
+  })
+  .transform(({ recipes, ...item }) => ({
+    ...item,
+    tried: item.tried === true,
+    note: item.note || null,
+    recipes: recipes
+      ? {
+          id: recipes.id,
+          name: recipes.name,
+          name_bn: recipes.name_bn || null,
+          cooking_method: recipes.cooking_method ?? null,
+          image_url: photoUrl(recipes.thumbnail_url),
+        }
+      : null,
+  }));
 
-const suggestionsSchema = z.object({
-  date: z.string(),
-  suggestions: z.array(suggestionSchema),
-});
+const SLOT_ORDER: Record<MealSlot, number> = { breakfast: 0, lunch: 1, snack: 2, dinner: 3 };
+
+// A freshly planned day carries the kcal figures; a cached one (asked again the same day) doesn't.
+const suggestionsSchema = z
+  .object({
+    date: z.string().nullish(),
+    target_kcal: z.coerce.number().nullish(),
+    consumed_kcal: z.coerce.number().nullish(),
+    cached: z.boolean().nullish(),
+    suggestions: z.array(suggestionSchema),
+  })
+  .transform(({ suggestions, ...rest }) => ({
+    ...rest,
+    // The backend sorts slots alphabetically; show them in the order of the day.
+    suggestions: [...suggestions].sort((a, b) => SLOT_ORDER[a.meal_slot] - SLOT_ORDER[b.meal_slot]),
+  }));
 
 export type MealSuggestion = z.infer<typeof suggestionSchema>;
 export type MealSuggestions = z.infer<typeof suggestionsSchema>;
 
+/**
+ * The backend can't plan suggestions yet: no calorie target, or not enough recipes fit the
+ * person's diet (both 422). Shown as an honest "not ready yet" state, not an error.
+ */
+export function suggestionsNotReady(error: unknown): boolean {
+  return error instanceof ApiError && error.status === 422;
+}
+
 /** `GET /api/v1/food/suggestions/{user_id}`: today's goal-based suggestions (F18). */
 export async function fetchMealSuggestions(userId: string): Promise<MealSuggestions> {
   const json = await apiFetch(`/food/suggestions/${encodeURIComponent(userId)}`);
+  return suggestionsSchema.parse(json);
+}
+
+/** `POST /api/v1/food/suggestions/{user_id}/new`: asks the backend for a fresh set for today. */
+export async function regenerateMealSuggestions(userId: string): Promise<MealSuggestions> {
+  const json = await apiFetch(`/food/suggestions/${encodeURIComponent(userId)}/new`, {
+    method: 'POST',
+  });
   return suggestionsSchema.parse(json);
 }
 

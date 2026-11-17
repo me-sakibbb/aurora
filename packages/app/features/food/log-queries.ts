@@ -136,7 +136,11 @@ export function registerFoodMutations(queryClient: QueryClient) {
   queryClient.setMutationDefaults(FOOD_LOG, {
     mutationFn: ({ userId: _userId, ...input }: FoodLogVars) => createFoodLog(input),
     onSettled: (_data, _error, { userId }: FoodLogVars) =>
-      queryClient.invalidateQueries({ queryKey: dailySummaryQueryKey(userId) }),
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: dailySummaryQueryKey(userId) }),
+        // Suggestions can mark what's been tried (F18).
+        queryClient.invalidateQueries({ queryKey: ['meal-suggestions', userId] }),
+      ]),
   });
 }
 

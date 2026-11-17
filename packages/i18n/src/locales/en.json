@@ -85,7 +85,18 @@
       "emptyTitle": "Suggestions are on their way",
       "emptyBody": "Once MyBela knows your meals a little better, ideas for your goals will show up here.",
       "noProfileTitle": "Your daily target isn't set up yet",
-      "noProfileBody": "MyBela plans suggestions around your daily target, which comes from your height, weight, age and activity. They'll show up here once those are saved."
+      "noProfileBody": "MyBela plans suggestions around your daily target, which comes from your height, weight, age and activity. They'll show up here once those are saved.",
+      "open": "Open {{name}}",
+      "tried": "Tried",
+      "regenerate": "New ideas",
+      "regenerateFailed": "Couldn’t get new ideas just now. Your current ones are still here.",
+      "notReadyTitle": "Suggestions are getting ready",
+      "notReadyBody": "MyBela needs a little more to plan meals that fit your goals and diet. They’ll appear here as soon as they’re ready.",
+      "calories": "Calories",
+      "amount": "Amount",
+      "kcal": "{{kcal}} kcal",
+      "why": "Why this",
+      "note": "Nutrition figures describe the food itself, not you. Your body and needs are more than a number."
     },
     "recent": {
       "title": "Today's log",
@@ -385,10 +396,6 @@
   },
   "placeholders": {
     "backHome": "Back to Home",
-    "chat": {
-      "title": "Ask MyBela",
-      "body": "Ask about food, your cycle or how you're feeling, in English, Bengali or a mix, and get answers with sources."
-    },
     "insights": {
       "title": "Insights",
       "body": "A fuller look at your patterns over the week and month, building on the summary on Home."
@@ -925,6 +932,50 @@
       "historyEnd": "That's every check-in",
       "emptyTitle": "No check-ins yet",
       "emptyBody": "Your daily check-ins will gather here. Checking in again on the same day just updates it."
+    },
+    "insight": {
+      "title": "A pattern MyBela noticed",
+      "notYetTitle": "Patterns, coming soon",
+      "demoObservation": "You’ve tended to feel calmer on days you got outside, even for a short walk.",
+      "demoNotEnough": "A few more check-ins and MyBela can start sharing gentle observations about your mood over time."
+    }
+  },
+  "chat": {
+    "newChat": "New chat",
+    "jumpToLatest": "Jump to the latest message",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "askAbout": "Tell me more about this: {{topic}}",
+    "welcome": {
+      "title": "What’s on your mind?",
+      "titleNamed": "Hi {{name}}, what’s on your mind?",
+      "body": "Ask about food, your cycle or how you’re feeling. MyBela gives general information, not a diagnosis.",
+      "languages": "Write in English, বাংলা or Banglish. MyBela replies in kind."
+    },
+    "starters": {
+      "breakfast": "What’s a filling Bangladeshi breakfast for my goal?",
+      "calories": "Roughly how many calories are in a plate of bhuna khichuri?",
+      "energy": "I’ve felt low on energy lately. Could food be part of it?",
+      "period": "What’s good to eat during my period?",
+      "routine": "How can I build a steadier eating routine?"
+    },
+    "composer": {
+      "label": "Message MyBela",
+      "placeholder": "Ask MyBela anything…",
+      "send": "Send",
+      "offline": "You’re offline. Your message will be here when you’re back.",
+      "count": "{{count}} / {{max}}"
+    },
+    "waiting": {
+      "typing": "MyBela is writing",
+      "slow": "Still thinking. Checking your logs and putting it together…",
+      "verySlow": "This one is taking a little longer than usual. Hang tight, it’s nearly there."
+    },
+    "failed": {
+      "generic": "Not sent",
+      "offline": "Not sent, you’re offline",
+      "timeout": "That took too long",
+      "discard": "Discard message"
     }
   }
 }

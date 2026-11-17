@@ -157,8 +157,42 @@ the workspace root. Review each added component: some need extra `@rn-primitives
   `GET /ovulation` (cycle preview) and `GET /food/suggestions/{user_id}`. Sections with no endpoint
   yet (daily summary, week/streak/chips, insights, MyBela noticed, recent logs, mood) use
   `features/home/demo.ts`, shaped like `packages/api/src/home/types.ts` (the proposed contract), and
-  show a "Preview" badge. Suggestions fall back to the sample while the endpoint fails.
-- Chat and Insights are "coming soon" placeholders (`features/placeholders`).
+  show a "Preview" badge.
+- **Suggestions (F18)** (`features/home/components/suggestions.tsx`, `suggestion-sheet.tsx`): photo
+  cards for today, tapping one opens the backend's full `reason`, the "describes the food, not you"
+  note (the backend's `note` when it sends one, else i18n) and "Log this meal" (the F6 `LogPanel`,
+  set to the suggested meal). A "Tried" badge only shows when the backend sends `tried: true`.
+  "New ideas" calls `POST /food/suggestions/{user_id}/new`. A 422 (no target / too few recipes
+  fit) is the honest "getting ready" state, not an error. Rows are reordered breakfast → dinner
+  (the backend sorts alphabetically); the cached response has no kcal totals, so none are shown.
+- Insights is a "coming soon" placeholder (`features/placeholders`).
+
+## Ask MyBela chat (F16)
+
+- **API** (`packages/api/src/chat`): `sendChatMessage` → `POST /chat` (plain JSON, no streaming;
+  replies take 10–30 s+, so it has its own 90 s timeout that surfaces as a retryable 408).
+  By design, history isn't an API endpoint: `fetchLatestThread` / `fetchThreadMessages` read `chat_threads`
+  and `chat_messages` straight from Supabase (RLS: own rows). `canned` rows render as MyBela's.
+- **State** (`features/chat/queries.ts`): stored messages live in the (persisted) query cache, pages
+  of 30 newest-first; a reply is written into that cache when it arrives (no refetch, so no
+  duplicates). Messages in flight / failed live in a zustand store persisted to kv with the draft,
+  so nothing typed is lost (F15). Sends are **not** queued offline: a reply only makes sense live,
+  so the composer says it's offline instead. After a reply the daily summary and suggestions are
+  invalidated (the chat can log a meal via the backend's `log_meal` tool).
+- **UI**: opens on the latest thread; "New chat" (top bar) starts fresh, `?q=` prefills a new chat
+  (Home's "Ask MyBela about this"). Inverted `FlatList`, day separators, a tiny Markdown renderer
+  (`packages/api/src/chat/markdown.ts`, no dependency), block-by-block reveal for fresh replies,
+  typing dots plus reassurance after 8 s / 25 s. Bengali text (same `[ঀ-৿]` check as the
+  backend's `is_bangla`) gets a larger size and looser line height; typography only.
+- The backend sends no safety/stop signal, sources or rate-limit 429 yet; every reply renders as a
+  normal answer until it does.
+
+## Mood insights (F17)
+
+- No backend endpoint yet. `features/mood/demo.ts` supplies a sample shaped like the proposed
+  `GET /mood/insights` contract (`packages/api/src/mood/types.ts`), rendered by `MoodInsightCard`
+  on the Mood screen and inside Home's discreet-mode veil, with a "Preview" badge. Swap the demo
+  for a query when the endpoint ships; the sentence is shown exactly as written.
 
 ## Food search & logging (F5, F6)
 

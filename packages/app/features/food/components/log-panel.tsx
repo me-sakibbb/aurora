@@ -64,10 +64,13 @@ export function LogPanel({
   item,
   onBack,
   onDone,
+  initialSlot,
 }: {
   item: FoodItem;
   onBack: () => void;
   onDone: () => void;
+  /** The meal it's for, when known (e.g. a suggestion for lunch); otherwise by the clock. */
+  initialSlot?: MealSlot;
 }) {
   const { t } = useTranslation();
   const { language } = useLanguage();
@@ -81,7 +84,7 @@ export function LogPanel({
 
   const serving = servingGrams(item);
   const range = useMemo(() => portionRange(serving), [serving]);
-  const [slot, setSlot] = useState<MealSlot>(() => currentMealSlot());
+  const [slot, setSlot] = useState<MealSlot>(() => initialSlot ?? currentMealSlot());
   const [grams, setGrams] = useState(serving);
   const [oil, setOil] = useState<OilTier>('typical');
   const [answers, setAnswers] = useState<RecipeAnswers>({});

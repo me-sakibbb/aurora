@@ -7,7 +7,6 @@ import {
   cn,
   Icon,
   type IconComponent,
-  MessageCircleHeart,
   Sparkles,
   Text,
 } from '@mybela/ui';
@@ -17,10 +16,9 @@ import { Pop } from '../../components/pop';
 import { useAppRouter } from '../../lib/navigation';
 import { AppTopBar } from '../shell/top-bar';
 
-type Section = 'chat' | 'insights';
+type Section = 'insights';
 
 const ART: Record<Section, { icon: IconComponent; tile: string; iconClass: string }> = {
-  chat: { icon: MessageCircleHeart, tile: 'bg-sage', iconClass: 'text-ivory' },
   insights: { icon: ChartNoAxesColumn, tile: 'bg-primary', iconClass: 'text-primary-foreground' },
 };
 
@@ -69,5 +67,4 @@ function ComingSoon({ section, standalone = false }: { section: Section; standal
   );
 }
 
-export const ChatScreen = () => <ComingSoon section="chat" />;
 export const InsightsScreen = () => <ComingSoon section="insights" />;

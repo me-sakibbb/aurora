@@ -8,6 +8,7 @@ export {
   isApiConfigured,
   isRetryable,
 } from './backend';
+export * from './chat';
 export * from './cycle';
 export type { Database } from './database.types';
 export * from './food';
