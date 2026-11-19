@@ -1,5 +1,5 @@
 import { apiFetch } from '../backend';
-import { fetchMoodBetween, fetchMoodPage, previousDay, saveMoodLog } from './api';
+import { fetchMoodBetween, fetchMoodInsight, fetchMoodPage, previousDay, saveMoodLog } from './api';
 
 jest.mock('../backend', () => ({
   ...jest.requireActual('../backend'),
@@ -98,5 +98,40 @@ describe('previousDay', () => {
   it('crosses month and year boundaries', () => {
     expect(previousDay('2026-01-01')).toBe('2025-12-31');
     expect(previousDay('2024-03-01')).toBe('2024-02-29');
+  });
+});
+
+describe('fetchMoodInsight', () => {
+  const response = (days_logged: number, observation: string | null) => ({
+    from: '2026-10-22',
+    to: '2026-11-20',
+    summary: { days_in_range: 30, days_logged, averages: {}, top_tags: [] },
+    daily: [],
+    observation,
+  });
+
+  it('asks for the range and keeps the sentence as written', async () => {
+    mockFetch.mockResolvedValueOnce(response(6, 'Your average mood was positive at 4.1 out of 5.'));
+    const insight = await fetchMoodInsight({ from: '2026-10-22', to: '2026-11-20' });
+    expect(mockFetch).toHaveBeenCalledWith('/mood/insights?from=2026-10-22&to=2026-11-20', {
+      signal: undefined,
+    });
+    expect(insight).toEqual({
+      status: 'ready',
+      text: 'Your average mood was positive at 4.1 out of 5.',
+      days_logged: 6,
+    });
+  });
+
+  it('marks a range with no check-ins as not enough data, still showing the wording', async () => {
+    mockFetch.mockResolvedValueOnce(response(0, 'No mood entries were logged.'));
+    const insight = await fetchMoodInsight({ from: 'a', to: 'b' });
+    expect(insight?.status).toBe('not_enough_data');
+    expect(insight?.text).toBe('No mood entries were logged.');
+  });
+
+  it('returns null when there is no sentence', async () => {
+    mockFetch.mockResolvedValueOnce(response(3, '  '));
+    await expect(fetchMoodInsight({ from: 'a', to: 'b' })).resolves.toBeNull();
   });
 });

@@ -4,27 +4,35 @@ import type { MoodInsight } from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
 import { cn, Icon, Lightbulb, Sparkles, Text } from '@mybela/ui';
 import { View } from 'react-native';
-import { PreviewBadge } from '../../home/components/primitives';
+import { Skeleton } from '../../../components/skeleton';
+import { InlineState } from '../../home/components/primitives';
+import type { SectionState } from '../../home/queries';
 
 /**
- * F17: one plain-language observation about mood over time, written by the backend and shown
- * exactly as written, never as a chart or score. While there isn't enough to go on, the backend's
- * honest "not yet" wording is shown instead.
+ * F17: the backend's plain-language observation about mood over time, shown exactly as written,
+ * never as a chart or score. With no check-ins in the range it's the backend's "not enough yet"
+ * wording, drawn quieter. Loading, offline and error states for the card (F15).
  */
 export function MoodInsightCard({
   insight,
-  demo = false,
+  state,
+  onRetry,
   className,
 }: {
-  insight: MoodInsight;
-  /** Sample content until the endpoint exists. */
-  demo?: boolean;
+  insight: MoodInsight | null | undefined;
+  state: SectionState;
+  onRetry: () => void;
   className?: string;
 }) {
   const { t } = useTranslation();
-  const ready = insight.status === 'ready' && Boolean(insight.observation);
-  const text = ready ? insight.observation : insight.message;
-  if (!text) return null;
+  if (state === 'loading') return <Skeleton className={cn('h-36 rounded-3xl', className)} />;
+  if (state !== 'ready') {
+    return <InlineState kind={state === 'offline' ? 'offline' : 'error'} onRetry={onRetry} />;
+  }
+  // The backend sent no sentence: nothing to show.
+  if (!insight) return null;
+  const ready = insight.status === 'ready';
+  const text = insight.text;
 
   return (
     <View
@@ -50,7 +58,6 @@ export function MoodInsightCard({
         <Text className="text-muted-foreground flex-1 text-xs font-semibold uppercase tracking-wider">
           {t(ready ? 'mood.insight.title' : 'mood.insight.notYetTitle')}
         </Text>
-        {demo ? <PreviewBadge /> : null}
       </View>
       <Text
         className={cn(

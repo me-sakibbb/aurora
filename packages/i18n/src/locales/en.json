@@ -939,9 +939,7 @@
     },
     "insight": {
       "title": "A pattern MyBela noticed",
-      "notYetTitle": "Patterns, coming soon",
-      "demoObservation": "You’ve tended to feel calmer on days you got outside, even for a short walk.",
-      "demoNotEnough": "A few more check-ins and MyBela can start sharing gentle observations about your mood over time."
+      "notYetTitle": "Not enough to go on yet"
     }
   },
   "chat": {
@@ -981,5 +979,24 @@
       "timeout": "That took too long",
       "discard": "Discard message"
     }
+  },
+  "settings": {
+    "title": "Health & goals",
+    "subtitle": "The answers behind your daily calorie target and meal ideas. Change anything, then save.",
+    "goals": "Your goals",
+    "diet": "How you eat",
+    "sex": "Sex",
+    "age": "Age",
+    "ageValue": "{{value}} years",
+    "bodyType": "Body type",
+    "activity": "Typical activity",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "savedTarget": "Saved. Your daily target is now {{kcal}} kcal.",
+    "savedNoTarget": "Saved. A few more answers are needed before MyBela can set a daily target.",
+    "error": "We couldn't save your changes. Please try again.",
+    "offline": "You're offline. Connect to save your changes.",
+    "noProfileTitle": "Your health profile isn't set up yet",
+    "noProfileBody": "It's built from your onboarding answers about your body and activity. Once it's ready, you can change them here."
   }
 }

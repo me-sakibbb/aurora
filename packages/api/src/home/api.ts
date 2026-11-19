@@ -1,7 +1,14 @@
 import { z } from 'zod';
 import { ApiError, apiFetch } from '../backend';
 import { photoUrl } from '../food/api';
-import { GOALS } from '../onboarding/options';
+import {
+  ACTIVITY_LEVELS,
+  BLOOD_PRESSURES,
+  BODY_TYPES,
+  DIETARY_PATTERNS,
+  GOALS,
+  SEXES,
+} from '../onboarding/options';
 import { getSupabase } from '../supabase';
 
 // Live FastAPI endpoints behind the Home dashboard (F4). Every figure is displayed as returned.
@@ -16,7 +23,16 @@ const profileSchema = z.object({
   target_kcal: z.coerce.number().nullish(),
   discreet_mode: z.boolean().nullish(),
   /** Decides who is offered cycle tracking before opting in (F13). */
-  sex: z.enum(['female', 'male', 'other']).nullish().catch(null),
+  sex: z.enum(SEXES).nullish().catch(null),
+  // Health & goals settings (F3), edited with `PATCH /profile`.
+  age_years: z.coerce.number().nullish(),
+  height_cm: z.coerce.number().nullish(),
+  weight_kg: z.coerce.number().nullish(),
+  activity_level: z.enum(ACTIVITY_LEVELS).nullish().catch(null),
+  dietary_pattern: z.enum(DIETARY_PATTERNS).nullish().catch(null),
+  body_type: z.enum(BODY_TYPES).nullish().catch(null),
+  blood_pressure: z.enum(BLOOD_PRESSURES).nullish().catch(null),
+  has_diabetes: z.boolean().nullish(),
   /** Opt-in for the estimated fertile window (F11). */
   wants_fertility_estimate: z.boolean().nullish(),
 });
@@ -34,6 +50,30 @@ export async function fetchProfile(): Promise<Profile | null> {
     if (error instanceof ApiError && error.status === 404) return null;
     throw error;
   }
+}
+
+/** What the Health & goals settings can change (F3). Only the fields sent are updated. */
+export type ProfileUpdate = Partial<{
+  sex: (typeof SEXES)[number];
+  age_years: number;
+  height_cm: number;
+  weight_kg: number;
+  activity_level: (typeof ACTIVITY_LEVELS)[number];
+  goals: (typeof GOALS)[number][];
+  dietary_pattern: (typeof DIETARY_PATTERNS)[number];
+  body_type: (typeof BODY_TYPES)[number];
+  blood_pressure: (typeof BLOOD_PRESSURES)[number];
+  has_diabetes: boolean;
+}>;
+
+/**
+ * `PATCH /api/v1/profile`: saves the changed answers. The backend recalculates the calorie target
+ * when an energy-related answer changes and returns the whole profile (target included).
+ */
+export async function updateProfile(changes: ProfileUpdate): Promise<Profile> {
+  return profileSchema.parse(
+    await apiFetch('/profile', { method: 'PATCH', body: changes }),
+  ) as Profile;
 }
 
 export const MEAL_SLOTS = ['breakfast', 'lunch', 'snack', 'dinner'] as const;
@@ -250,6 +290,11 @@ const calorieInsightsSchema = z.object({
     days_compared_to_target: z.coerce.number().default(0),
   }),
   daily: z.array(calorieDaySchema),
+  /** The backend's written summary of the range (F4 insights summary). Shown as written. */
+  observation: z
+    .string()
+    .nullish()
+    .transform((text) => text?.trim() || null),
 });
 
 export type CalorieInsights = z.infer<typeof calorieInsightsSchema>;

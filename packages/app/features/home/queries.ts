@@ -53,7 +53,7 @@ export type SectionState = 'ready' | 'loading' | 'offline' | 'error';
  * What a Home section should render (F15). Cached data always wins, even offline or after a failed
  * refetch, since queries are persisted.
  */
-function sectionState(query: UseQueryResult<unknown>, online: boolean): SectionState {
+export function sectionState(query: UseQueryResult<unknown>, online: boolean): SectionState {
   if (query.data !== undefined) return 'ready';
   if (!online) return 'offline';
   if (query.isError) return 'error';

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { apiFetch } from '../backend';
+import type { MoodInsight } from './types';
 
 // Daily mood check-in (F12): FastAPI `POST /mood` (create or replace that day's entry) and
 // `GET /mood?from&to&limit` (newest first). One entry per person per calendar day, so saving the
@@ -112,4 +113,32 @@ export function previousDay(day: string): string {
   const [y, m, d] = day.split('-').map(Number) as [number, number, number];
   const date = new Date(Date.UTC(y, m - 1, d - 1));
   return date.toISOString().slice(0, 10);
+}
+
+const insightsSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  summary: z.object({ days_logged: z.coerce.number() }).passthrough(),
+  observation: z.string().nullish(),
+});
+
+/**
+ * `GET /mood/insights?from&to`: the backend's written observation about mood over the range.
+ * `null` when it sent no sentence. The days are sent explicitly because the backend's own
+ * default uses the server's date.
+ */
+export async function fetchMoodInsight(
+  { from, to }: { from: string; to: string },
+  signal?: AbortSignal,
+): Promise<MoodInsight | null> {
+  const params = new URLSearchParams({ from, to });
+  const json = insightsSchema.parse(await apiFetch(`/mood/insights?${params}`, { signal }));
+  const text = json.observation?.trim();
+  if (!text) return null;
+  const daysLogged = json.summary.days_logged;
+  return {
+    status: daysLogged > 0 ? 'ready' : 'not_enough_data',
+    text,
+    days_logged: daysLogged,
+  };
 }

@@ -16,7 +16,7 @@ import { useSheets } from './sheets';
  * Pushed screens (and everything under them): they draw their own bar (with back) and, like on
  * Android where they open over the tabs, show no tab bar.
  */
-export const STANDALONE_PATHS = ['/mood'];
+export const STANDALONE_PATHS = ['/mood', '/settings'];
 
 export const isStandalone = (pathname: string) =>
   STANDALONE_PATHS.some((href) => isActivePath(pathname, href));
@@ -27,6 +27,7 @@ const TITLES = [
   { href: '/cycle', key: 'shell.nav.cycle' },
   { href: '/insights', key: 'shell.nav.insights' },
   { href: '/mood', key: 'mood.title' },
+  { href: '/settings', key: 'settings.title' },
 ] as const;
 
 /**

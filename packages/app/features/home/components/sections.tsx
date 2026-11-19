@@ -19,6 +19,7 @@ import {
   Gift,
   Icon,
   type IconComponent,
+  Lightbulb,
   MessageCircleHeart,
   Smile,
   Sparkles,
@@ -224,6 +225,12 @@ export function WeekCard({
             />
           ) : null}
         </View>
+        {calories.observation ? (
+          <View className="flex-row gap-3">
+            <Icon as={Lightbulb} size={18} className="text-accent mt-0.5" />
+            <Text className="flex-1 leading-6">{calories.observation}</Text>
+          </View>
+        ) : null}
       </>
     );
   }

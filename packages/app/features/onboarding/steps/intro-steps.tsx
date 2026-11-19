@@ -51,7 +51,7 @@ const HEARD_FROM_ICONS: Record<HeardFrom, IconComponent> = {
   other: Ellipsis,
 };
 
-const GOAL_ICONS: Record<Goal, IconComponent> = {
+export const GOAL_ICONS: Record<Goal, IconComponent> = {
   weight_loss: TrendingDown,
   weight_gain: TrendingUp,
   hormonal: Flower2,
@@ -59,7 +59,7 @@ const GOAL_ICONS: Record<Goal, IconComponent> = {
   energy: Zap,
 };
 
-const DIET_ICONS: Record<DietaryPattern, IconComponent> = {
+export const DIET_ICONS: Record<DietaryPattern, IconComponent> = {
   omnivore: Utensils,
   vegetarian: Leaf,
   no_beef: Beef,

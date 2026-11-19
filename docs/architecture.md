@@ -189,10 +189,18 @@ the workspace root. Review each added component: some need extra `@rn-primitives
 
 ## Mood insights (F17)
 
-- No backend endpoint yet. `features/mood/demo.ts` supplies a sample shaped like the proposed
-  `GET /mood/insights` contract (`packages/api/src/mood/types.ts`), rendered by `MoodInsightCard`
-  on the Mood screen and inside Home's discreet-mode veil, with a "Preview" badge. Swap the demo
-  for a query when the endpoint ships; the sentence is shown exactly as written.
+- `GET /mood/insights?from&to` (last 30 local days, sent explicitly because the backend's default
+  uses the server date). `fetchMoodInsight` keeps only the backend's `observation` and
+  `days_logged`; `MoodInsightCard` shows the sentence exactly as written on the Mood screen and in
+  Home's discreet-mode veil, never as a chart or score. The query lives under `['mood', userId]`,
+  so saving a check-in refreshes it. Kept fresh for 30 minutes, since the backend writes it with a model.
+
+## Health & goals settings (F3)
+
+- `/settings` (`packages/app/features/settings`), a stacked screen opened from the profile sheet.
+  It reuses the onboarding choice cards, icons and sliders, and sends only the changed fields with
+  `PATCH /profile`. The save waits for the answer (not a queued offline write) so it can show the
+  recalculated target as returned, then refreshes the profile, Today card, week insights and suggestions.
 
 ## Food search & logging (F5, F6)
 

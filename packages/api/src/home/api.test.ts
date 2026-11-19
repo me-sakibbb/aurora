@@ -8,6 +8,7 @@ import {
   fetchMealSuggestions,
   regenerateMealSuggestions,
   suggestionsNotReady,
+  updateProfile,
 } from './api';
 
 jest.mock('../backend', () => ({
@@ -252,6 +253,31 @@ describe('fetchCalorieInsights', () => {
     );
     expect(result?.summary.average_logged_day_kcal).toBe(1800.2);
     expect(result?.daily[1]?.consumed_kcal).toBe(640.5);
+    expect(result?.observation).toBeNull();
+  });
+
+  it('keeps the written observation as is', async () => {
+    mockFetch.mockResolvedValueOnce({
+      timezone: 'Asia/Dhaka',
+      start_date: 'a',
+      end_date: 'b',
+      target_kcal: null,
+      summary: {
+        total_consumed_kcal: 0,
+        average_consumed_kcal: 0,
+        average_logged_day_kcal: 0,
+        days_in_range: 7,
+        days_with_logs: 0,
+        days_without_logs: 7,
+        days_at_or_below_target: null,
+        target_adherence_pct: null,
+        days_compared_to_target: 0,
+      },
+      daily: [],
+      observation: 'No food was logged during this period.',
+    });
+    const result = await fetchCalorieInsights({ startDate: 'a', endDate: 'b', tz: 'Asia/Dhaka' });
+    expect(result?.observation).toBe('No food was logged during this period.');
   });
 
   it('returns null when there is no profile yet', async () => {
@@ -265,5 +291,38 @@ describe('fetchCalorieInsights', () => {
     expect(dayHasLogs(day('d', 0, 1))).toBe(true);
     expect(dayHasLogs(day('d', 120))).toBe(true);
     expect(dayHasLogs(day('d', 0))).toBe(false);
+  });
+});
+
+describe('updateProfile', () => {
+  it('sends only the changes and returns the profile with the new target as returned', async () => {
+    mockFetch.mockResolvedValueOnce({
+      id: 'u1',
+      goals: ['weight_loss', 'unknown_goal'],
+      target_kcal: '1650.5',
+      weight_kg: '64.5',
+      height_cm: 162,
+      activity_level: 'lightly_active',
+      dietary_pattern: 'no_beef',
+      body_type: 'not-a-type',
+      has_diabetes: false,
+      bmi: 24.6,
+    });
+
+    const profile = await updateProfile({ weight_kg: 64.5, goals: ['weight_loss'] });
+
+    expect(mockFetch).toHaveBeenCalledWith('/profile', {
+      method: 'PATCH',
+      body: { weight_kg: 64.5, goals: ['weight_loss'] },
+    });
+    expect(profile).toMatchObject({
+      goals: ['weight_loss'],
+      target_kcal: 1650.5,
+      weight_kg: 64.5,
+      activity_level: 'lightly_active',
+      dietary_pattern: 'no_beef',
+      body_type: null,
+      has_diabetes: false,
+    });
   });
 });

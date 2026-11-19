@@ -2,9 +2,11 @@
 
 import {
   fetchMoodBetween,
+  fetchMoodInsight,
   fetchMoodPage,
   isApiConfigured,
   MOOD_PAGE_SIZE,
+  type MoodInsight,
   type MoodLog,
   saveMoodLog,
 } from '@mybela/api';
@@ -18,8 +20,10 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import { endOfMonth, format, parseISO, startOfMonth } from 'date-fns';
+import { endOfMonth, format, parseISO, startOfMonth, subDays } from 'date-fns';
+import { useIsOnline } from '../../lib/use-online';
 import { useSession } from '../auth/session';
+import { sectionState } from '../home/queries';
 
 const ISO = 'yyyy-MM-dd';
 
@@ -156,4 +160,25 @@ export function useFailedMoodSaves() {
       void queryClient.invalidateQueries({ queryKey: moodQueryKey(userId) });
     },
   };
+}
+
+/** How far back the F17 observation looks: the last 30 local days, including today. */
+const INSIGHT_DAYS = 30;
+
+/**
+ * `GET /mood/insights` for the last 30 days (F17). Under the mood key, so a saved check-in
+ * refreshes it. The backend writes the sentence with a model, so it's kept for a while.
+ */
+export function useMoodInsight() {
+  const userId = useSession()?.user.id;
+  const online = useIsOnline();
+  const to = todayIso();
+  const from = format(subDays(parseISO(to), INSIGHT_DAYS - 1), ISO);
+  const query = useQuery<MoodInsight | null>({
+    queryKey: [...moodQueryKey(userId), 'insight', from, to],
+    queryFn: ({ signal }) => fetchMoodInsight({ from, to }, signal),
+    enabled: Boolean(userId) && isApiConfigured(),
+    staleTime: 30 * 60_000,
+  });
+  return { ...query, state: sectionState(query, online) };
 }

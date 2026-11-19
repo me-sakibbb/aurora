@@ -41,16 +41,20 @@ import { BodyFigure } from '../components/visuals';
 import { YearWheel } from '../components/year-wheel';
 import type { StepDefinition } from './types';
 
-const SEX_ICONS: Record<Sex, IconComponent> = { female: Venus, male: Mars, other: NonBinary };
+export const SEX_ICONS: Record<Sex, IconComponent> = {
+  female: Venus,
+  male: Mars,
+  other: NonBinary,
+};
 
-const ACTIVITY_ICONS: Record<ActivityLevel, IconComponent> = {
+export const ACTIVITY_ICONS: Record<ActivityLevel, IconComponent> = {
   mostly_sitting: Armchair,
   lightly_active: Footprints,
   moderately_active: Bike,
   very_active: Dumbbell,
 };
 
-const BLOOD_PRESSURE_ICONS: Record<BloodPressure, IconComponent> = {
+export const BLOOD_PRESSURE_ICONS: Record<BloodPressure, IconComponent> = {
   normal: HeartPulse,
   high: ArrowUp,
   low: ArrowDown,
@@ -110,9 +114,9 @@ export const bodyTypeStep: StepDefinition = {
   },
 };
 
-const CM_PER_INCH = 2.54;
-const KG_PER_LB = 0.45359237;
-const round1 = (n: number) => Math.round(n * 10) / 10;
+export const CM_PER_INCH = 2.54;
+export const KG_PER_LB = 0.45359237;
+export const round1 = (n: number) => Math.round(n * 10) / 10;
 
 export const birthYearStep: StepDefinition = {
   Body: function BirthYearBody({ draft, update }) {
@@ -244,7 +248,7 @@ export const measurementsStep: StepDefinition = {
 };
 
 /** One measurement on the height & weight screen: a label (with an optional unit switch) above it. */
-function Section({
+export function Section({
   label,
   units,
   children,

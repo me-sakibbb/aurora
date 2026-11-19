@@ -16,13 +16,13 @@ import { AppTopBar } from '../shell/top-bar';
 import { EntryDetails, EntryRow, TodayPanel } from './components/entry';
 import { MoodInsightCard } from './components/insight-card';
 import { MoodCalendar } from './components/mood-calendar';
-import { useDemoMoodInsight } from './demo';
 import { checkInHref } from './links';
 import {
   todayIso,
   useFailedMoodSaves,
   useMoodDay,
   useMoodHistory,
+  useMoodInsight,
   useWaitingMoodDays,
 } from './queries';
 
@@ -44,8 +44,7 @@ export function MoodScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const items = history.data?.pages.flat() ?? [];
-  // F17 sample until `GET /mood/insights` exists (see ./demo.ts).
-  const insight = useDemoMoodInsight(items.length > 0);
+  const insight = useMoodInsight();
   // Offline with nothing saved on the device yet: say so instead of loading forever.
   const offlineEmpty = history.data === undefined && !online;
   const firstLoad = history.data === undefined && !history.isError && !offlineEmpty;
@@ -61,7 +60,7 @@ export function MoodScreen() {
 
   const refresh = async () => {
     setRefreshing(true);
-    await Promise.allSettled([todayEntry.refetch(), history.refetch()]);
+    await Promise.allSettled([todayEntry.refetch(), history.refetch(), insight.refetch()]);
     setRefreshing(false);
   };
 
@@ -103,7 +102,11 @@ export function MoodScreen() {
             </FadeIn>
           )}
           <FadeIn delay={40}>
-            <MoodInsightCard insight={insight} demo />
+            <MoodInsightCard
+              insight={insight.data}
+              state={insight.state}
+              onRetry={() => insight.refetch()}
+            />
           </FadeIn>
         </View>
 

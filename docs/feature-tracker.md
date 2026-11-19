@@ -21,11 +21,11 @@ not here.
 
 | Phase | Window | Status |
 | --- | --- | --- |
-| 1: Access, onboarding & settings | Sep 21 – Sep 29 | F1, F2 done · F3 not started |
-| 2: Home, food logging & recipes | Sep 30 – Oct 20 | F5, F6 done · F4 partly demo · F7, F8, F9 open |
+| 1: Access, onboarding & settings | Sep 21 – Sep 29 | F1, F2, F3 done |
+| 2: Home, food logging & recipes | Sep 30 – Oct 20 | F5, F6 done · F4 mostly live (streak, chips, noticed demo) · F7, F8, F9 open |
 | 3: Cycle tracking | Oct 21 – Nov 3 | Built · symptoms halted · waiting on BE flags |
 | 4: Mood, analytics, system states | Nov 4 – Nov 10 | F12, F15 done · F14 waiting on Clarity ID |
-| 5: Chat, patterns, suggestions | Nov 11 – Nov 24 | Built · chat safety/sources + F17 waiting on BE |
+| 5: Chat, patterns, suggestions | Nov 11 – Nov 24 | Built · F17 live · chat safety/sources waiting on BE |
 | 6: Engagement & trust | Nov 25 – Dec 5 | Not started (some demo UI on Home) |
 | 7: Localization, profile, privacy | Dec 6 – Dec 12 | F24 partly done · F25 partly done |
 | 8: Phase 2 feature set | Dec 13 – Dec 24 | Not started |
@@ -48,12 +48,15 @@ not here.
   - Answers are kept on the device and survive restarts (`draft-store.ts`), then are submitted after sign-up.
   - The client removed the cycle questions (2026-10-09).
   - Note: the widget step only records opt-in. No home-screen widget is built.
-- [ ] **F3 Health & goals settings**
-  - Not started. The profile sheet has a "Settings" row marked "Soon".
-  - To do: an editable form pre-filled from the onboarding answers, with save and error states.
-  - BE now available (2026-11-20): `PATCH /profile` (sex, weight, height, age, activity, goals, diet,
-    body type, BP, diabetes, notifications); it recalculates the calorie target on save and returns
-    the profile with `bmi`. Not wired yet. Still missing: `discreet_mode`, `wants_fertility_estimate`.
+- [x] **F3 Health & goals settings**
+  - `/settings` screen (profile sheet → "Health & goals"), pre-filled from `GET /profile`: goals, diet,
+    sex, age, height and weight (cm/ft-in, kg/lb), body type, activity, blood pressure, diabetes.
+  - Saves only the changed fields with `PATCH /profile` (2026-11-20) and shows the new daily target
+    as returned. Then it refreshes the Today card, week insights and suggestions.
+  - States: loading, error, offline (save disabled, online only on purpose so the new target can be
+    shown), no-profile, save error.
+  - Not in the form: notifications (that's the OS permission, F20+), BMI (returned but not shown).
+  - Waiting on BE: a way to write `discreet_mode` and `wants_fertility_estimate` through the API.
 
 ## Phase 2: Home, food logging & recipes
 
@@ -65,8 +68,10 @@ not here.
     (days logged, average per logged day, days within target) from `GET /calories/insights`.
   - Demo ("Preview", badged per item): the streak count (card + header pill), Flex Day chips, and the
     Aurora Noticed card.
-  - Waiting on BE: a streak count, written insight sentences, and noticed. The DB has no table for
-    any of them. Nice to have on `/calories/insights`: an `entries` count per day (we count a day as
+  - The week card also shows the backend's written `observation` from `/calories/insights`
+    (2026-11-20) as the insights summary.
+  - Waiting on BE: a streak count and noticed. The DB has no table for either. The observation
+    is English only. Nice to have on `/calories/insights`: an `entries` count per day (we count a day as
     logged when `consumed_kcal > 0` or `unquantified_entries > 0`, so a logged 0 kcal item is missed).
 - [x] **F5 Food search**
   - Hybrid search (instant on-device match plus backend `?search=`), a card grid with photos, and
@@ -141,10 +146,11 @@ not here.
   - Waiting on BE: `status` / safety / stop signal in `ChatResponse`, `citations`, 429 + timeout
     handling, and the topic classifier.
 - [ ] **F17 Mood pattern insights**
-  - The UI is built (`MoodInsightCard` on the Mood screen and Home) with demo data ("Preview").
-  - BE now available (2026-11-18): `GET /mood/insights?from&to`, which returns daily series, averages,
-    mood distribution, top tags and completion %. Not wired yet. It has no written pattern sentences
-    and no "not enough data yet" message, so the insight card's wording still has no source.
+  - Live (2026-11-20): `MoodInsightCard` on the Mood screen and Home shows the backend's
+    `observation` from `GET /mood/insights` (last 30 local days), exactly as written. No check-ins in
+    the range → the quieter "not enough yet" style, still with the backend's wording.
+  - Loading, error and offline states. It refreshes after a check-in is saved.
+  - Waiting on BE: Bengali observations (the sentence is English only, no language parameter).
 - [x] **F18 Goal-based food suggestions**
   - Each suggestion shows its explanation, a "tried" marker, a static note as a fallback, and a "New
     ideas" refresh. A 422 shows the "getting ready" empty state. The detail sheet has "Log this meal".

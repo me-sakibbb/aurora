@@ -82,8 +82,10 @@ export function ProfileSheet() {
         <Row
           icon={SlidersHorizontal}
           label={t('shell.profile.settings')}
-          hint={t('shell.soon')}
-          disabled
+          onPress={() => {
+            close();
+            router.navigate('/settings');
+          }}
         />
         {cycle !== 'hidden' ? (
           <Row

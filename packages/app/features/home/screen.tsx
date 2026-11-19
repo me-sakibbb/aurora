@@ -9,9 +9,8 @@ import { FadeIn } from '../../components/fade-in';
 import { useAppRouter } from '../../lib/navigation';
 import { useCycleStatus } from '../cycle/queries';
 import { MoodInsightCard } from '../mood/components/insight-card';
-import { useDemoMoodInsight } from '../mood/demo';
 import { checkInHref } from '../mood/links';
-import { todayIso, useMoodDay, useMoodHistory, useWaitingMoodDays } from '../mood/queries';
+import { todayIso, useMoodDay, useMoodInsight, useWaitingMoodDays } from '../mood/queries';
 import { useAccount } from '../shell/account';
 import { HomeSkeleton, Veil } from './components/primitives';
 import {
@@ -64,9 +63,7 @@ export function HomeScreen() {
   const today = todayIso();
   const mood = useMoodDay(today);
   const moodWaiting = useWaitingMoodDays();
-  const moodHistory = useMoodHistory();
-  // F17 sample until `GET /mood/insights` exists (see ../mood/demo.ts).
-  const moodInsight = useDemoMoodInsight((moodHistory.data?.pages[0]?.length ?? 0) > 0);
+  const moodInsight = useMoodInsight();
   const [refreshing, setRefreshing] = useState(false);
 
   const now = new Date();
@@ -186,7 +183,11 @@ export function HomeScreen() {
                       onPick={(value) => go(checkInHref({ mood: value }))}
                       onOpen={() => go('/mood')}
                     />
-                    <MoodInsightCard insight={moodInsight} demo />
+                    <MoodInsightCard
+                      insight={moodInsight.data}
+                      state={moodInsight.state}
+                      onRetry={() => moodInsight.refetch()}
+                    />
                   </View>
                 </Veil>
               </FadeIn>
