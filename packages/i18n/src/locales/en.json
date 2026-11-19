@@ -55,7 +55,13 @@
       "chips_one": "You have {{count}} Flex Day chip to protect a busy day.",
       "chips_other": "You have {{count}} Flex Day chips to protect busy days.",
       "logged": "logged",
-      "notLogged": "nothing logged"
+      "notLogged": "nothing logged",
+      "loggedDays": "Days logged",
+      "loggedDaysValue": "{{count}}/{{total}}",
+      "average": "Avg. per logged day",
+      "onTarget": "Within target",
+      "onTargetValue": "{{count}}/{{total}} days",
+      "noProfile": "Finish your profile to see your week."
     },
     "mood": {
       "section": "Mood check-in",
@@ -101,7 +107,9 @@
     "recent": {
       "title": "Today's log",
       "emptyTitle": "Nothing logged yet today",
-      "emptyBody": "Your meals will show up here as you log them."
+      "emptyBody": "Your meals will show up here as you log them.",
+      "meta": "{{time}} · {{grams}} g",
+      "unnamed": "Logged food"
     },
     "discreet": {
       "hidden": "Hidden by Discreet Mode. Tap to show.",
@@ -113,11 +121,7 @@
     },
     "demo": {
       "noticedTitle": "Your lunches are getting more balanced",
-      "noticedBody": "Three of your last four lunches had dal or shak alongside rice. That's a steady, filling pattern.",
-      "insight1Title": "Breakfast is your most consistent meal",
-      "insight1Body": "You logged breakfast on 6 of the last 7 days.",
-      "insight2Title": "Evenings are often unlogged",
-      "insight2Body": "Dinner was missing on 3 days this week. A quick log keeps the picture complete."
+      "noticedBody": "Three of your last four lunches had dal or shak alongside rice. That's a steady, filling pattern."
     }
   },
   "shell": {

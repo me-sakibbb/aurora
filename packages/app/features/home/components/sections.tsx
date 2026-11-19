@@ -1,12 +1,14 @@
 'use client';
 
-import type {
-  CycleStatus,
-  Insight,
-  MoodLevel,
-  MoodLog,
-  RecentLog,
-  WeekActivity,
+import {
+  type CalorieInsights,
+  type CycleStatus,
+  dayHasLogs,
+  type Insight,
+  type MoodLevel,
+  type MoodLog,
+  type RecentLog,
+  type WeekActivity,
 } from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
 import {
@@ -17,7 +19,6 @@ import {
   Gift,
   Icon,
   type IconComponent,
-  Lightbulb,
   MessageCircleHeart,
   Smile,
   Sparkles,
@@ -27,11 +28,14 @@ import {
 import { format, isToday, parseISO } from 'date-fns';
 import { Platform, Pressable, View } from 'react-native';
 import { FadeIn } from '../../../components/fade-in';
+import { FoodImage } from '../../../components/food-image';
 import { MoodFace } from '../../../components/mood-face';
+import { Skeleton } from '../../../components/skeleton';
 import { tapHaptic } from '../../../lib/haptics';
 import { FaceRow, WaitingNote } from '../../mood/components/entry';
+import type { SectionState } from '../queries';
 import { useDateLocale } from '../use-date-locale';
-import { MEAL_ICONS, Panel, PreviewBadge, SectionHeader } from './primitives';
+import { InlineState, Panel, PreviewBadge, SectionHeader } from './primitives';
 
 const pressable = Platform.select({ web: 'transition-colors hover:bg-muted', default: '' });
 
@@ -128,47 +132,48 @@ export function NoticedCard({
   );
 }
 
-// ─── This week: streak (F22), flex chips (F19), insights summary (F4) ───────────────────────────
+// ─── This week: logged days + totals (F4, live), streak (F22) and flex chips (F19, preview) ─────
 
 export function WeekCard({
   week,
-  insights,
-  demo,
+  calories,
+  state,
+  onRetry,
   onSeeAll,
 }: {
+  /** Streak and chips: sample data until their endpoints exist. */
   week: WeekActivity;
-  insights: Insight[];
-  demo: boolean;
+  /** `GET /calories/insights` for the last seven days. `null` = no profile yet. */
+  calories: CalorieInsights | null | undefined;
+  state: SectionState;
+  onRetry: () => void;
   onSeeAll: () => void;
 }) {
   const { t } = useTranslation();
   const locale = useDateLocale();
 
-  return (
-    <View>
-      <SectionHeader
-        title={t('home.week.title')}
-        badge={demo ? <PreviewBadge /> : null}
-        action={t('home.seeAll')}
-        onAction={onSeeAll}
-      />
-      <Panel className="gap-5">
-        <View className="flex-row items-center gap-3">
-          <View className="bg-taupe/35 h-12 w-12 items-center justify-center rounded-2xl">
-            <Icon as={Flame} size={24} className="text-olive" />
-          </View>
-          <View className="flex-1">
-            <Text className="text-xl font-bold">
-              {t('home.week.streak', { count: week.streak_days })}
-            </Text>
-            <Text variant="muted">{t('home.week.streakHint')}</Text>
-          </View>
-        </View>
-
+  let live: React.ReactNode;
+  if (state === 'loading') {
+    live = (
+      <View className="flex-row justify-between" aria-busy>
+        {Array.from({ length: 7 }, (_, i) => (
+          <Skeleton key={i} className="h-14 w-9 rounded-full" />
+        ))}
+      </View>
+    );
+  } else if (state !== 'ready') {
+    live = <InlineState kind={state === 'offline' ? 'offline' : 'error'} onRetry={onRetry} />;
+  } else if (!calories) {
+    live = <Text variant="muted">{t('home.week.noProfile')}</Text>;
+  } else {
+    const { summary } = calories;
+    live = (
+      <>
         <View className="flex-row justify-between">
-          {week.days.map((day, index) => {
+          {calories.daily.map((day, index) => {
             const date = parseISO(day.date);
             const today = isToday(date);
+            const logged = dayHasLogs(day);
             return (
               <FadeIn key={day.date} delay={index * 40} className="items-center gap-1.5">
                 <Text
@@ -181,20 +186,68 @@ export function WeekCard({
                 </Text>
                 <View
                   aria-label={`${format(date, 'EEEE', { locale })}: ${
-                    day.logged ? t('home.week.logged') : t('home.week.notLogged')
+                    logged ? t('home.week.logged') : t('home.week.notLogged')
                   }`}
                   className={cn(
                     'h-9 w-9 items-center justify-center rounded-full',
-                    day.logged ? 'bg-primary' : 'bg-muted',
+                    logged ? 'bg-primary' : 'bg-muted',
                     today && 'border-taupe border-2',
                   )}
                 >
-                  {day.logged ? <Icon as={Flame} size={16} className="text-taupe" /> : null}
+                  {logged ? <Icon as={Flame} size={16} className="text-taupe" /> : null}
                 </View>
               </FadeIn>
             );
           })}
         </View>
+        <View className="border-border flex-row gap-2 border-t pt-4">
+          <Stat
+            label={t('home.week.loggedDays')}
+            value={t('home.week.loggedDaysValue', {
+              count: summary.days_with_logs,
+              total: summary.days_in_range,
+            })}
+          />
+          <Stat
+            label={t('home.week.average')}
+            value={t('home.kcal', {
+              value: Math.round(summary.average_logged_day_kcal).toLocaleString(),
+            })}
+          />
+          {summary.days_at_or_below_target != null && summary.days_compared_to_target > 0 ? (
+            <Stat
+              label={t('home.week.onTarget')}
+              value={t('home.week.onTargetValue', {
+                count: summary.days_at_or_below_target,
+                total: summary.days_compared_to_target,
+              })}
+            />
+          ) : null}
+        </View>
+      </>
+    );
+  }
+
+  return (
+    <View>
+      <SectionHeader title={t('home.week.title')} action={t('home.seeAll')} onAction={onSeeAll} />
+      <Panel className="gap-5">
+        <View className="flex-row items-center gap-3">
+          <View className="bg-taupe/35 h-12 w-12 items-center justify-center rounded-2xl">
+            <Icon as={Flame} size={24} className="text-olive" />
+          </View>
+          <View className="flex-1">
+            <View className="flex-row items-center gap-2">
+              <Text className="text-xl font-bold">
+                {t('home.week.streak', { count: week.streak_days })}
+              </Text>
+              <PreviewBadge />
+            </View>
+            <Text variant="muted">{t('home.week.streakHint')}</Text>
+          </View>
+        </View>
+
+        {live}
 
         {week.flex_chips > 0 ? (
           <View className="bg-sage/10 -mt-1 flex-row items-center gap-2.5 rounded-2xl px-3 py-2.5">
@@ -202,25 +255,22 @@ export function WeekCard({
             <Text className="flex-1 text-sm">
               {t('home.week.chips', { count: week.flex_chips })}
             </Text>
-          </View>
-        ) : null}
-
-        {insights.length > 0 ? (
-          <View className="border-border gap-3 border-t pt-4">
-            {insights.map((insight) => (
-              <View key={insight.id} className="flex-row gap-3">
-                <Icon as={Lightbulb} size={18} className="text-accent mt-0.5" />
-                <View className="flex-1">
-                  <Text className="text-sm font-semibold">{insight.title}</Text>
-                  <Text variant="muted" className="leading-5">
-                    {insight.body}
-                  </Text>
-                </View>
-              </View>
-            ))}
+            <PreviewBadge />
           </View>
         ) : null}
       </Panel>
+    </View>
+  );
+}
+
+/** One of the week's figures, shown as the backend returned it. */
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <View className="bg-muted/60 flex-1 gap-0.5 rounded-2xl px-3 py-2.5">
+      <Text className="text-base font-bold">{value}</Text>
+      <Text variant="muted" className="text-xs leading-4">
+        {label}
+      </Text>
     </View>
   );
 }
@@ -347,44 +397,51 @@ export function CyclePreview({
 
 export function RecentLogs({
   logs,
-  demo,
+  state,
+  onRetry,
   onSeeAll,
   onLog,
 }: {
-  logs: RecentLog[];
-  demo: boolean;
+  logs: RecentLog[] | undefined;
+  state: SectionState;
+  onRetry: () => void;
   onSeeAll: () => void;
   onLog: () => void;
 }) {
   const { t, i18n } = useTranslation();
   const locale = useDateLocale();
 
-  return (
-    <View>
-      <SectionHeader
-        title={t('home.recent.title')}
-        badge={demo ? <PreviewBadge /> : null}
-        action={logs.length > 0 ? t('home.seeAll') : undefined}
-        onAction={onSeeAll}
-      />
-      {logs.length === 0 ? (
-        <Panel className="items-center gap-3 py-8">
-          <View className="bg-muted h-14 w-14 items-center justify-center rounded-full">
-            <Icon as={Utensils} size={24} className="text-muted-foreground" />
-          </View>
-          <Text className="text-center font-semibold">{t('home.recent.emptyTitle')}</Text>
-          <Text variant="muted" className="text-center">
-            {t('home.recent.emptyBody')}
+  let body: React.ReactNode;
+  if (state === 'loading') {
+    body = <Skeleton className="h-40 rounded-3xl" aria-busy />;
+  } else if (state !== 'ready' || !logs) {
+    body = <InlineState kind={state === 'offline' ? 'offline' : 'error'} onRetry={onRetry} />;
+  } else if (logs.length === 0) {
+    body = (
+      <Panel className="items-center gap-3 py-8">
+        <View className="bg-muted h-14 w-14 items-center justify-center rounded-full">
+          <Icon as={Utensils} size={24} className="text-muted-foreground" />
+        </View>
+        <Text className="text-center font-semibold">{t('home.recent.emptyTitle')}</Text>
+        <Text variant="muted" className="text-center">
+          {t('home.recent.emptyBody')}
+        </Text>
+        <Pressable onPress={onLog} className="bg-primary mt-1 rounded-full px-5 py-2.5">
+          <Text className="text-primary-foreground text-sm font-semibold">
+            {t('home.today.logMeal')}
           </Text>
-          <Pressable onPress={onLog} className="bg-primary mt-1 rounded-full px-5 py-2.5">
-            <Text className="text-primary-foreground text-sm font-semibold">
-              {t('home.today.logMeal')}
-            </Text>
-          </Pressable>
-        </Panel>
-      ) : (
-        <Panel className="gap-0 p-2">
-          {logs.map((log, index) => (
+        </Pressable>
+      </Panel>
+    );
+  } else {
+    body = (
+      <Panel className="gap-0 p-2">
+        {logs.map((log, index) => {
+          const name =
+            (i18n.language === 'bn' && log.name_bn ? log.name_bn : log.name) ??
+            t('home.recent.unnamed');
+          const time = format(parseISO(log.logged_at), 'h:mm a', { locale });
+          return (
             <View
               key={log.id}
               className={cn(
@@ -392,28 +449,43 @@ export function RecentLogs({
                 index > 0 && 'border-border border-t',
               )}
             >
-              <View className="bg-muted h-11 w-11 items-center justify-center rounded-2xl">
-                <Icon as={MEAL_ICONS[log.meal_slot]} size={20} className="text-foreground" />
+              <View className="bg-muted h-11 w-11 items-center justify-center overflow-hidden rounded-2xl">
+                <FoodImage
+                  uri={log.image_url}
+                  className="absolute inset-0"
+                  fallback={<Icon as={Utensils} size={20} className="text-foreground" />}
+                />
               </View>
               <View className="min-w-0 flex-1">
                 <Text numberOfLines={1} className="font-semibold">
-                  {i18n.language === 'bn' && log.name_bn ? log.name_bn : log.name}
+                  {name}
                 </Text>
                 <Text variant="muted" numberOfLines={1}>
-                  {t(`home.meals.${log.meal_slot}`)} ·{' '}
-                  {format(parseISO(log.logged_at), 'h:mm a', { locale })}
+                  {log.grams != null
+                    ? t('home.recent.meta', { time, grams: Math.round(log.grams) })
+                    : time}
                 </Text>
               </View>
-              <Text className="text-sm font-semibold">
-                {t('home.kcalRange', {
-                  min: log.kcal.min.toLocaleString(),
-                  max: log.kcal.max.toLocaleString(),
-                })}
-              </Text>
+              {log.kcal != null ? (
+                <Text className="text-sm font-semibold">
+                  {t('home.kcal', { value: Math.round(log.kcal).toLocaleString() })}
+                </Text>
+              ) : null}
             </View>
-          ))}
-        </Panel>
-      )}
+          );
+        })}
+      </Panel>
+    );
+  }
+
+  return (
+    <View>
+      <SectionHeader
+        title={t('home.recent.title')}
+        action={logs && logs.length > 0 ? t('home.seeAll') : undefined}
+        onAction={onSeeAll}
+      />
+      {body}
     </View>
   );
 }

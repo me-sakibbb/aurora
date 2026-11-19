@@ -24,7 +24,14 @@ import {
 } from './components/sections';
 import { SuggestionsSection } from './components/suggestions';
 import { TodayCard } from './components/today-card';
-import { useDailySummary, useHomeDemo, useMealSuggestions, useProfile } from './queries';
+import {
+  useDailySummary,
+  useHomeDemo,
+  useMealSuggestions,
+  useProfile,
+  useTodayLogs,
+  useWeekCalories,
+} from './queries';
 import { useDateLocale } from './use-date-locale';
 
 /** Greeting by local time of day (wording only; nothing health-related is derived). */
@@ -52,6 +59,8 @@ export function HomeScreen() {
   const summary = useDailySummary();
   const suggestions = useMealSuggestions();
   const demo = useHomeDemo();
+  const todayLogs = useTodayLogs();
+  const weekCalories = useWeekCalories();
   const today = todayIso();
   const mood = useMoodDay(today);
   const moodWaiting = useWaitingMoodDays();
@@ -157,8 +166,9 @@ export function HomeScreen() {
               </FadeIn>
               <FadeIn delay={240}>
                 <RecentLogs
-                  logs={demo.recent}
-                  demo
+                  logs={todayLogs.data}
+                  state={todayLogs.state}
+                  onRetry={() => todayLogs.refetch()}
                   onSeeAll={() => go('/food')}
                   onLog={() => go('/food')}
                 />
@@ -194,8 +204,9 @@ export function HomeScreen() {
               <FadeIn delay={240}>
                 <WeekCard
                   week={demo.week}
-                  insights={demo.insights}
-                  demo
+                  calories={weekCalories.data}
+                  state={weekCalories.state}
+                  onRetry={() => weekCalories.refetch()}
                   onSeeAll={() => go('/insights')}
                 />
               </FadeIn>

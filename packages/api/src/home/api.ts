@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { ApiError, apiFetch } from '../backend';
 import { photoUrl } from '../food/api';
 import { GOALS } from '../onboarding/options';
+import { getSupabase } from '../supabase';
 
 // Live FastAPI endpoints behind the Home dashboard (F4). Every figure is displayed as returned.
 
@@ -158,6 +159,123 @@ export async function fetchDailySummary({
   const params = new URLSearchParams({ date, tz });
   try {
     return dashboardSchema.parse(await apiFetch(`/dashboard?${params}`));
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return null;
+    throw error;
+  }
+}
+
+// ─── Today's food logs (F4 "Today's log") ───────────────────────────────────────────────────────
+// Read straight from `food_logs` (own-row RLS): the backend has no GET for logs. The kcal figure
+// is the one the backend stored in the log's snapshot when it was logged, shown as is.
+
+const RECENT_LOGS_LIMIT = 20;
+
+const recentLogSchema = z
+  .object({
+    id: z.string(),
+    logged_at: z.string(),
+    grams: z.coerce.number().nullish(),
+    kcal: z.coerce.number().nullish(),
+    recipes: z
+      .object({
+        name: z.string(),
+        name_bn: z.string().nullish(),
+        thumbnail_url: z.string().nullish(),
+      })
+      .nullish(),
+    bfct_foods: z.object({ name_en: z.string(), name_bn: z.string().nullish() }).nullish(),
+  })
+  .transform(({ recipes, bfct_foods, ...log }) => ({
+    id: log.id,
+    logged_at: log.logged_at,
+    grams: log.grams ?? null,
+    kcal: log.kcal ?? null,
+    name: recipes?.name ?? bfct_foods?.name_en ?? null,
+    name_bn: (recipes?.name_bn ?? bfct_foods?.name_bn) || null,
+    image_url: photoUrl(recipes?.thumbnail_url),
+  }));
+
+export type RecentLog = z.infer<typeof recentLogSchema>;
+
+/** The person's logs between two instants (ISO), newest first: the local day on Home. */
+export async function fetchLogsBetween({
+  userId,
+  from,
+  to,
+}: {
+  userId: string;
+  from: string;
+  to: string;
+}): Promise<RecentLog[]> {
+  const { data, error } = await getSupabase()
+    .from('food_logs')
+    .select(
+      'id, logged_at, grams, kcal:snapshot->nutrients->kcal, recipes(name, name_bn, thumbnail_url), bfct_foods(name_en, name_bn)',
+    )
+    .eq('user_id', userId)
+    .gte('logged_at', from)
+    .lt('logged_at', to)
+    .order('logged_at', { ascending: false })
+    .limit(RECENT_LOGS_LIMIT);
+  if (error) throw error;
+  return z.array(recentLogSchema).parse(data);
+}
+
+// ─── Calorie insights (F4 "This week") ──────────────────────────────────────────────────────────
+
+const calorieDaySchema = z.object({
+  date: z.string(),
+  consumed_kcal: z.coerce.number(),
+  target_kcal: z.coerce.number().nullish(),
+  target_gap_kcal: z.coerce.number().nullish(),
+  /** Logs on that day with no kcal figure. */
+  unquantified_entries: z.coerce.number().default(0),
+});
+
+const calorieInsightsSchema = z.object({
+  timezone: z.string(),
+  start_date: z.string(),
+  end_date: z.string(),
+  target_kcal: z.coerce.number().nullish(),
+  summary: z.object({
+    total_consumed_kcal: z.coerce.number(),
+    average_consumed_kcal: z.coerce.number(),
+    average_logged_day_kcal: z.coerce.number(),
+    days_in_range: z.coerce.number(),
+    days_with_logs: z.coerce.number(),
+    days_without_logs: z.coerce.number(),
+    days_at_or_below_target: z.coerce.number().nullish(),
+    target_adherence_pct: z.coerce.number().nullish(),
+    days_compared_to_target: z.coerce.number().default(0),
+  }),
+  daily: z.array(calorieDaySchema),
+});
+
+export type CalorieInsights = z.infer<typeof calorieInsightsSchema>;
+export type CalorieDay = z.infer<typeof calorieDaySchema>;
+
+/** A day has something logged: kcal counted, or a log without a kcal figure. */
+export function dayHasLogs(day: CalorieDay): boolean {
+  return day.consumed_kcal > 0 || day.unquantified_entries > 0;
+}
+
+/**
+ * `GET /api/v1/calories/insights`: kcal per local day against the target, plus the period's
+ * totals, all worked out by the backend. `null` when there's no profile yet (404).
+ */
+export async function fetchCalorieInsights({
+  startDate,
+  endDate,
+  tz,
+}: {
+  startDate: string;
+  endDate: string;
+  tz: string;
+}): Promise<CalorieInsights | null> {
+  const params = new URLSearchParams({ start_date: startDate, end_date: endDate, tz });
+  try {
+    return calorieInsightsSchema.parse(await apiFetch(`/calories/insights?${params}`));
   } catch (error) {
     if (error instanceof ApiError && error.status === 404) return null;
     throw error;

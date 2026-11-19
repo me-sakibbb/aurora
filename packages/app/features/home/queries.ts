@@ -1,17 +1,21 @@
 'use client';
 
 import {
+  type CalorieInsights,
   type DailySummary,
+  fetchCalorieInsights,
   fetchDailySummary,
+  fetchLogsBetween,
   fetchMealSuggestions,
   fetchProfile,
   isApiConfigured,
   type MealSuggestions,
+  type RecentLog,
   regenerateMealSuggestions,
   suggestionsNotReady,
 } from '@mybela/api';
 import { type UseQueryResult, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { format } from 'date-fns';
+import { addDays, format, startOfDay, subDays } from 'date-fns';
 import { useIsOnline } from '../../lib/use-online';
 import { useSession } from '../auth/session';
 import { useDemoHome } from './demo';
@@ -25,6 +29,12 @@ export const mealSuggestionsQueryKey = (userId: string | undefined, date: string
 ];
 /** Prefix of every day's summary; invalidate it after a meal is logged. */
 export const dailySummaryQueryKey = (userId: string | undefined) => ['daily-summary', userId];
+
+/** Prefix of every day's log list; invalidate it after a meal is logged. */
+export const todayLogsQueryKey = (userId: string | undefined) => ['food-logs', userId];
+
+/** Prefix of every calorie-insights range; invalidate it after a meal is logged. */
+export const calorieInsightsQueryKey = (userId: string | undefined) => ['calorie-insights', userId];
 
 /** `GET /profile`: target, goals, discreet mode. `null` data = no profile built yet. */
 export function useProfile() {
@@ -66,6 +76,48 @@ export function useDailySummary() {
     queryKey: [...dailySummaryQueryKey(userId), date, tz],
     queryFn: () => fetchDailySummary({ date, tz }),
     enabled: Boolean(userId) && isApiConfigured(),
+    staleTime: 60_000,
+  });
+  return { ...query, state: sectionState(query, online) };
+}
+
+/**
+ * `GET /calories/insights` for the last seven local days, ending today (F4 "This week"): which days
+ * have logs and the week's totals. `null` data = no profile yet.
+ */
+export function useWeekCalories() {
+  const userId = useSession()?.user.id;
+  const online = useIsOnline();
+  const { date, tz } = useLocalDay();
+  const startDate = format(subDays(new Date(), 6), 'yyyy-MM-dd');
+  const query = useQuery<CalorieInsights | null>({
+    queryKey: [...calorieInsightsQueryKey(userId), startDate, date, tz],
+    queryFn: () => fetchCalorieInsights({ startDate, endDate: date, tz }),
+    enabled: Boolean(userId) && isApiConfigured(),
+    staleTime: 60_000,
+  });
+  return { ...query, state: sectionState(query, online) };
+}
+
+/**
+ * Today's food logs, newest first, read straight from Supabase (the backend has no GET for logs).
+ * The day runs from local midnight to the next.
+ */
+export function useTodayLogs() {
+  const userId = useSession()?.user.id;
+  const online = useIsOnline();
+  const { date } = useLocalDay();
+  const query = useQuery<RecentLog[]>({
+    queryKey: [...todayLogsQueryKey(userId), date],
+    queryFn: () => {
+      const start = startOfDay(new Date());
+      return fetchLogsBetween({
+        userId: userId as string,
+        from: start.toISOString(),
+        to: addDays(start, 1).toISOString(),
+      });
+    },
+    enabled: Boolean(userId),
     staleTime: 60_000,
   });
   return { ...query, state: sectionState(query, online) };

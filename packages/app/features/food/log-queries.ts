@@ -21,7 +21,7 @@ import {
 } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useIsOnline } from '../../lib/use-online';
-import { dailySummaryQueryKey } from '../home/queries';
+import { calorieInsightsQueryKey, dailySummaryQueryKey, todayLogsQueryKey } from '../home/queries';
 
 // ─── F6 meal slots ──────────────────────────────────────────────────────────────────────────────
 // The log only carries `logged_at`; the backend puts it in a slot by local time (breakfast 04–11,
@@ -138,6 +138,8 @@ export function registerFoodMutations(queryClient: QueryClient) {
     onSettled: (_data, _error, { userId }: FoodLogVars) =>
       Promise.all([
         queryClient.invalidateQueries({ queryKey: dailySummaryQueryKey(userId) }),
+        queryClient.invalidateQueries({ queryKey: todayLogsQueryKey(userId) }),
+        queryClient.invalidateQueries({ queryKey: calorieInsightsQueryKey(userId) }),
         // Suggestions can mark what's been tried (F18).
         queryClient.invalidateQueries({ queryKey: ['meal-suggestions', userId] }),
       ]),
