@@ -10,7 +10,7 @@ import { FoodImage } from '../../../../components/food-image';
 import { Sheet } from '../../../../components/sheet';
 import { tapHaptic } from '../../../../lib/haptics';
 import { methodIcon } from '../../method-icons';
-import { compressPhoto, pickPhoto } from '../photo';
+import { compressPhoto, pickPhoto } from '../../photo';
 
 /**
  * The recipe's photo: a big 4:3 tile (the card shape) that shows the cooking-method illustration

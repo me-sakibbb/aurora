@@ -6,6 +6,8 @@ export class ApiError extends Error {
   constructor(
     readonly status: number,
     message: string,
+    /** The response's raw `detail`, when it carries more than a message (e.g. a session id). */
+    readonly detail?: unknown,
   ) {
     super(message);
     this.name = 'ApiError';
@@ -57,12 +59,17 @@ export async function apiFetch(
   });
 
   if (!response.ok) {
-    let detail = response.statusText;
+    let message = response.statusText;
+    let detail: unknown;
     try {
-      const json = (await response.json()) as { detail?: unknown };
-      if (typeof json.detail === 'string') detail = json.detail;
+      detail = ((await response.json()) as { detail?: unknown }).detail;
+      if (typeof detail === 'string') message = detail;
+      else if (detail && typeof detail === 'object' && 'message' in detail) {
+        const text = (detail as { message?: unknown }).message;
+        if (typeof text === 'string') message = text;
+      }
     } catch {}
-    throw new ApiError(response.status, detail || `HTTP ${response.status}`);
+    throw new ApiError(response.status, message || `HTTP ${response.status}`, detail);
   }
   return response.status === 204 ? null : response.json();
 }

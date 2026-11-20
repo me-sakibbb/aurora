@@ -1,5 +1,5 @@
 // How a photo is shrunk before upload, shared by the app's photo.ts (web) and photo.native.ts
-// (packages/app/features/food/recipes).
+// (packages/app/features/food).
 // A phone photo (3–8 MB) ends up a JPEG of a few hundred KB, which uploads quickly on mobile data.
 
 /** A photo ready to show and upload: a local URI plus its size after compression. */

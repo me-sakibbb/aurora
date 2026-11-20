@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { apiFetch } from '../backend';
+import { ApiError, apiFetch } from '../backend';
 import type { KcalRange } from '../home/types';
+import type { UploadPart } from '../uploads';
 
 // F5 Food Search. Every figure is displayed as returned; the backend owns matching and ranking.
 // The on-device matcher below only fills the gap while the backend answers (or when offline).
@@ -211,6 +212,8 @@ export type FoodLogInput = {
   /** ISO timestamp. The backend puts the log in a meal slot by this time. */
   logged_at: string;
   answers: RecipeAnswers;
+  /** Set when the dish was picked from a meal photo, so the photo is paired with this log. */
+  image_session_id?: string;
 };
 
 const foodLogSchema = z.object({
@@ -226,6 +229,77 @@ export type FoodLog = z.infer<typeof foodLogSchema>;
 /** `POST /api/v1/food/recipes/log`: saves a meal. Returns the saved log with its nutrition. */
 export async function createFoodLog(input: FoodLogInput): Promise<FoodLog> {
   return foodLogSchema.parse(await apiFetch('/food/recipes/log', { method: 'POST', body: input }));
+}
+
+// ─── Snap a meal: photo → recipe match ───────────────────────────────────────────────────────────
+// The backend stores the photo, has a vision model rank catalogue recipes, and returns them. The
+// person confirms one (or picks another) and the log carries `image_session_id`.
+
+const mealPhotoCandidateSchema = z.object({
+  recipe_id: z.string(),
+  name: z.string(),
+  name_bn: z.string().nullish(),
+  cooking_method: z.string().nullish(),
+  thumbnail_url: z.string().nullish(),
+});
+
+export type MealPhotoCandidate = z.infer<typeof mealPhotoCandidateSchema>;
+
+const mealPhotoMatchSchema = z.object({
+  image_session_id: z.string(),
+  status: z.string(),
+  candidates: z
+    .array(mealPhotoCandidateSchema)
+    .nullish()
+    .transform((list) => list ?? []),
+});
+
+export type MealPhotoMatch = z.infer<typeof mealPhotoMatchSchema>;
+
+/** Name of the uploaded meal photo (always a JPEG after compression). */
+export const MEAL_PHOTO_FILENAME = 'meal.jpg';
+
+/**
+ * `POST /api/v1/food/log/image`: matches a meal photo to catalogue recipes, best first. Pass the
+ * `sessionId` from an earlier attempt to retry (a retake or a hint) within the same session.
+ */
+export async function identifyMealPhoto({
+  file,
+  sessionId,
+  description,
+  signal,
+}: {
+  file: UploadPart;
+  sessionId?: string | null;
+  /** A hint from the person, e.g. "beef tehari" (backend limit 500 characters). */
+  description?: string | null;
+  signal?: AbortSignal;
+}): Promise<MealPhotoMatch> {
+  const form = new FormData();
+  if (file instanceof Blob) form.append('image', file, MEAL_PHOTO_FILENAME);
+  // RN's FormData takes a file reference object; the DOM typings only know string | Blob.
+  else form.append('image', file as unknown as Blob);
+  if (sessionId) form.append('session_id', sessionId);
+  const hint = description?.trim().slice(0, 500);
+  if (hint) form.append('description', hint);
+  return mealPhotoMatchSchema.parse(
+    await apiFetch('/food/log/image', { method: 'POST', body: form, signal }),
+  );
+}
+
+/**
+ * A match as a food, for showing its card before the full recipe arrives (no serving or nutrition
+ * yet, so it isn't enough for the log form; fetch the recipe for that).
+ */
+export function mealCandidateFood(candidate: MealPhotoCandidate): FoodItem {
+  return foodItemSchema.parse({ ...candidate, id: candidate.recipe_id });
+}
+
+/** The photo session a failed match left behind (502 sends it), so a retry stays in it. */
+export function mealPhotoSessionId(error: unknown): string | null {
+  if (!(error instanceof ApiError)) return null;
+  const detail = error.detail as { image_session_id?: unknown } | null | undefined;
+  return typeof detail?.image_session_id === 'string' ? detail.image_session_id : null;
 }
 
 // ─── A2 custom recipes ───────────────────────────────────────────────────────────────────────────

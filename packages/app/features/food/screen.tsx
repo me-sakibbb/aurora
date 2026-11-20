@@ -3,13 +3,15 @@
 import type { FoodItem } from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
 import { Button, Text } from '@mybela/ui';
-import { useCallback, useState } from 'react';
-import { View } from 'react-native';
+import { useCallback, useRef, useState } from 'react';
+import { type TextInput, View } from 'react-native';
 import { FadeIn } from '../../components/fade-in';
 import { FoodDetailSheet } from './components/food-detail-sheet';
 import { FoodSearch } from './food-search';
 import { useFoodLogWrites } from './log-queries';
 import { useRecentFoods } from './queries';
+import { SnapButton } from './snap/snap-button';
+import { SnapSheet } from './snap/snap-sheet';
 
 /**
  * The Food tab: F5 Food Search. Picking a food opens its details (remembered under "Recent"),
@@ -21,6 +23,8 @@ export function FoodScreen() {
   const [selected, setSelected] = useState<FoodItem | null>(null);
   const [open, setOpen] = useState(false);
   const writes = useFoodLogWrites();
+  const [snapOpen, setSnapOpen] = useState(false);
+  const searchRef = useRef<TextInput>(null);
 
   const onSelect = useCallback(
     (item: FoodItem) => {
@@ -54,12 +58,23 @@ export function FoodScreen() {
       ) : null}
       <FoodSearch
         onSelect={onSelect}
+        inputRef={searchRef}
+        searchAction={<SnapButton onPress={() => setSnapOpen(true)} />}
         header={
           // Phones skip the subtitle so more of the grid fits under the pinned search box.
           <Text className="text-muted-foreground hidden pb-1 leading-6">{t('food.subtitle')}</Text>
         }
       />
       <FoodDetailSheet item={selected} open={open} onClose={() => setOpen(false)} />
+      <SnapSheet
+        open={snapOpen}
+        onClose={() => setSnapOpen(false)}
+        onSearchInstead={() => {
+          setSnapOpen(false);
+          // After the sheet's closing animation, so the keyboard doesn't fight it.
+          setTimeout(() => searchRef.current?.focus(), 350);
+        }}
+      />
     </View>
   );
 }

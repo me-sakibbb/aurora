@@ -40,6 +40,7 @@
     },
     "quick": {
       "food": "Log food",
+      "snap": "Snap meal",
       "mood": "Mood check-in",
       "chat": "Ask MyBela"
     },
@@ -276,18 +277,10 @@
       "other": "Other"
     },
     "recipes": {
-      "myTitle": "My recipes",
       "editorTitle": "Your recipe",
-      "seeAll": "See all",
-      "create": "Create",
       "createRecipe": "Create a recipe",
       "newRecipe": "New recipe",
       "mine": "My recipe",
-      "listSubtitle": "Dishes you saved. Log any of them in a tap.",
-      "emptyTitle": "No recipes yet",
-      "emptyBody": "Save a dish you cook at home, like your family's khichuri, and log it any time.",
-      "count_one": "{{count}} recipe",
-      "count_other": "{{count}} recipes",
       "stepOf": "Step {{step}} of {{total}}",
       "steps": {
         "basics": "Name & photo",
@@ -428,6 +421,60 @@
         "unknown": "Couldn't save your recipe. Please try again.",
         "fix": "Fix it",
         "photoTooLarge": "This photo is too large to upload. Try another one, or save without it."
+      }
+    },
+    "snap": {
+      "open": "Snap your meal",
+      "title": "Snap your meal",
+      "subtitle": "Take a photo of your plate and we'll find the dish, so logging takes a tap.",
+      "camera": "Take a photo",
+      "library": "Choose from gallery",
+      "close": "Close",
+      "cancel": "Cancel",
+      "analyzing": "Finding your dish…",
+      "analyzingSlow": "Still looking…",
+      "analyzingVerySlow": "Almost there, thanks for waiting…",
+      "looksLike": "Looks like",
+      "logIt": "Yes, log it",
+      "others": "Or is it one of these?",
+      "noneOfThese": "None of these",
+      "openFailed": "We couldn't open this dish. Please try again.",
+      "backToMatches": "Back to the matches",
+      "retryTitle": "Let's try again",
+      "noMatchTitle": "We couldn't recognise this dish",
+      "retryBody": "Tell us what it is and we'll look again with the same photo.",
+      "hintLabel": "What is it?",
+      "hintPlaceholder": "What is it? e.g. beef tehari",
+      "lookAgain": "Look again",
+      "retake": "Retake photo",
+      "search": "Search instead",
+      "offlineTitle": "You're offline",
+      "offlineBody": "Matching a photo needs a connection. You can still search and log your meal.",
+      "errors": {
+        "offline": {
+          "title": "You're offline",
+          "body": "Your photo is ready. Try again when you're back online, or search for the dish."
+        },
+        "server": {
+          "title": "We couldn't read the photo",
+          "body": "Something went wrong on our side. Try again, retake the photo or search for the dish."
+        },
+        "tooLarge": {
+          "title": "This photo is too large",
+          "body": "Please take a new photo or choose a smaller one."
+        },
+        "badPhoto": {
+          "title": "We can't use this photo",
+          "body": "Please use a JPEG, PNG or WebP photo of your meal."
+        },
+        "denied": {
+          "title": "Camera access is off",
+          "body": "You can still choose a photo from your gallery, or turn camera access on in your phone's settings."
+        },
+        "photoFailed": {
+          "title": "We couldn't use that photo",
+          "body": "Please try another photo."
+        }
       }
     }
   },

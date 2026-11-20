@@ -14,6 +14,7 @@ import { useTranslation } from '@mybela/i18n';
 import {
   ArrowRight,
   CalendarHeart,
+  Camera,
   cn,
   Flame,
   Gift,
@@ -40,11 +41,12 @@ import { InlineState, Panel, PreviewBadge, SectionHeader } from './primitives';
 
 const pressable = Platform.select({ web: 'transition-colors hover:bg-muted', default: '' });
 
-// ─── Quick actions (F4: jump into food, mood, chat) ─────────────────────────────────────────────
+// ─── Quick actions (F4: jump into food, mood, chat; snap a meal) ─────────────────────────────────
 
 type QuickAction = {
-  key: 'food' | 'mood' | 'chat';
-  href: string;
+  key: 'food' | 'snap' | 'mood' | 'chat';
+  /** Where it goes; `snap` opens the snap-a-meal sheet instead. */
+  href: string | null;
   icon: IconComponent;
   tile: string;
   iconClass: string;
@@ -58,6 +60,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     tile: 'bg-primary',
     iconClass: 'text-primary-foreground',
   },
+  { key: 'snap', href: null, icon: Camera, tile: 'bg-olive', iconClass: 'text-ivory' },
   { key: 'mood', href: '/mood', icon: Smile, tile: 'bg-taupe', iconClass: 'text-olive' },
   {
     key: 'chat',
@@ -68,26 +71,35 @@ const QUICK_ACTIONS: QuickAction[] = [
   },
 ];
 
-export function QuickActions({ onNavigate }: { onNavigate: (href: string) => void }) {
+/** Four compact tiles in one row (icon over a short label), sized for a 360 px phone. */
+export function QuickActions({
+  onNavigate,
+  onSnap,
+}: {
+  onNavigate: (href: string) => void;
+  onSnap: () => void;
+}) {
   const { t } = useTranslation();
   return (
-    <View className="flex-row gap-3">
+    <View className="flex-row gap-2.5">
       {QUICK_ACTIONS.map((action) => (
         <Pressable
           key={action.key}
+          role="button"
           onPress={() => {
             tapHaptic();
-            onNavigate(action.href);
+            if (action.href) onNavigate(action.href);
+            else onSnap();
           }}
           className={cn(
-            'bg-card border-border active:bg-muted flex-1 items-start gap-3 rounded-3xl border p-4 shadow-sm shadow-black/5',
+            'bg-card border-border active:bg-muted flex-1 items-center gap-2 rounded-3xl border px-1.5 py-3.5 shadow-sm shadow-black/5',
             pressable,
           )}
         >
           <View className={cn('h-11 w-11 items-center justify-center rounded-2xl', action.tile)}>
             <Icon as={action.icon} size={22} className={action.iconClass} />
           </View>
-          <Text className="w-full text-sm font-semibold leading-5">
+          <Text className="w-full text-center text-xs font-semibold leading-4" numberOfLines={2}>
             {t(`home.quick.${action.key}`)}
           </Text>
         </Pressable>

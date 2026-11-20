@@ -25,7 +25,11 @@ function remember(blob: Blob) {
  * Opens the picker. `camera` asks phones to open the camera straight away. Resolves to the picked
  * file (not yet compressed), or `null` when cancelled.
  */
-export function pickPhoto(source: PhotoSource): Promise<PickedPhoto | null> {
+export function pickPhoto(
+  source: PhotoSource,
+  // Web has no crop step; the option exists so both files share one signature.
+  _options: { crop?: boolean } = {},
+): Promise<PickedPhoto | null> {
   return new Promise((resolve) => {
     const input = document.createElement('input');
     input.type = 'file';

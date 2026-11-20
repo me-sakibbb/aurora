@@ -38,7 +38,6 @@ import { SearchField } from './components/search-field';
 import { foodNames, methodLabel } from './display';
 import { COOKING_METHODS, type CookingMethod, methodIcon } from './method-icons';
 import { useFoodBrowse, useFoodSearch, useRecentFoods } from './queries';
-import { MyRecipesRail } from './recipes/components/my-recipes-rail';
 import { recipeEditorHref } from './recipes/links';
 
 /** Cards past this one appear without a stagger, so long lists don't feel slow. */
@@ -60,15 +59,22 @@ export function FoodSearch({
   onSelect,
   autoFocus,
   header,
+  searchAction,
+  inputRef: hostInputRef,
 }: {
   onSelect: (item: FoodItem) => void;
   autoFocus?: boolean;
   /** Rendered above the search box (e.g. the screen title). */
   header?: React.ReactNode;
+  /** A button inside the empty search box, at its right end (the Food tab's camera). */
+  searchAction?: React.ReactNode;
+  /** Lets the host focus the search box. */
+  inputRef?: React.RefObject<TextInput | null>;
 }) {
   const { t } = useTranslation();
   const online = useIsOnline();
-  const inputRef = useRef<TextInput>(null);
+  const ownInputRef = useRef<TextInput>(null);
+  const inputRef = hostInputRef ?? ownInputRef;
   const [query, setQuery] = useState('');
   const [method, setMethod] = useState<CookingMethod | null>(null);
   const [missingOpen, setMissingOpen] = useState(false);
@@ -140,6 +146,7 @@ export function FoodSearch({
           }}
           busy={search.waiting}
           autoFocus={autoFocus}
+          trailing={searchAction}
         />
         {!online ? (
           <FadeIn className="bg-muted flex-row items-center gap-2.5 rounded-2xl px-4 py-2.5">
@@ -352,8 +359,8 @@ function CategoryTile({
 }
 
 /**
- * The empty box: ideas to try, the person's own recipes, recently viewed foods, then every food by
- * cooking type.
+ * The empty box: ideas to try, recently viewed foods, then every food by cooking type. The
+ * person's own recipes are in the grid with the rest, marked "My recipe" on their cards.
  */
 function IdleHeader({
   method,
@@ -395,9 +402,6 @@ function IdleHeader({
       <FadeIn>
         <TryLine onTry={onTry} />
       </FadeIn>
-
-      {/* Renders nothing (no wrapper) when hidden, so the column's gap isn't doubled. */}
-      <MyRecipesRail onPick={onPick} />
 
       {recent.length > 0 ? (
         <FadeIn delay={60}>

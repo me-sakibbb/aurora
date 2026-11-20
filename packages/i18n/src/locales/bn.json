@@ -40,6 +40,7 @@
     },
     "quick": {
       "food": "Log food",
+      "snap": "ছবি তুলুন",
       "mood": "Mood check-in",
       "chat": "Ask MyBela"
     },
@@ -276,18 +277,10 @@
       "other": "Other"
     },
     "recipes": {
-      "myTitle": "My recipes",
       "editorTitle": "Your recipe",
-      "seeAll": "See all",
-      "create": "Create",
       "createRecipe": "Create a recipe",
       "newRecipe": "New recipe",
       "mine": "My recipe",
-      "listSubtitle": "Dishes you saved. Log any of them in a tap.",
-      "emptyTitle": "No recipes yet",
-      "emptyBody": "Save a dish you cook at home, like your family's khichuri, and log it any time.",
-      "count_one": "{{count}} recipe",
-      "count_other": "{{count}} recipes",
       "stepOf": "Step {{step}} of {{total}}",
       "steps": {
         "basics": "Name & photo",
@@ -428,6 +421,60 @@
         "unknown": "Couldn't save your recipe. Please try again.",
         "fix": "Fix it",
         "photoTooLarge": "This photo is too large to upload. Try another one, or save without it."
+      }
+    },
+    "snap": {
+      "open": "খাবারের ছবি তুলুন",
+      "title": "খাবারের ছবি তুলুন",
+      "subtitle": "প্লেটের একটা ছবি তুলুন, আমরা খাবারটা খুঁজে দেব, এক ট্যাপেই লগ হবে।",
+      "camera": "ছবি তুলুন",
+      "library": "গ্যালারি থেকে বেছে নিন",
+      "close": "বন্ধ করুন",
+      "cancel": "বাতিল",
+      "analyzing": "আপনার খাবার খুঁজছি…",
+      "analyzingSlow": "এখনও খুঁজছি…",
+      "analyzingVerySlow": "প্রায় হয়ে গেছে, অপেক্ষার জন্য ধন্যবাদ…",
+      "looksLike": "মনে হচ্ছে এটা",
+      "logIt": "হ্যাঁ, লগ করুন",
+      "others": "নাকি এগুলোর একটা?",
+      "noneOfThese": "এগুলোর কোনোটাই না",
+      "openFailed": "খাবারটা খোলা গেল না। আবার চেষ্টা করুন।",
+      "backToMatches": "মিলগুলোতে ফিরে যান",
+      "retryTitle": "আবার চেষ্টা করি",
+      "noMatchTitle": "খাবারটা চেনা গেল না",
+      "retryBody": "খাবারটার নাম লিখুন, একই ছবি দিয়ে আমরা আবার খুঁজব।",
+      "hintLabel": "এটা কী?",
+      "hintPlaceholder": "এটা কী? যেমন: বিফ তেহারি",
+      "lookAgain": "আবার খুঁজুন",
+      "retake": "আবার ছবি তুলুন",
+      "search": "খুঁজে নিন",
+      "offlineTitle": "আপনি অফলাইনে আছেন",
+      "offlineBody": "ছবি মেলাতে ইন্টারনেট লাগে। আপনি এখনও খুঁজে খাবার লগ করতে পারেন।",
+      "errors": {
+        "offline": {
+          "title": "আপনি অফলাইনে আছেন",
+          "body": "আপনার ছবি তৈরি আছে। অনলাইনে ফিরে আবার চেষ্টা করুন, অথবা খাবারটা খুঁজে নিন।"
+        },
+        "server": {
+          "title": "ছবিটা পড়া গেল না",
+          "body": "আমাদের দিকে একটা সমস্যা হয়েছে। আবার চেষ্টা করুন, নতুন ছবি তুলুন বা খাবারটা খুঁজে নিন।"
+        },
+        "tooLarge": {
+          "title": "ছবিটা অনেক বড়",
+          "body": "নতুন ছবি তুলুন বা ছোট একটা ছবি বেছে নিন।"
+        },
+        "badPhoto": {
+          "title": "এই ছবিটা ব্যবহার করা যাচ্ছে না",
+          "body": "খাবারের একটা JPEG, PNG বা WebP ছবি দিন।"
+        },
+        "denied": {
+          "title": "ক্যামেরার অনুমতি বন্ধ",
+          "body": "গ্যালারি থেকে ছবি বেছে নিতে পারেন, বা ফোনের সেটিংসে ক্যামেরার অনুমতি চালু করুন।"
+        },
+        "photoFailed": {
+          "title": "ছবিটা ব্যবহার করা গেল না",
+          "body": "অন্য একটা ছবি দিয়ে চেষ্টা করুন।"
+        }
       }
     }
   },

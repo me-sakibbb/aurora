@@ -1,4 +1,4 @@
-// Native: expo-image-picker (with a 4:3 crop) and expo-image-manipulator to shrink and re-encode.
+// Native: expo-image-picker (with an optional 4:3 crop) and expo-image-manipulator to shrink and re-encode.
 // The web twin (photo.ts) uses a file input + canvas; same exports.
 import {
   type CompressStep,
@@ -19,14 +19,18 @@ async function fileSize(uri: string): Promise<number> {
 }
 
 /**
- * Opens the camera or the gallery with a 4:3 crop (the card shape), at full quality so the image
- * is only compressed once. Resolves to `null` when cancelled.
+ * Opens the camera or the gallery, at full quality so the image is only compressed once. With
+ * `crop` (the default) the person crops to 4:3, the card shape; meal photos skip that step.
+ * Resolves to `null` when cancelled.
  */
-export async function pickPhoto(source: PhotoSource): Promise<PickedPhoto | null> {
+export async function pickPhoto(
+  source: PhotoSource,
+  { crop = true }: { crop?: boolean } = {},
+): Promise<PickedPhoto | null> {
   const options: ImagePicker.ImagePickerOptions = {
     mediaTypes: ['images'],
-    allowsEditing: true,
-    aspect: [4, 3],
+    allowsEditing: crop,
+    ...(crop ? { aspect: [4, 3] as [number, number] } : {}),
     quality: 1,
   };
   let result: ImagePicker.ImagePickerResult;

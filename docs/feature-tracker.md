@@ -242,10 +242,9 @@ has a price for it.
 
 ### A2 custom recipes (built 2026-11-20)
 
-- [x] Food tab: a small "+ New recipe" pill beside the "All dishes" heading, and a "My recipes" rail
-  (recipe tiles + "See all", shown only once there's at least one recipe) and `/food/my-recipes` (infinite
-  card grid with loading / empty / error / offline states). Own recipes show a "My recipe" marker in
-  search and on cards.
+- [x] Food tab: a small "+ New recipe" pill beside the "All dishes" heading. Own recipes appear in the
+  All dishes grid and in search with the rest, marked by a "My recipe" badge on their cards (no separate
+  section or page, per the user, 2026-11-20).
 - [x] 4-step editor at `/food/recipe` (new) and `/food/recipe?id=` (edit): photo + names + cooking type →
   ingredients → finished weight + servings → review. Ingredients: the recipe's list on top (tap to
   change the amount), then every ingredient A–Z (`GET /food/ingredients?limit=200`, paged on the device,
@@ -279,7 +278,6 @@ has a price for it.
   - No way to delete a replaced or never-saved photo.
   - `yield_factor` optional with a per-method default, so the finished-weight step can become optional.
   - A nutrition preview before saving (today it's only known after Save).
-  - `GET /food/recipes?mine=true&offset=` (My recipes filters the first 200 catalogue rows today).
   - `GET /food/ingredients`: `offset`, and matching on Bengali names/aliases (English `name_en` only).
   - Publish the recipe rules (e.g. `requires_water` per cooking method), so the app's copy can go.
   - Stable error codes next to the English `detail`, so errors can be shown in Bengali.

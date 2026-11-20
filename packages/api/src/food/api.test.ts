@@ -7,7 +7,9 @@ import {
   fetchFoodCatalogue,
   fetchFoodPage,
   fetchRecipeDetail,
+  identifyMealPhoto,
   matchCatalogue,
+  mealPhotoSessionId,
   mergeResults,
   methodIgnored,
   normalizeQuery,
@@ -341,5 +343,60 @@ describe('custom recipes', () => {
     expect(result).toEqual([
       { id: 'f1', name_en: 'Rice', name_bn: null, kcal_per_100g: 350, image_url: null },
     ]);
+  });
+});
+
+describe('meal photo matching', () => {
+  const photo = () => new Blob(['x'], { type: 'image/jpeg' });
+
+  it('sends the photo, session and trimmed hint as multipart and parses candidates', async () => {
+    mockFetch.mockResolvedValueOnce({
+      image_session_id: 's1',
+      image_upload_id: 'u1',
+      status: 'needs_confirmation',
+      recipe_id: 'r1',
+      candidates: [
+        { recipe_id: 'r1', name: 'Biryani', name_bn: null, confidence: 0.9, reason: 'rice' },
+        {
+          recipe_id: 'r2',
+          name: 'Polao',
+          cooking_method: 'polao',
+          thumbnail_url: 'https://x/p.jpg',
+        },
+      ],
+      retry_options: ['retake_photo'],
+    });
+    const result = await identifyMealPhoto({
+      file: photo(),
+      sessionId: 's1',
+      description: '  beef tehari ',
+    });
+    const [path, init] = mockFetch.mock.calls.at(-1) ?? [];
+    expect(path).toBe('/food/log/image');
+    const form = init?.body as FormData;
+    expect(init?.method).toBe('POST');
+    expect(form.get('session_id')).toBe('s1');
+    expect(form.get('description')).toBe('beef tehari');
+    expect(form.get('image')).toBeInstanceOf(Blob);
+    expect(result.status).toBe('needs_confirmation');
+    expect(result.candidates.map((c) => c.recipe_id)).toEqual(['r1', 'r2']);
+    expect(result.candidates[0]).not.toHaveProperty('confidence');
+  });
+
+  it('leaves out an empty hint and session, and accepts no match', async () => {
+    mockFetch.mockResolvedValueOnce({ image_session_id: 's2', status: 'no_match', candidates: [] });
+    const result = await identifyMealPhoto({ file: photo(), description: '   ' });
+    const form = mockFetch.mock.calls.at(-1)?.[1]?.body as FormData;
+    expect(form.has('session_id')).toBe(false);
+    expect(form.has('description')).toBe(false);
+    expect(result).toEqual({ image_session_id: 's2', status: 'no_match', candidates: [] });
+  });
+
+  it('reads the session a failed match left behind', () => {
+    const { ApiError } = jest.requireActual('../backend');
+    const failed = new ApiError(502, 'could not identify', { image_session_id: 's3' });
+    expect(mealPhotoSessionId(failed)).toBe('s3');
+    expect(mealPhotoSessionId(new ApiError(502, 'x'))).toBeNull();
+    expect(mealPhotoSessionId(new Error('x'))).toBeNull();
   });
 });

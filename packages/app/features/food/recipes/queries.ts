@@ -4,7 +4,6 @@ import {
   type CustomRecipeInput,
   createCustomRecipe,
   deleteCustomRecipe,
-  FOOD_PAGE_SIZE,
   fetchRecipeDetail,
   INGREDIENT_BROWSE_LIMIT,
   isAddedWater,
@@ -18,36 +17,11 @@ import {
   uploadFile,
 } from '@mybela/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
-import { foodCatalogueQueryKey, useDebounced, useFoodCatalogue, useRecentFoods } from '../queries';
-import { uploadPart } from './photo';
+import { useMemo, useState } from 'react';
+import { uploadPart } from '../photo';
+import { foodCatalogueQueryKey, useDebounced, useRecentFoods } from '../queries';
 
 // ─── Reads ───────────────────────────────────────────────────────────────────────────────────────
-
-/**
- * The person's own recipes, a page at a time. Read from the cached catalogue (which includes them
- * for the signed-in user) because the backend has no "mine" filter or offset yet.
- */
-export function useMyRecipes() {
-  const catalogue = useFoodCatalogue();
-  const mine = useMemo(
-    () => (catalogue.data ?? []).filter((item) => item.is_custom),
-    [catalogue.data],
-  );
-  const [size, setSize] = useState(FOOD_PAGE_SIZE);
-  const hasMore = size < mine.length;
-  const loadMore = useCallback(() => setSize((current) => current + FOOD_PAGE_SIZE), []);
-  return {
-    items: mine.slice(0, size),
-    total: mine.length,
-    hasMore,
-    loadMore,
-    loading: catalogue.data === undefined && catalogue.isPending,
-    failed: catalogue.data === undefined && catalogue.isError,
-    error: catalogue.error,
-    retry: () => void catalogue.refetch(),
-  };
-}
 
 const INGREDIENT_MIN_QUERY = 2;
 const INGREDIENT_PAGE = 20;

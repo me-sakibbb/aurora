@@ -8,6 +8,7 @@ import { RefreshControl, ScrollView, View } from 'react-native';
 import { FadeIn } from '../../components/fade-in';
 import { useAppRouter } from '../../lib/navigation';
 import { useCycleStatus } from '../cycle/queries';
+import { SnapSheet } from '../food/snap/snap-sheet';
 import { MoodInsightCard } from '../mood/components/insight-card';
 import { checkInHref } from '../mood/links';
 import { todayIso, useMoodDay, useMoodInsight, useWaitingMoodDays } from '../mood/queries';
@@ -41,7 +42,7 @@ function greetingKey(hour: number) {
 }
 
 /**
- * F4 Home dashboard: the day at a glance, quick ways into food / mood / chat, MyBela's
+ * F4 Home dashboard: the day at a glance, quick ways into food / snap a meal / mood / chat, MyBela's
  * observation, the week, suggestions and today's log.
  *
  * Live data: profile (discreet mode), daily summary, cycle status, meal suggestions. Sections
@@ -65,6 +66,7 @@ export function HomeScreen() {
   const moodWaiting = useWaitingMoodDays();
   const moodInsight = useMoodInsight();
   const [refreshing, setRefreshing] = useState(false);
+  const [snapOpen, setSnapOpen] = useState(false);
 
   const now = new Date();
   const discreet = profile.data?.discreet_mode === true;
@@ -85,136 +87,146 @@ export function HomeScreen() {
   const firstLoad = profile.isLoading && profile.data === undefined;
 
   return (
-    <ScrollView
-      className="bg-background flex-1"
-      contentContainerStyle={{ paddingTop: 16 }}
-      contentContainerClassName="pb-10"
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
-    >
-      <View className="mx-auto w-full max-w-6xl gap-5 px-5">
-        {/* Header */}
-        <View className="flex-row items-center gap-3">
-          <View className="flex-1">
-            <Text className="text-muted-foreground text-xs font-semibold uppercase tracking-[1.5px]">
-              {format(now, 'EEEE, d MMMM', { locale })}
-            </Text>
-            <Text
-              role="heading"
-              aria-level={1}
-              numberOfLines={2}
-              className="mt-1 text-[28px] font-bold leading-9 tracking-tight"
-            >
-              {firstName
-                ? t('home.greeting.named', {
-                    greeting: t(greetingKey(now.getHours())),
-                    name: firstName,
-                  })
-                : t(greetingKey(now.getHours()))}
-            </Text>
-          </View>
-          <View
-            className="bg-card border-border flex-row items-center gap-1 rounded-full border px-3 py-2"
-            aria-label={t('home.week.streak', { count: demo.week.streak_days })}
-          >
-            <Icon as={Flame} size={16} className="text-accent" />
-            <Text className="text-sm font-bold">{demo.week.streak_days}</Text>
-          </View>
-        </View>
-
-        {firstLoad ? (
-          <HomeSkeleton />
-        ) : (
-          <View className="gap-5">
-            {/* Main column */}
-            <View className="gap-5">
-              <FadeIn>
-                <TodayCard
-                  summary={summary.data}
-                  state={summary.state}
-                  onRetry={() => summary.refetch()}
-                  onLog={() => go('/food')}
-                />
-              </FadeIn>
-              <FadeIn delay={60}>
-                <QuickActions onNavigate={go} />
-              </FadeIn>
-              <FadeIn delay={120}>
-                <NoticedCard
-                  insight={demo.noticed}
-                  demo
-                  onAsk={() =>
-                    go(
-                      `/chat?q=${encodeURIComponent(t('chat.askAbout', { topic: demo.noticed.body }))}`,
-                    )
-                  }
-                />
-              </FadeIn>
-              <FadeIn delay={180}>
-                <SuggestionsSection
-                  data={suggestions.data}
-                  noProfile={suggestions.noProfile}
-                  notReady={suggestions.notReady}
-                  state={suggestions.state}
-                  onRetry={() => suggestions.refetch()}
-                  onRegenerate={() => suggestions.regenerate.mutate()}
-                  regenerating={suggestions.regenerate.isPending}
-                  regenerateFailed={suggestions.regenerate.isError}
-                />
-              </FadeIn>
-              <FadeIn delay={240}>
-                <RecentLogs
-                  logs={todayLogs.data}
-                  state={todayLogs.state}
-                  onRetry={() => todayLogs.refetch()}
-                  onSeeAll={() => go('/food')}
-                  onLog={() => go('/food')}
-                />
-              </FadeIn>
+    <>
+      <ScrollView
+        className="bg-background flex-1"
+        contentContainerStyle={{ paddingTop: 16 }}
+        contentContainerClassName="pb-10"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} />}
+      >
+        <View className="mx-auto w-full max-w-6xl gap-5 px-5">
+          {/* Header */}
+          <View className="flex-row items-center gap-3">
+            <View className="flex-1">
+              <Text className="text-muted-foreground text-xs font-semibold uppercase tracking-[1.5px]">
+                {format(now, 'EEEE, d MMMM', { locale })}
+              </Text>
+              <Text
+                role="heading"
+                aria-level={1}
+                numberOfLines={2}
+                className="mt-1 text-[28px] font-bold leading-9 tracking-tight"
+              >
+                {firstName
+                  ? t('home.greeting.named', {
+                      greeting: t(greetingKey(now.getHours())),
+                      name: firstName,
+                    })
+                  : t(greetingKey(now.getHours()))}
+              </Text>
             </View>
+            <View
+              className="bg-card border-border flex-row items-center gap-1 rounded-full border px-3 py-2"
+              aria-label={t('home.week.streak', { count: demo.week.streak_days })}
+            >
+              <Icon as={Flame} size={16} className="text-accent" />
+              <Text className="text-sm font-bold">{demo.week.streak_days}</Text>
+            </View>
+          </View>
 
-            {/* Side column */}
+          {firstLoad ? (
+            <HomeSkeleton />
+          ) : (
             <View className="gap-5">
-              <FadeIn delay={120}>
-                <Veil hidden={discreet} label={t('home.mood.section')}>
-                  <View className="gap-3">
-                    <MoodCard
-                      entry={mood.entry}
-                      waiting={moodWaiting.has(today)}
-                      onPick={(value) => go(checkInHref({ mood: value }))}
-                      onOpen={() => go('/mood')}
-                    />
-                    <MoodInsightCard
-                      insight={moodInsight.data}
-                      state={moodInsight.state}
-                      onRetry={() => moodInsight.refetch()}
-                    />
-                  </View>
-                </Veil>
-              </FadeIn>
-              {cycle.data?.enabled ? (
+              {/* Main column */}
+              <View className="gap-5">
+                <FadeIn>
+                  <TodayCard
+                    summary={summary.data}
+                    state={summary.state}
+                    onRetry={() => summary.refetch()}
+                    onLog={() => go('/food')}
+                  />
+                </FadeIn>
+                <FadeIn delay={60}>
+                  <QuickActions onNavigate={go} onSnap={() => setSnapOpen(true)} />
+                </FadeIn>
+                <FadeIn delay={120}>
+                  <NoticedCard
+                    insight={demo.noticed}
+                    demo
+                    onAsk={() =>
+                      go(
+                        `/chat?q=${encodeURIComponent(t('chat.askAbout', { topic: demo.noticed.body }))}`,
+                      )
+                    }
+                  />
+                </FadeIn>
                 <FadeIn delay={180}>
-                  <Veil hidden={discreet} label={t('home.cycle.title')}>
-                    <CyclePreview
-                      status={cycle.data}
-                      fertilityOptIn={profile.data?.wants_fertility_estimate === true}
-                      onOpen={() => go('/cycle')}
-                    />
+                  <SuggestionsSection
+                    data={suggestions.data}
+                    noProfile={suggestions.noProfile}
+                    notReady={suggestions.notReady}
+                    state={suggestions.state}
+                    onRetry={() => suggestions.refetch()}
+                    onRegenerate={() => suggestions.regenerate.mutate()}
+                    regenerating={suggestions.regenerate.isPending}
+                    regenerateFailed={suggestions.regenerate.isError}
+                  />
+                </FadeIn>
+                <FadeIn delay={240}>
+                  <RecentLogs
+                    logs={todayLogs.data}
+                    state={todayLogs.state}
+                    onRetry={() => todayLogs.refetch()}
+                    onSeeAll={() => go('/food')}
+                    onLog={() => go('/food')}
+                  />
+                </FadeIn>
+              </View>
+
+              {/* Side column */}
+              <View className="gap-5">
+                <FadeIn delay={120}>
+                  <Veil hidden={discreet} label={t('home.mood.section')}>
+                    <View className="gap-3">
+                      <MoodCard
+                        entry={mood.entry}
+                        waiting={moodWaiting.has(today)}
+                        onPick={(value) => go(checkInHref({ mood: value }))}
+                        onOpen={() => go('/mood')}
+                      />
+                      <MoodInsightCard
+                        insight={moodInsight.data}
+                        state={moodInsight.state}
+                        onRetry={() => moodInsight.refetch()}
+                      />
+                    </View>
                   </Veil>
                 </FadeIn>
-              ) : null}
-              <FadeIn delay={240}>
-                <WeekCard
-                  week={demo.week}
-                  calories={weekCalories.data}
-                  state={weekCalories.state}
-                  onRetry={() => weekCalories.refetch()}
-                  onSeeAll={() => go('/insights')}
-                />
-              </FadeIn>
+                {cycle.data?.enabled ? (
+                  <FadeIn delay={180}>
+                    <Veil hidden={discreet} label={t('home.cycle.title')}>
+                      <CyclePreview
+                        status={cycle.data}
+                        fertilityOptIn={profile.data?.wants_fertility_estimate === true}
+                        onOpen={() => go('/cycle')}
+                      />
+                    </Veil>
+                  </FadeIn>
+                ) : null}
+                <FadeIn delay={240}>
+                  <WeekCard
+                    week={demo.week}
+                    calories={weekCalories.data}
+                    state={weekCalories.state}
+                    onRetry={() => weekCalories.refetch()}
+                    onSeeAll={() => go('/insights')}
+                  />
+                </FadeIn>
+              </View>
             </View>
-          </View>
-        )}
-      </View>
-    </ScrollView>
+          )}
+        </View>
+      </ScrollView>
+      <SnapSheet
+        open={snapOpen}
+        onClose={() => setSnapOpen(false)}
+        onSearchInstead={() => {
+          setSnapOpen(false);
+          go('/food');
+        }}
+      />
+    </>
   );
 }

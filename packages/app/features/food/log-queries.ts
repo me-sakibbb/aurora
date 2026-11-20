@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  ApiError,
   createFoodLog,
   type FoodItem,
   type FoodLog,
@@ -134,7 +135,18 @@ export type FoodLogVars = FoodLogInput & { userId: string };
 
 export function registerFoodMutations(queryClient: QueryClient) {
   queryClient.setMutationDefaults(FOOD_LOG, {
-    mutationFn: ({ userId: _userId, ...input }: FoodLogVars) => createFoodLog(input),
+    mutationFn: async ({ userId: _userId, ...input }: FoodLogVars): Promise<FoodLog | null> => {
+      try {
+        return await createFoodLog(input);
+      } catch (error) {
+        // A meal photo can back one log only. A 409 for it means an earlier send (e.g. replayed
+        // after going offline) already saved this log, so it isn't an error (no log id returned).
+        if (input.image_session_id && error instanceof ApiError && error.status === 409) {
+          return null;
+        }
+        throw error;
+      }
+    },
     onSettled: (_data, _error, { userId }: FoodLogVars) =>
       Promise.all([
         queryClient.invalidateQueries({ queryKey: dailySummaryQueryKey(userId) }),

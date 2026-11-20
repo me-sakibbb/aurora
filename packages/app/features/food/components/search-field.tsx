@@ -18,6 +18,7 @@ export function SearchField({
   inputRef,
   placeholder,
   label,
+  trailing,
 }: {
   value: string;
   onChangeText: (text: string) => void;
@@ -29,6 +30,8 @@ export function SearchField({
   /** Defaults to the food search's wording. */
   placeholder?: string;
   label?: string;
+  /** Shown at the right end while the box is empty (e.g. the snap-a-meal camera). */
+  trailing?: React.ReactNode;
 }) {
   const { t } = useTranslation();
 
@@ -73,6 +76,8 @@ export function SearchField({
             <Icon as={X} size={16} strokeWidth={2.5} className="text-muted-foreground" />
           </Pressable>
         </View>
+      ) : trailing ? (
+        <View className="absolute right-2 z-10">{trailing}</View>
       ) : null}
     </View>
   );

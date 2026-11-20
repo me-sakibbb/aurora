@@ -65,12 +65,15 @@ export function LogPanel({
   onBack,
   onDone,
   initialSlot,
+  imageSessionId,
 }: {
   item: FoodItem;
   onBack: () => void;
   onDone: () => void;
   /** The meal it's for, when known (e.g. a suggestion for lunch); otherwise by the clock. */
   initialSlot?: MealSlot;
+  /** The meal photo this dish was matched from (snap a meal), paired with the log. */
+  imageSessionId?: string;
 }) {
   const { t } = useTranslation();
   const { language } = useLanguage();
@@ -108,7 +111,7 @@ export function LogPanel({
     complete,
   });
 
-  const mutation = useMutation<FoodLog, Error, FoodLogVars>({ mutationKey: FOOD_LOG });
+  const mutation = useMutation<FoodLog | null, Error, FoodLogVars>({ mutationKey: FOOD_LOG });
   const lastVars = useRef<FoodLogVars | null>(null);
 
   const save = () => {
@@ -128,6 +131,7 @@ export function LogPanel({
       oil_tier: oil,
       logged_at: loggedAtFor(slot),
       answers: sentAnswers,
+      ...(imageSessionId ? { image_session_id: imageSessionId } : {}),
     };
     lastVars.current = vars;
     successHaptic();
