@@ -15,6 +15,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { create } from 'zustand';
 import { useRecentFoods } from '../food/queries';
+import { useRecipeDrafts } from '../food/recipes/draft-store';
 import { useOnboardingDraft } from '../onboarding/draft-store';
 
 type AuthState = { status: AuthStatus; session: Session | null };
@@ -46,6 +47,7 @@ export function useAuthListener() {
         queryClient.clear();
         useOnboardingDraft.getState().reset();
         useRecentFoods.getState().clear();
+        useRecipeDrafts.getState().clear();
       }
     });
     return () => subscription.unsubscribe();

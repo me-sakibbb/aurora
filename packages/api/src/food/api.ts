@@ -60,14 +60,21 @@ const foodItemSchema = z
     // A photo of the dish. Cards show a cooking-method illustration when there's none.
     thumbnail_url: z.string().nullish(),
     questions: z.array(recipeQuestionSchema).nullish(),
+    // The list sends `is_custom`; a single recipe sends `owner_id` instead (set only for the
+    // signed-in user's own recipes, since other people's are never returned).
+    is_custom: z.boolean().nullish(),
+    owner_id: z.string().nullish(),
     // Proposed (see ./types.ts): a calorie range per typical serving. Shown instead of the
     // per-100 g figure once the backend sends it.
     kcal_min: z.number().nullish(),
     kcal_max: z.number().nullish(),
   })
-  .transform(({ kcal_min, kcal_max, thumbnail_url, ...item }) => ({
+  .transform(({ kcal_min, kcal_max, thumbnail_url, is_custom, owner_id, ...item }) => ({
     ...item,
     name_bn: item.name_bn || null,
+    is_custom: is_custom ?? Boolean(owner_id),
+    /** The stored URL as sent (placeholder included), so an edit can send it back unchanged. */
+    thumbnail_url: thumbnail_url ?? null,
     image_url: photoUrl(thumbnail_url),
     questions: item.questions ?? [],
     kcal_range:
@@ -219,4 +226,135 @@ export type FoodLog = z.infer<typeof foodLogSchema>;
 /** `POST /api/v1/food/recipes/log`: saves a meal. Returns the saved log with its nutrition. */
 export async function createFoodLog(input: FoodLogInput): Promise<FoodLog> {
   return foodLogSchema.parse(await apiFetch('/food/recipes/log', { method: 'POST', body: input }));
+}
+
+// ─── A2 custom recipes ───────────────────────────────────────────────────────────────────────────
+
+const ingredientSchema = z
+  .object({
+    id: z.string(),
+    name_en: z.string(),
+    name_bn: z.string().nullish(),
+    kcal_per_100g: z.number().nullish(),
+    // Proposed (./types.ts): a photo of the ingredient. Rows show an icon until it exists.
+    image_url: z.string().nullish(),
+  })
+  .transform(({ image_url, ...item }) => ({
+    ...item,
+    name_bn: item.name_bn || null,
+    image_url: photoUrl(image_url),
+  }));
+
+/** A base food (`bfct_foods`) a recipe is made from. */
+export type Ingredient = z.infer<typeof ingredientSchema>;
+
+/** Ingredients per search. The backend has no `offset` yet (see ./types.ts). */
+export const INGREDIENT_SEARCH_LIMIT = 50;
+
+/** Ingredients fetched to browse with an empty search box (the backend's maximum). */
+export const INGREDIENT_BROWSE_LIMIT = 200;
+
+/**
+ * `GET /api/v1/food/ingredients?search=`: base foods whose English name matches, or the first ones
+ * by name when `search` is empty (browsing).
+ */
+export async function searchIngredients(
+  search: string,
+  signal?: AbortSignal,
+  limit = INGREDIENT_SEARCH_LIMIT,
+): Promise<Ingredient[]> {
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (search.trim()) params.set('search', search.trim());
+  const json = await apiFetch(`/food/ingredients?${params}`, { signal });
+  return z.object({ ingredients: z.array(ingredientSchema) }).parse(json).ingredients;
+}
+
+/**
+ * One recipe as `GET /food/recipes/{id}` (and the custom create/update calls) return it: its
+ * nutrition sits under `nutrients.per_100g` and it lists its ingredients.
+ */
+const recipeDetailSchema = z
+  .object({
+    nutrients: z.object({ per_100g: nutrientsSchema.nullish() }).passthrough().nullish(),
+    yield_factor: z.number().nullish(),
+    ingredients: z
+      .array(
+        z.object({
+          food_id: z.string(),
+          edible_g: z.number(),
+          bfct_foods: z
+            .object({
+              name_en: z.string().nullish(),
+              name_bn: z.string().nullish(),
+              image_url: z.string().nullish(),
+            })
+            .nullish(),
+        }),
+      )
+      .nullish(),
+  })
+  .passthrough()
+  .transform(({ nutrients, yield_factor, ingredients, ...rest }) => {
+    const per100 = nutrients?.per_100g ?? null;
+    const item = foodItemSchema.parse({
+      ...rest,
+      nutrients_per_100g: (rest as { nutrients_per_100g?: unknown }).nutrients_per_100g ?? per100,
+      kcal_per_100g: (rest as { kcal_per_100g?: unknown }).kcal_per_100g ?? per100?.kcal ?? null,
+    });
+    return {
+      ...item,
+      yield_factor: yield_factor ?? null,
+      ingredients: (ingredients ?? []).map((row) => ({
+        food_id: row.food_id,
+        edible_g: row.edible_g,
+        name_en: row.bfct_foods?.name_en ?? '',
+        name_bn: row.bfct_foods?.name_bn || null,
+        image_url: photoUrl(row.bfct_foods?.image_url),
+      })),
+    };
+  });
+
+export type RecipeDetail = z.infer<typeof recipeDetailSchema>;
+
+/** `GET /api/v1/food/recipes/{id}` with its ingredients, for editing a custom recipe. */
+export async function fetchRecipeDetail(id: string, signal?: AbortSignal): Promise<RecipeDetail> {
+  return recipeDetailSchema.parse(await apiFetch(`/food/recipes/${id}`, { signal }));
+}
+
+/**
+ * The body of `POST /food/recipes/custom` and `PATCH /food/recipes/{id}`. The backend works out
+ * the nutrition and cooked weight; the app sends what the person entered.
+ */
+export type CustomRecipeInput = {
+  name: string;
+  name_bn: string | null;
+  cooking_method: string;
+  /** A URL from `uploadFile`, or the recipe's current one when editing. */
+  thumbnail_url: string | null;
+  servings: number;
+  /** Finished weight ÷ raw ingredient weight, from the weight the person entered. */
+  yield_factor: number;
+  ingredients: { food_id: string; edible_g: number }[];
+};
+
+/** `POST /api/v1/food/recipes/custom`: saves a private recipe. Returns it with its nutrition. */
+export async function createCustomRecipe(input: CustomRecipeInput): Promise<RecipeDetail> {
+  return recipeDetailSchema.parse(
+    await apiFetch('/food/recipes/custom', { method: 'POST', body: input }),
+  );
+}
+
+/** `PATCH /api/v1/food/recipes/{id}`: replaces an own recipe. Past logs keep their numbers. */
+export async function updateCustomRecipe(
+  id: string,
+  input: CustomRecipeInput,
+): Promise<RecipeDetail> {
+  return recipeDetailSchema.parse(
+    await apiFetch(`/food/recipes/${id}`, { method: 'PATCH', body: input }),
+  );
+}
+
+/** `DELETE /api/v1/food/recipes/{id}`. A 409 means it's in the food log and can't be deleted. */
+export async function deleteCustomRecipe(id: string): Promise<void> {
+  await apiFetch(`/food/recipes/${id}`, { method: 'DELETE' });
 }

@@ -38,7 +38,7 @@ export function useFoodCatalogue() {
   });
 }
 
-function useDebounced<T>(value: T, delay: number): T {
+export function useDebounced<T>(value: T, delay: number): T {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
     const timer = setTimeout(() => setDebounced(value), delay);
@@ -213,6 +213,9 @@ const MAX_RECENT = 8;
 type RecentFoodsState = {
   items: FoodItem[];
   add: (item: FoodItem) => void;
+  /** Swaps in a fresh copy (e.g. an edited own recipe), if it's in the list. */
+  replace: (item: FoodItem) => void;
+  remove: (id: string) => void;
   clear: () => void;
 };
 
@@ -225,6 +228,9 @@ export const useRecentFoods = create<RecentFoodsState>()(
         set((s) => ({
           items: [item, ...s.items.filter((other) => other.id !== item.id)].slice(0, MAX_RECENT),
         })),
+      replace: (item) =>
+        set((s) => ({ items: s.items.map((other) => (other.id === item.id ? item : other)) })),
+      remove: (id) => set((s) => ({ items: s.items.filter((other) => other.id !== id) })),
       clear: () => set({ items: [] }),
     }),
     {

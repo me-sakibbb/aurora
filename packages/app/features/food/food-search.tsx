@@ -9,6 +9,7 @@ import {
   Icon,
   type IconComponent,
   LayoutGrid,
+  Plus,
   SearchX,
   Sparkles,
   Text,
@@ -28,6 +29,7 @@ import { FoodImage } from '../../components/food-image';
 import { Skeleton } from '../../components/skeleton';
 import { tapHaptic } from '../../lib/haptics';
 import { useLanguage } from '../../lib/language';
+import { useAppRouter } from '../../lib/navigation';
 import { useIsOnline } from '../../lib/use-online';
 import { InlineState } from '../home/components/primitives';
 import { FoodCard } from './components/food-card';
@@ -36,6 +38,8 @@ import { SearchField } from './components/search-field';
 import { foodNames, methodLabel } from './display';
 import { COOKING_METHODS, type CookingMethod, methodIcon } from './method-icons';
 import { useFoodBrowse, useFoodSearch, useRecentFoods } from './queries';
+import { MyRecipesRail } from './recipes/components/my-recipes-rail';
+import { recipeEditorHref } from './recipes/links';
 
 /** Cards past this one appear without a stagger, so long lists don't feel slow. */
 const STAGGER_CARDS = 8;
@@ -347,7 +351,10 @@ function CategoryTile({
   );
 }
 
-/** The empty box: recently viewed foods, ideas to try, then every food by cooking type. */
+/**
+ * The empty box: ideas to try, the person's own recipes, recently viewed foods, then every food by
+ * cooking type.
+ */
 function IdleHeader({
   method,
   onMethod,
@@ -389,6 +396,9 @@ function IdleHeader({
         <TryLine onTry={onTry} />
       </FadeIn>
 
+      {/* Renders nothing (no wrapper) when hidden, so the column's gap isn't doubled. */}
+      <MyRecipesRail onPick={onPick} />
+
       {recent.length > 0 ? (
         <FadeIn delay={60}>
           <SectionTitle action={{ label: t('food.search.clearRecent'), onPress: clearRecent }}>
@@ -424,16 +434,40 @@ function IdleHeader({
             ))}
           </Rail>
         </View>
-        <Text
-          role="heading"
-          aria-level={2}
-          aria-live="polite"
-          className="mt-6 px-1.5 text-[17px] font-bold tracking-tight"
-        >
-          {method ? methodLabel(t, method) : t('food.search.allDishes')}
-        </Text>
+        <View className="mt-6 flex-row items-center justify-between gap-3 px-1.5">
+          <Text
+            role="heading"
+            aria-level={2}
+            aria-live="polite"
+            className="flex-1 text-[17px] font-bold tracking-tight"
+          >
+            {method ? methodLabel(t, method) : t('food.search.allDishes')}
+          </Text>
+          <NewRecipeButton />
+        </View>
       </FadeIn>
     </View>
+  );
+}
+
+/** A small "+ New recipe" pill beside the grid's heading: the one way into the recipe editor. */
+function NewRecipeButton() {
+  const { t } = useTranslation();
+  const router = useAppRouter();
+  return (
+    <Pressable
+      onPress={() => {
+        tapHaptic();
+        router.push(recipeEditorHref());
+      }}
+      role="button"
+      aria-label={t('food.recipes.createRecipe')}
+      hitSlop={8}
+      className="bg-primary/10 flex-row items-center gap-1 rounded-full px-3 py-1.5 active:opacity-70"
+    >
+      <Icon as={Plus} size={14} strokeWidth={2.5} className="text-primary" />
+      <Text className="text-primary text-[13px] font-semibold">{t('food.recipes.newRecipe')}</Text>
+    </Pressable>
   );
 }
 

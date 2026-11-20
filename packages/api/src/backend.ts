@@ -28,6 +28,7 @@ export async function apiFetch(
     signal,
   }: {
     method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    /** JSON-encoded, except `FormData`, which is sent as multipart (the runtime sets the boundary). */
     body?: unknown;
     /** Cancels the request (TanStack Query passes one, so stale searches are dropped). */
     signal?: AbortSignal;
@@ -40,8 +41,9 @@ export async function apiFetch(
     );
   }
 
+  const multipart = typeof FormData !== 'undefined' && body instanceof FormData;
   const headers: Record<string, string> = { Accept: 'application/json' };
-  if (body !== undefined) headers['Content-Type'] = 'application/json';
+  if (body !== undefined && !multipart) headers['Content-Type'] = 'application/json';
   if (isSupabaseConfigured()) {
     const { data } = await getSupabase().auth.getSession();
     if (data.session) headers.Authorization = `Bearer ${data.session.access_token}`;
@@ -50,7 +52,7 @@ export async function apiFetch(
   const response = await fetch(`${env.apiUrl.replace(/\/+$/, '')}/api/v1${path}`, {
     method,
     headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
+    body: body === undefined ? undefined : multipart ? body : JSON.stringify(body),
     signal,
   });
 

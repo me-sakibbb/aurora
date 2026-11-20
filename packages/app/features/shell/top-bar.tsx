@@ -16,12 +16,15 @@ import { useSheets } from './sheets';
  * Pushed screens (and everything under them): they draw their own bar (with back) and, like on
  * Android where they open over the tabs, show no tab bar.
  */
-export const STANDALONE_PATHS = ['/mood', '/settings'];
+export const STANDALONE_PATHS = ['/mood', '/settings', '/food/my-recipes', '/food/recipe'];
 
 export const isStandalone = (pathname: string) =>
   STANDALONE_PATHS.some((href) => isActivePath(pathname, href));
 
 const TITLES = [
+  // Before '/food', which would match them too.
+  { href: '/food/my-recipes', key: 'food.recipes.myTitle' },
+  { href: '/food/recipe', key: 'food.recipes.editorTitle' },
   { href: '/food', key: 'shell.nav.food' },
   { href: '/chat', key: 'shell.nav.chat' },
   { href: '/cycle', key: 'shell.nav.cycle' },

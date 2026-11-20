@@ -60,6 +60,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     'expo-notifications',
     'expo-image',
+    // A2 custom recipes: a photo of the dish, from the camera or the gallery.
+    [
+      'expo-image-picker',
+      {
+        cameraPermission: 'Allow MyBela to use your camera to take a photo of your recipe.',
+        photosPermission: 'Allow MyBela to choose a photo of your recipe from your gallery.',
+        microphonePermission: false,
+      },
+    ],
     // @react-native-google-signin/google-signin needs no config plugin on Android (autolinked); the
     // plugin only registers the iOS URL scheme.
     ...(googleIosUrlScheme

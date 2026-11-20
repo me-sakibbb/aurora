@@ -2,7 +2,7 @@
 
 import type { FoodItem } from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
-import { cn, Icon, Text } from '@mybela/ui';
+import { ChefHat, cn, Icon, Text } from '@mybela/ui';
 import { memo } from 'react';
 import { Pressable, View } from 'react-native';
 import { FoodImage } from '../../../components/food-image';
@@ -32,7 +32,9 @@ export const FoodCard = memo(function FoodCard({
   return (
     <Pressable
       onPress={() => onPress(item)}
-      aria-label={[primary, secondary, method, kcal].filter(Boolean).join(', ')}
+      aria-label={[primary, secondary, item.is_custom ? t('food.recipes.mine') : null, method, kcal]
+        .filter(Boolean)
+        .join(', ')}
       className="bg-card border-border flex-1 overflow-hidden rounded-3xl border shadow-sm shadow-black/5 transition-transform hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98]"
     >
       <View className="bg-sage/15 aspect-[4/3] w-full items-center justify-center">
@@ -48,6 +50,14 @@ export const FoodCard = memo(function FoodCard({
             />
           }
         />
+        {item.is_custom ? (
+          <View className="bg-primary absolute left-2 top-2 flex-row items-center gap-1 rounded-full px-2 py-0.5">
+            <Icon as={ChefHat} size={11} className="text-primary-foreground" />
+            <Text className="text-primary-foreground text-[10px] font-bold">
+              {t('food.recipes.mine')}
+            </Text>
+          </View>
+        ) : null}
         {kcal ? (
           <View className="bg-card/95 absolute bottom-2 left-2 rounded-full px-2.5 py-1 shadow-sm shadow-black/10">
             <Text className="text-foreground text-[11px] font-semibold">{kcal}</Text>

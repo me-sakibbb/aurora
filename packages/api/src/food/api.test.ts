@@ -1,9 +1,12 @@
 import { apiFetch } from '../backend';
 import {
+  createCustomRecipe,
   createFoodLog,
+  deleteCustomRecipe,
   type FoodItem,
   fetchFoodCatalogue,
   fetchFoodPage,
+  fetchRecipeDetail,
   matchCatalogue,
   mergeResults,
   methodIgnored,
@@ -11,6 +14,7 @@ import {
   offsetIgnored,
   photoUrl,
   previewRecipeNutrition,
+  searchIngredients,
 } from './api';
 
 const searchFoods = (search: string) => fetchFoodPage({ offset: 0, search });
@@ -32,6 +36,8 @@ const food = (id: string, name: string, name_bn: string | null = null): FoodItem
   kcal_per_100g: 100,
   nutrients_per_100g: null,
   image_url: null,
+  thumbnail_url: null,
+  is_custom: false,
   kcal_range: null,
   questions: [],
 });
@@ -263,5 +269,77 @@ describe('paging support', () => {
     expect(methodIgnored([dal], 'dal')).toBe(false);
     expect(methodIgnored([dal, ALU], 'dal')).toBe(true);
     expect(methodIgnored([ALU], null)).toBe(false);
+  });
+});
+
+describe('custom recipes', () => {
+  const detail = {
+    id: 'c1',
+    owner_id: 'u1',
+    name: "Mom's Khichuri",
+    name_bn: null,
+    cooking_method: 'other',
+    servings: 4,
+    thumbnail_url: 'https://placehold.co/640x480?text=Recipe',
+    weight_g: 800,
+    yield_factor: 0.8,
+    water_added_g: 0,
+    nutrients: { total: { kcal: 1200 }, per_100g: { kcal: 150, protein_g: 5 } },
+    questions: [],
+    ingredients: [
+      { food_id: 'f1', edible_g: 600, bfct_foods: { name_en: 'Rice', name_bn: 'চাল' } },
+      { food_id: 'f2', edible_g: 400, bfct_foods: { name_en: 'Lentil', name_bn: '' } },
+    ],
+  };
+
+  it('reads a recipe detail: own recipe, per-100 g nutrition, ingredients, stored thumbnail', async () => {
+    mockFetch.mockResolvedValueOnce(detail);
+    const recipe = await fetchRecipeDetail('c1');
+    expect(recipe.is_custom).toBe(true);
+    expect(recipe.kcal_per_100g).toBe(150);
+    expect(recipe.nutrients_per_100g?.protein_g).toBe(5);
+    expect(recipe.yield_factor).toBe(0.8);
+    expect(recipe.image_url).toBeNull();
+    expect(recipe.thumbnail_url).toBe('https://placehold.co/640x480?text=Recipe');
+    expect(recipe.ingredients).toEqual([
+      { food_id: 'f1', edible_g: 600, name_en: 'Rice', name_bn: 'চাল', image_url: null },
+      { food_id: 'f2', edible_g: 400, name_en: 'Lentil', name_bn: null, image_url: null },
+    ]);
+  });
+
+  it('posts the recipe body as entered', async () => {
+    mockFetch.mockResolvedValueOnce(detail);
+    const input = {
+      name: "Mom's Khichuri",
+      name_bn: null,
+      cooking_method: 'other',
+      thumbnail_url: null,
+      servings: 4,
+      yield_factor: 0.8,
+      ingredients: [{ food_id: 'f1', edible_g: 600 }],
+    };
+    await createCustomRecipe(input);
+    expect(mockFetch).toHaveBeenLastCalledWith('/food/recipes/custom', {
+      method: 'POST',
+      body: input,
+    });
+  });
+
+  it('deletes with a DELETE and passes a 409 through', async () => {
+    const { ApiError } = jest.requireActual('../backend');
+    mockFetch.mockRejectedValueOnce(new ApiError(409, 'recipe cannot be deleted'));
+    await expect(deleteCustomRecipe('c1')).rejects.toMatchObject({ status: 409 });
+    expect(mockFetch).toHaveBeenLastCalledWith('/food/recipes/c1', { method: 'DELETE' });
+  });
+
+  it('searches ingredients by trimmed text', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ingredients: [{ id: 'f1', name_en: 'Rice', name_bn: '', kcal_per_100g: 350, extra: 1 }],
+    });
+    const result = await searchIngredients('  rice ');
+    expect(mockFetch.mock.calls.at(-1)?.[0]).toBe('/food/ingredients?limit=50&search=rice');
+    expect(result).toEqual([
+      { id: 'f1', name_en: 'Rice', name_bn: null, kcal_per_100g: 350, image_url: null },
+    ]);
   });
 });

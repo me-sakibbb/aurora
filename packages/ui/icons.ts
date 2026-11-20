@@ -54,6 +54,7 @@ export {
   HeartHandshake,
   HeartPulse,
   House,
+  ImagePlus,
   Info,
   Languages,
   Laugh,

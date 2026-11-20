@@ -48,6 +48,9 @@ not here.
   - Answers are kept on the device and survive restarts (`draft-store.ts`), then are submitted after sign-up.
   - The client removed the cycle questions (2026-10-09).
   - Note: the widget step only records opt-in. No home-screen widget is built.
+  - **BE regression, fixed (2026-11-20):** backend commit `c2d30ef` ("Custom recipes") made
+    `GET /food/recipes` require auth, which broke the signed-out sample-meals step. Backend `4e13cc5`
+    made it optional-auth again. Checked live: a signed-out request returns 200 with the catalog.
 - [x] **F3 Health & goals settings**
   - `/settings` screen (profile sheet → "Health & goals"), pre-filled from `GET /profile`: goals, diet,
     sex, age, height and weight (cm/ft-in, kg/lb), body type, activity, blood pressure, diabetes.
@@ -211,7 +214,8 @@ not here.
 - [ ] **P6 "Common concerns" chips**: not started. Uses the same hand-off as P2. Avoid stacked pill
   rows (UI feedback).
 - [ ] **P7 Aura badges**: not started. Needs badge data from BE.
-- [ ] **P8 My recipes**: not started. Needs save/unsave + list endpoints.
+- [ ] **P8 My recipes**: not started. P8 is save/unsave favourites from the library and still needs
+  save/unsave + list endpoints. Creating your own recipes is a separate extra item, A2 (below).
 - [ ] **P9 Notifications (in-app centre + SMS opt-in)**: not started. Needs BE endpoints.
 - [ ] **P10 Native app lock**: not started. PIN / biometric lock (expo-local-authentication), Android
   only (iOS via A1).
@@ -234,6 +238,53 @@ has a price for it.
 | ID | Feature | Status | Quoted | Priced | Notes |
 | --- | --- | --- | --- | --- | --- |
 | A1 | iOS app (iPhone) | In progress | [x] | [ ] | Rebrand prepared the iOS build; iOS Google client recorded. Needs an Apple Developer account from Aurora, TestFlight setup, and Face ID lock (with P10). |
+| A2 | Custom recipes (create, reuse, edit, delete, log) | Built | [x] | [ ] | See "A2 custom recipes" below. |
+
+### A2 custom recipes (built 2026-11-20)
+
+- [x] Food tab: a small "+ New recipe" pill beside the "All dishes" heading, and a "My recipes" rail
+  (recipe tiles + "See all", shown only once there's at least one recipe) and `/food/my-recipes` (infinite
+  card grid with loading / empty / error / offline states). Own recipes show a "My recipe" marker in
+  search and on cards.
+- [x] 4-step editor at `/food/recipe` (new) and `/food/recipe?id=` (edit): photo + names + cooking type →
+  ingredients → finished weight + servings → review. Ingredients: the recipe's list on top (tap to
+  change the amount), then every ingredient A–Z (`GET /food/ingredients?limit=200`, paged on the device,
+  infinite) or the matches for what's typed. Picking one opens a "How much?" sheet (grams with −/+).
+  Rows have a photo tile (icon until the backend sends ingredient photos).
+  The draft is kept on the device until saved (cleared on sign-out).
+- [x] Save uses `POST /food/recipes/custom` or `PATCH /food/recipes/{id}`. `yield_factor` is the
+  finished weight the person entered ÷ the raw total. Backend `detail` errors (e.g. the water rule) are
+  shown as returned. After saving, the backend's nutrition per 100 g is shown with "Log it now" (the
+  F6 log form).
+- [x] Errors (2026-11-20): the ingredients step says up front when a water-cooked method (dal, jhol,
+  curry, torkari, polao/biryani) has no "Water (Added)", with an "Add water" button, and Next is
+  blocked until it's added. **This mirrors a backend rule in the client, at the user's request**
+  (`packages/api/src/food/recipe-rules.ts`, copied from food.py `WATER_REQUIRED_METHODS`). Save
+  re-checks every step first. Backend errors are sorted (`classifyRecipeError`) and shown on the step
+  that fixes them (water, missing or duplicate ingredient, weight) or above Save (offline, signed out,
+  not found, server). Unknown 4xx messages are shown as returned.
+- [x] Detail sheet: Edit and Delete for own recipes. Delete shows a 409 ("in your food log") plainly.
+- [x] Photo: camera or gallery (expo-image-picker on Android, file input on web). Before upload it's
+  resized to ≤ 1280 px and re-encoded as JPEG q0.7, with a second pass at 1024 px / q0.55 if it's still
+  > 1 MB (expo-image-manipulator on Android, canvas on web). Upload goes through `POST /uploads/file`
+  (backend `24fdcc8`) and the returned URL is sent as `thumbnail_url`.
+- Waiting on BE:
+  - **Recipe photo bucket: created on the FE side (2026-11-20, user's OK).** Uploads failed because no
+    `recipe-photos` bucket existed. Migration `recipe_photos_bucket` (public, 5 MB, JPEG/PNG/WebP) is
+    saved in `docs/sql/recipe_photos_bucket.sql`. The backend should adopt it into its migrations.
+  - Ingredient photos: `image_url` on `bfct_foods` (also in the ingredients list and recipe detail). The
+    app already reads it.
+  - `/uploads/file` accepts any `bucket_name` (including the private meal-images bucket) and any file
+    type. Proposed: an allowed-bucket list, and an image type + signature check.
+  - No way to delete a replaced or never-saved photo.
+  - `yield_factor` optional with a per-method default, so the finished-weight step can become optional.
+  - A nutrition preview before saving (today it's only known after Save).
+  - `GET /food/recipes?mine=true&offset=` (My recipes filters the first 200 catalogue rows today).
+  - `GET /food/ingredients`: `offset`, and matching on Bengali names/aliases (English `name_en` only).
+  - Publish the recipe rules (e.g. `requires_water` per cooking method), so the app's copy can go.
+  - Stable error codes next to the English `detail`, so errors can be shown in Bengali.
+  - `thumbnail_url` saved as the placehold.co image when there's no photo (should be `null`).
+- Native deps added: `expo-image-picker`, `expo-image-manipulator`. **Rebuild the dev client / APK.**
 
 ### Built beyond the quotation's wording (not quoted separately)
 

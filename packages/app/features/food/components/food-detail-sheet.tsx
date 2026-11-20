@@ -2,7 +2,7 @@
 
 import { type FoodItem, servingGrams } from '@mybela/api';
 import { useTranslation } from '@mybela/i18n';
-import { Button, Icon, Text, X } from '@mybela/ui';
+import { Button, ChefHat, Icon, Pencil, Text, Trash2, X } from '@mybela/ui';
 import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { FoodImage } from '../../../components/food-image';
@@ -10,8 +10,11 @@ import { Sheet, SheetScrollView } from '../../../components/sheet';
 import { useAppDimensions } from '../../../lib/dimensions';
 import { useInsets } from '../../../lib/insets';
 import { useLanguage } from '../../../lib/language';
+import { useAppRouter } from '../../../lib/navigation';
 import { foodNames, kcalLabel, methodLabel } from '../display';
 import { methodIcon } from '../method-icons';
+import { DeleteRecipeConfirm } from '../recipes/components/delete-recipe-confirm';
+import { recipeEditorHref } from '../recipes/links';
 import { LogPanel } from './log-panel';
 
 const MACROS = ['protein_g', 'carbs_g', 'fat_g', 'fiber_g'] as const;
@@ -20,7 +23,7 @@ const MACROS = ['protein_g', 'carbs_g', 'fat_g', 'fiber_g'] as const;
  * A closer look at one food: a big photo up top (a large cooking-method illustration until photos
  * exist), both names, the typical serving and the backend's nutrition per 100 g, as returned.
  * Scrolls when it's taller than the screen. "Log this meal" turns the same sheet into the F6
- * log form (`LogPanel`).
+ * log form (`LogPanel`). The person's own recipes (A2) can also be edited or deleted from here.
  */
 export function FoodDetailSheet({
   item,
@@ -36,11 +39,16 @@ export function FoodDetailSheet({
   const { language } = useLanguage();
   const insets = useInsets();
   const { width, height } = useAppDimensions();
+  const router = useAppRouter();
   const [mode, setMode] = useState<'detail' | 'log'>('detail');
+  const [confirmDelete, setConfirmDelete] = useState(false);
   // Every newly opened food starts on its details.
   const itemId = item?.id;
   useEffect(() => {
-    if (open && itemId) setMode('detail');
+    if (open && itemId) {
+      setMode('detail');
+      setConfirmDelete(false);
+    }
   }, [open, itemId]);
   if (!item) return null;
 
@@ -83,8 +91,18 @@ export function FoodDetailSheet({
                 </View>
               }
             />
-            <View className="bg-card/95 absolute bottom-3 left-4 rounded-full px-3 py-1 shadow-sm shadow-black/10">
-              <Text className="text-xs font-semibold">{methodLabel(t, item.cooking_method)}</Text>
+            <View className="absolute bottom-3 left-4 flex-row gap-2">
+              <View className="bg-card/95 rounded-full px-3 py-1 shadow-sm shadow-black/10">
+                <Text className="text-xs font-semibold">{methodLabel(t, item.cooking_method)}</Text>
+              </View>
+              {item.is_custom ? (
+                <View className="bg-primary flex-row items-center gap-1 rounded-full px-3 py-1">
+                  <Icon as={ChefHat} size={12} className="text-primary-foreground" />
+                  <Text className="text-primary-foreground text-xs font-semibold">
+                    {t('food.recipes.mine')}
+                  </Text>
+                </View>
+              ) : null}
             </View>
           </View>
 
@@ -136,6 +154,39 @@ export function FoodDetailSheet({
             <Button size="lg" className="rounded-full" onPress={() => setMode('log')}>
               <Text>{t('food.detail.log')}</Text>
             </Button>
+
+            {item.is_custom ? (
+              confirmDelete ? (
+                <DeleteRecipeConfirm
+                  id={item.id}
+                  name={primary}
+                  onCancel={() => setConfirmDelete(false)}
+                  onDeleted={onClose}
+                />
+              ) : (
+                <View className="-mt-2 flex-row gap-3">
+                  <Button
+                    variant="outline"
+                    className="flex-1 rounded-full"
+                    onPress={() => {
+                      onClose();
+                      router.push(recipeEditorHref(item.id));
+                    }}
+                  >
+                    <Icon as={Pencil} size={16} className="text-foreground" />
+                    <Text>{t('food.recipes.detail.edit')}</Text>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="flex-1 rounded-full"
+                    onPress={() => setConfirmDelete(true)}
+                  >
+                    <Icon as={Trash2} size={16} className="text-destructive" />
+                    <Text className="text-destructive">{t('food.recipes.detail.delete')}</Text>
+                  </Button>
+                </View>
+              )
+            ) : null}
           </View>
         </SheetScrollView>
       )}

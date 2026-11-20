@@ -16,6 +16,8 @@ export function SearchField({
   busy,
   autoFocus,
   inputRef,
+  placeholder,
+  label,
 }: {
   value: string;
   onChangeText: (text: string) => void;
@@ -24,6 +26,9 @@ export function SearchField({
   busy?: boolean;
   autoFocus?: boolean;
   inputRef?: Ref<TextInput>;
+  /** Defaults to the food search's wording. */
+  placeholder?: string;
+  label?: string;
 }) {
   const { t } = useTranslation();
 
@@ -37,8 +42,8 @@ export function SearchField({
         value={value}
         onChangeText={onChangeText}
         onSubmitEditing={onSubmit}
-        placeholder={t('food.search.placeholder')}
-        aria-label={t('food.search.label')}
+        placeholder={placeholder ?? t('food.search.placeholder')}
+        aria-label={label ?? t('food.search.label')}
         autoFocus={autoFocus}
         autoCorrect={false}
         autoCapitalize="none"
