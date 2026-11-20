@@ -5,7 +5,7 @@ F1–F26 and P1–P10) and against extra work billed separately
 (`docs/client/Aurora_Additional_Work_Quotation.html`, A-items). Prices stay in those git-ignored files,
 not here.
 
-**Last updated:** 2026-11-20 (after commit `ad77f6a`, Phase 5)
+**Last updated:** 2026-11-20 (A3 snap a meal)
 
 ## How to use this file
 
@@ -239,6 +239,7 @@ has a price for it.
 | --- | --- | --- | --- | --- | --- |
 | A1 | iOS app (iPhone) | In progress | [x] | [ ] | Rebrand prepared the iOS build; iOS Google client recorded. Needs an Apple Developer account from Aurora, TestFlight setup, and Face ID lock (with P10). |
 | A2 | Custom recipes (create, reuse, edit, delete, log) | Built | [x] | [ ] | See "A2 custom recipes" below. |
+| A3 | Snap a meal (photo → dish → log) | Built | [x] | [ ] | See "A3 snap a meal" below. |
 
 ### A2 custom recipes (built 2026-11-20)
 
@@ -283,6 +284,38 @@ has a price for it.
   - Stable error codes next to the English `detail`, so errors can be shown in Bengali.
   - `thumbnail_url` saved as the placehold.co image when there's no photo (should be `null`).
 - Native deps added: `expo-image-picker`, `expo-image-manipulator`. **Rebuild the dev client / APK.**
+
+### A3 snap a meal (built 2026-11-20)
+
+- [x] Entry points: a camera button inside the Food tab's search box (shown while the box is empty) and a
+  "Snap meal" tile in Home's quick actions (now four tiles across).
+- [x] One sheet (`features/food/snap/`): camera or gallery (no crop step) → the photo with a scan
+  animation and "Finding your dish…" (it changes after 6 s and 15 s; Cancel aborts) → the top match big with
+  "Yes, log it", the other matches as photo cards, and "None of these" → the usual F6 log form.
+- [x] Uses `POST /food/log/image` (backend; live). The photo is compressed like recipe photos (≤1280 px
+  JPEG, ~150–300 KB). Matches show name, Bengali name, method and kcal per 100 g (from
+  `GET /food/recipes/{id}`). Confidence and the model's reason are **not** shown (user's decision).
+- [x] The log sends `image_session_id`, so the backend pairs the photo with the confirmed dish (training
+  labels). Checked live: `food_logs.image_session_id` is set, the session is `logged`, and a label row
+  is written.
+- [x] No match / "None of these": a hint field ("e.g. beef tehari") → "Look again" re-sends the same
+  photo with the same `session_id` + `description`. Retake keeps the session. "Search instead" focuses
+  the search box (Food) or opens /food (Home). Checked live: a hint retry adds a second upload to the
+  same session.
+- [x] States: offline (no camera, "Search instead"), server/502 (Try again keeps the session the 502
+  returns), too large (413), bad type (422), camera access denied, a dish that won't open. A 409 on
+  an offline-replayed snap log counts as already saved.
+- [x] Single-recipe responses now map `nutrients.per_100g` to `kcal_per_100g` / `nutrients_per_100g`
+  (the list endpoint sends those directly), so the kcal shows wherever a fetched recipe is used.
+- Waiting on BE:
+  - food.py `log_meal_image`: the `except HTTPException` branch turns every HTTPException into a
+    503 "recipe catalog is unavailable" (e.g. a storage error).
+  - No delete or expiry for photos in sessions that are never logged.
+  - English-only `detail` text with no error codes, and the `reason` text is English only (not shown).
+  - No idempotency key on `/food/recipes/log` (same as F6).
+  - Single recipe `GET /food/recipes/{id}`: send `kcal_per_100g` like the list does, so the two
+    shapes match.
+- No new native deps (expo-image-picker / manipulator were already added for A2).
 
 ### Built beyond the quotation's wording (not quoted separately)
 

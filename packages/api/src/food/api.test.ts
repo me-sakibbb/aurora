@@ -6,9 +6,11 @@ import {
   type FoodItem,
   fetchFoodCatalogue,
   fetchFoodPage,
+  fetchRecipe,
   fetchRecipeDetail,
   identifyMealPhoto,
   matchCatalogue,
+  mealCandidateFood,
   mealPhotoSessionId,
   mergeResults,
   methodIgnored,
@@ -346,6 +348,22 @@ describe('custom recipes', () => {
   });
 });
 
+describe('fetchRecipe', () => {
+  it('uses per_100g figures from a single recipe when the list fields are missing', async () => {
+    mockFetch.mockResolvedValueOnce({
+      id: 'r1',
+      name: 'Biryani',
+      weight_g: 306.9,
+      servings: 1,
+      nutrients: { total: { kcal: 701 }, per_100g: { kcal: 228.6, protein_g: 9.2 } },
+    });
+    const recipe = await fetchRecipe('r1');
+    expect(recipe.kcal_per_100g).toBe(228.6);
+    expect(recipe.nutrients_per_100g).toEqual({ kcal: 228.6, protein_g: 9.2 });
+    expect(recipe).not.toHaveProperty('nutrients');
+  });
+});
+
 describe('meal photo matching', () => {
   const photo = () => new Blob(['x'], { type: 'image/jpeg' });
 
@@ -390,6 +408,11 @@ describe('meal photo matching', () => {
     expect(form.has('session_id')).toBe(false);
     expect(form.has('description')).toBe(false);
     expect(result).toEqual({ image_session_id: 's2', status: 'no_match', candidates: [] });
+  });
+
+  it("shows a single recipe's figures from its nutrients block", () => {
+    const food = mealCandidateFood({ recipe_id: 'r1', name: 'Biryani' });
+    expect(food).toMatchObject({ id: 'r1', kcal_per_100g: null, image_url: null });
   });
 
   it('reads the session a failed match left behind', () => {

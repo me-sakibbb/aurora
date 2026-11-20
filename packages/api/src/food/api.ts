@@ -69,9 +69,14 @@ const foodItemSchema = z
     // per-100 g figure once the backend sends it.
     kcal_min: z.number().nullish(),
     kcal_max: z.number().nullish(),
+    // A single recipe (`GET /food/recipes/{id}`) sends its figures here instead of the list's
+    // `kcal_per_100g` / `nutrients_per_100g`; they're used as is when those are missing.
+    nutrients: z.object({ per_100g: nutrientsSchema.nullish() }).nullish(),
   })
-  .transform(({ kcal_min, kcal_max, thumbnail_url, is_custom, owner_id, ...item }) => ({
+  .transform(({ kcal_min, kcal_max, thumbnail_url, is_custom, owner_id, nutrients, ...item }) => ({
     ...item,
+    kcal_per_100g: item.kcal_per_100g ?? nutrients?.per_100g?.kcal ?? null,
+    nutrients_per_100g: item.nutrients_per_100g ?? nutrients?.per_100g ?? null,
     name_bn: item.name_bn || null,
     is_custom: is_custom ?? Boolean(owner_id),
     /** The stored URL as sent (placeholder included), so an edit can send it back unchanged. */
